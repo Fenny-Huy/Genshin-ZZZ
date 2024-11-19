@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import './App.css'; // Importing the styles
 
 function App() {
   const [formData, setFormData] = useState({
@@ -11,12 +12,12 @@ function App() {
   });
 
   const artifactTypes = {
-    "Flower": ["HP"],
-    "Plume": ["ATK"],
-    "Sand": ["%HP", "%ATK", "%DEF", "ER", "EM"],
-    "Goblet": ["%HP", "%ATK", "%DEF", "EM", "Physical", "Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo"],
-    "Circlet": ["%HP", "%ATK", "%DEF", "EM", "Crit Rate", "Crit DMG", "Healing"],
-  };  
+    Flower: ["HP"],
+    Plume: ["ATK"],
+    Sand: ["%HP", "%ATK", "%DEF", "ER", "EM"],
+    Goblet: ["%HP", "%ATK", "%DEF", "EM", "Physical", "Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo"],
+    Circlet: ["%HP", "%ATK", "%DEF", "EM", "Crit Rate", "Crit DMG", "Healing"],
+  };
 
   const allSubstats = ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"];
 
@@ -63,67 +64,64 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       <h1>Artifact Input Form</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Artifact Type:
-            <select name="type" value={formData.type} onChange={handleInputChange}>
-              <option value="">Select Type</option>
-              {Object.keys(artifactTypes).map((type) => (
-                <option key={type} value={type}>
-                  {type}
+      <form onSubmit={handleSubmit} className="form">
+        <div className="inputGroup">
+          <label className="label">Artifact Type:</label>
+          <select name="type" value={formData.type} onChange={handleInputChange} className="select">
+            <option value="">Select Type</option>
+            {Object.keys(artifactTypes).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="inputGroup">
+          <label className="label">Main Stat:</label>
+          <select
+            name="mainStat"
+            value={formData.mainStat}
+            onChange={handleInputChange}
+            className="select"
+            disabled={!formData.type}
+          >
+            <option value="">Select Main Stat</option>
+            {formData.type &&
+              artifactTypes[formData.type].map((stat) => (
+                <option key={stat} value={stat}>
+                  {stat}
                 </option>
               ))}
-            </select>
-          </label>
+          </select>
         </div>
-        <div>
-          <label>
-            Main Stat:
-            <select
-              name="mainStat"
-              value={formData.mainStat}
-              onChange={handleInputChange}
-              disabled={!formData.type}
-            >
-              <option value="">Select Main Stat</option>
-              {formData.type &&
-                artifactTypes[formData.type].map((stat) => (
-                  <option key={stat} value={stat}>
-                    {stat}
-                  </option>
-                ))}
-            </select>
-          </label>
+        <div className="inputGroup">
+          <label className="label">Number of Substats:</label>
+          <select
+            name="numberOfSubstats"
+            value={formData.numberOfSubstats}
+            onChange={handleInputChange}
+            className="select"
+            disabled={!formData.mainStat}
+          >
+            <option value="">Select Number</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
         </div>
-        <div>
-          <label>
-            Number of Substats:
-            <select
-              name="numberOfSubstats"
-              value={formData.numberOfSubstats}
-              onChange={handleInputChange}
-              disabled={!formData.mainStat}
-            >
-              <option value="">Select Number</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
-        </div>
-        <div>
-          <label>Substats:</label>
+        <div className="inputGroup">
+          <label className="label">Substats:</label>
           <div>
             {filteredSubstats.map((substat) => (
-              <label key={substat} style={{ display: "block" }}>
+              <label key={substat} className="checkboxLabel">
                 <input
                   type="checkbox"
                   name="substats"
                   value={substat}
                   checked={formData.substats.includes(substat)}
                   onChange={handleInputChange}
+                  className="checkbox"
                   disabled={!formData.numberOfSubstats}
                 />
                 {substat}
@@ -131,33 +129,29 @@ function App() {
             ))}
           </div>
         </div>
-        <div>
-          <label>
-            Score:
-            <select name="score" value={formData.score} onChange={handleInputChange}>
-              <option value="">Select Score</option>
-              {scores.map((score) => (
-                <option key={score} value={score}>
-                  {score}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="inputGroup">
+          <label className="label">Score:</label>
+          <select name="score" value={formData.score} onChange={handleInputChange} className="select">
+            <option value="">Select Score</option>
+            {scores.map((score) => (
+              <option key={score} value={score}>
+                {score}
+              </option>
+            ))}
+          </select>
         </div>
-        <div>
-          <label>
-            Where Get It:
-            <select name="source" value={formData.source} onChange={handleInputChange}>
-              <option value="">Select Source</option>
-              {sources.map((source) => (
-                <option key={source} value={source}>
-                  {source}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="inputGroup">
+          <label className="label">Where Get It:</label>
+          <select name="source" value={formData.source} onChange={handleInputChange} className="select">
+            <option value="">Select Source</option>
+            {sources.map((source) => (
+              <option key={source} value={source}>
+                {source}
+              </option>
+            ))}
+          </select>
         </div>
-        <button type="submit" disabled={isSubmitDisabled()}>
+        <button type="submit" disabled={isSubmitDisabled()} className="submitButton">
           Submit
         </button>
       </form>
