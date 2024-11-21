@@ -1,30 +1,114 @@
 import React, { useState } from "react";
+import Select from "react-select"; // Import React-Select
 import './App.css'; // Importing the styles
 
 function App() {
   const [formData, setFormData] = useState({
-    type: "",
-    mainStat: "",
+    type: null, // Track selected artifact type
+    mainStat: null, // Track selected main stat
     substats: [],
     numberOfSubstats: "",
     score: "",
     source: "",
+    artifactSet: null, // Track selected artifact set
   });
 
-  const artifactTypes = {
-    Flower: ["HP"],
-    Plume: ["ATK"],
-    Sand: ["%HP", "%ATK", "%DEF", "ER", "EM"],
-    Goblet: ["%HP", "%ATK", "%DEF", "EM", "Physical", "Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo"],
-    Circlet: ["%HP", "%ATK", "%DEF", "EM", "Crit Rate", "Crit DMG", "Healing"],
+  const artifactTypes = [
+    { value: "Flower", label: "Flower" },
+    { value: "Plume", label: "Plume" },
+    { value: "Sand", label: "Sand" },
+    { value: "Goblet", label: "Goblet" },
+    { value: "Circlet", label: "Circlet" },
+  ];
+
+  const mainStatsOptions = {
+    Flower: [{ value: "HP", label: "HP" }],
+    Plume: [{ value: "ATK", label: "ATK" }],
+    Sand: [
+      { value: "%HP", label: "%HP" },
+      { value: "%ATK", label: "%ATK" },
+      { value: "%DEF", label: "%DEF" },
+      { value: "ER", label: "ER" },
+      { value: "EM", label: "EM" },
+    ],
+    Goblet: [
+      { value: "%HP", label: "%HP" },
+      { value: "%ATK", label: "%ATK" },
+      { value: "%DEF", label: "%DEF" },
+      { value: "EM", label: "EM" },
+      { value: "Physical", label: "Physical" },
+      { value: "Anemo", label: "Anemo" },
+      { value: "Geo", label: "Geo" },
+      { value: "Electro", label: "Electro" },
+      { value: "Dendro", label: "Dendro" },
+      { value: "Hydro", label: "Hydro" },
+      { value: "Pyro", label: "Pyro" },
+      { value: "Cryo", label: "Cryo" },
+    ],
+    Circlet: [
+      { value: "%HP", label: "%HP" },
+      { value: "%ATK", label: "%ATK" },
+      { value: "%DEF", label: "%DEF" },
+      { value: "EM", label: "EM" },
+      { value: "Crit Rate", label: "Crit Rate" },
+      { value: "Crit DMG", label: "Crit DMG" },
+      { value: "Healing", label: "Healing" },
+    ],
   };
 
   const allSubstats = ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"];
-
-  const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat);
+  const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat?.value);
 
   const scores = ["Complete trash", "Trash", "Usable", "Good", "Excellent", "Marvelous", "Unknown"];
   const sources = ["Domain Farming", "Bosses", "Strongbox", "Spiral Abyss"];
+
+  const artifactSets = [
+    "Archaic Petra",
+    "Blizzard Strayer",
+    "Bloodstained Chivalry",
+    "Crimson Witch of Flames",
+    "Deepwood Memories",
+    "Desert Pavilion Chronicle",
+    "Echoes of an Offering",
+    "Emblem of Severed Fate",
+    "Flower of Paradise Lost",
+    "Fragment of Harmonic Whimsy",
+    "Gilded Dreams",
+    "Gladiator's Finale",
+    "Golden Troupe",
+    "Heart of Depth",
+    "Husk of Opulent Dreams",
+    "Lavawalker",
+    "Maiden Beloved",
+    "Marechaussee Hunter",
+    "Nighttime of Whispers in the Echoing Woods",
+    "Noblesse Oblige",
+    "Nymph's Dream",
+    "Obsidian Codex",
+    "Ocean-Hued Clam",
+    "Pale Flame",
+    "Retracing Bolide",
+    "Scroll of the Hero of Cinder City",
+    "Shimenawa's Reminiscence",
+    "Song of Days Past",
+    "Tenacity of the Millelith",
+    "Thundering Fury",
+    "Thundersoother",
+    "Unfinished Reverie",
+    "Vermillion Hereafter",
+    "Viridescent Venerer",
+    "Vourukasha's Glow",
+    "Wanderer's Troupe"
+  ];
+
+  const handleSelectChange = (selectedOption, field) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: selectedOption,
+      ...(field === "type" && { mainStat: null, substats: [], numberOfSubstats: "" }),
+      ...(field === "mainStat" && { substats: [] }),
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -40,8 +124,6 @@ function App() {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
-        ...(name === "type" && { mainStat: "", substats: [], numberOfSubstats: "", score: "", source: "" }),
-        ...(name === "mainStat" && { substats: [] }),
       }));
     }
   };
@@ -52,13 +134,14 @@ function App() {
   };
 
   const isSubmitDisabled = () => {
-    const { type, mainStat, numberOfSubstats, substats, score, source } = formData;
+    const { type, mainStat, numberOfSubstats, substats, score, source, artifactSet } = formData;
     return (
       !type ||
       !mainStat ||
       !numberOfSubstats ||
       !score ||
       !source ||
+      !artifactSet ||
       substats.length !== parseInt(numberOfSubstats, 10)
     );
   };
@@ -67,34 +150,39 @@ function App() {
     <div className="container">
       <h1>Artifact Input Form</h1>
       <form onSubmit={handleSubmit} className="form">
+
+        <div className="inputGroup">
+          <label className="label">Artifact Set:</label>
+          <Select
+            options={artifactSets.map((set) => ({ value: set, label: set }))}
+            value={formData.artifactSet}
+            onChange={(selected) => handleSelectChange(selected, "artifactSet")}
+            placeholder="Select or type to search"
+            className="react-select"
+          />
+        </div>
+
+
         <div className="inputGroup">
           <label className="label">Artifact Type:</label>
-          <select name="type" value={formData.type} onChange={handleInputChange} className="select">
-            <option value="">Select Type</option>
-            {Object.keys(artifactTypes).map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          <Select
+            options={artifactTypes}
+            value={formData.type}
+            onChange={(selected) => handleSelectChange(selected, "type")}
+            placeholder="Select or type to search"
+            className="react-select"
+          />
         </div>
         <div className="inputGroup">
           <label className="label">Main Stat:</label>
-          <select
-            name="mainStat"
+          <Select
+            options={formData.type ? mainStatsOptions[formData.type.value] : []}
             value={formData.mainStat}
-            onChange={handleInputChange}
-            className="select"
-            disabled={!formData.type}
-          >
-            <option value="">Select Main Stat</option>
-            {formData.type &&
-              artifactTypes[formData.type].map((stat) => (
-                <option key={stat} value={stat}>
-                  {stat}
-                </option>
-              ))}
-          </select>
+            onChange={(selected) => handleSelectChange(selected, "mainStat")}
+            placeholder={formData.type ? "Select or type to search" : "Select Artifact Type first"}
+            isDisabled={!formData.type}
+            className="react-select"
+          />
         </div>
         <div className="inputGroup">
           <label className="label">Number of Substats:</label>
@@ -151,6 +239,7 @@ function App() {
             ))}
           </select>
         </div>
+        
         <button type="submit" disabled={isSubmitDisabled()} className="submitButton">
           Submit
         </button>
