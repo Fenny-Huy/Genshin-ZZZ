@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "react-select"; // Import React-Select
 import './App.css'; // Importing the styles
+import axios from "axios";
 
 function App() {
   const [formData, setFormData] = useState({
@@ -128,10 +129,8 @@ function App() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted Data:", formData);
-  };
+  
+
 
   const isSubmitDisabled = () => {
     const { type, mainStat, numberOfSubstats, substats, score, source, artifactSet } = formData;
@@ -145,6 +144,39 @@ function App() {
       substats.length !== parseInt(numberOfSubstats, 10)
     );
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      set: formData.artifactSet.value,
+      type: formData.type.value,
+      main_stat: formData.mainStat.value,
+      number_of_substats: parseInt(formData.numberOfSubstats, 10),
+      atk_percent: formData.substats.includes("%ATK") ? 1 : 0,
+      hp_percent: formData.substats.includes("%HP") ? 1 : 0,
+      def_percent: formData.substats.includes("%DEF") ? 1 : 0,
+      atk: formData.substats.includes("ATK") ? 1 : 0,
+      hp: formData.substats.includes("HP") ? 1 : 0,
+      defense: formData.substats.includes("DEF") ? 1 : 0,
+      er: formData.substats.includes("ER") ? 1 : 0,
+      em: formData.substats.includes("EM") ? 1 : 0,
+      crit_rate: formData.substats.includes("Crit Rate") ? 1 : 0,
+      crit_dmg: formData.substats.includes("Crit DMG") ? 1 : 0,
+      where_got_it: formData.source,
+      score: formData.score,
+    };
+
+    try {
+      const response = await axios.post("http://localhost:8000/genshinartifacts/", payload);
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Error creating artifact:", error);
+      alert("Failed to create artifact. Check console for details.");
+    }
+  };
+
+  
 
   return (
     <div className="container">
