@@ -35,6 +35,7 @@ def get_db_connection():
 
 # Data model for artifacts
 class Artifact(BaseModel):
+    id: int
     set: str
     type: str
     main_stat: str
@@ -62,6 +63,7 @@ def get_artifacts(db: pymysql.connections.Connection = Depends(get_db_connection
         # Convert rows to a list of dicts
         artifacts = [
             {
+                "id": row[0],
                 "set": row[1],
                 "type": row[2],
                 "main_stat": row[3],
