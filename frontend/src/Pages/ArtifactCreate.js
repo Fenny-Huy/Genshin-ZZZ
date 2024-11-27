@@ -151,6 +151,7 @@ const ArtifactCreate = () => {
         e.preventDefault();
     
         const payload = {
+          id: 1,
           set: formData.artifactSet.value,
           type: formData.type.value,
           main_stat: formData.mainStat.value,
