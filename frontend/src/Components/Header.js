@@ -12,6 +12,7 @@ const Header = () => {
       <div className="header-right">
         <Link to="/artifactcreate">Create Artifact</Link>
         <Link to="/artifact-list">Artifact List</Link>
+        <Link to="/search-artifacts">Search Artifacts</Link>
       </div>
     </header>
   );

@@ -13,7 +13,7 @@ const ArtifactListing = () => {
   // Here we use item offsets; we could also use page offsets
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 14;
+  const itemsPerPage = 13;
 
   // Invoke when user click to request another page.
   
@@ -56,7 +56,7 @@ const ArtifactListing = () => {
             <th>Set</th>
             <th>Type</th>
             <th>Main Stat</th>
-            <th>Number of Substats</th>
+            <th>Subs Numb</th>
             <th>%ATK</th>
             <th>%HP</th>
             <th>%DEF</th>

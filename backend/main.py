@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import pymysql
-from typing import List
+from typing import List, Optional
 
 # Database connection settings
 DB_HOST = "localhost"
@@ -106,3 +106,90 @@ def create_artifact(artifact: Artifact, db: pymysql.connections.Connection = Dep
         cursor.execute(query)
         db.commit()
     return {"message": "Artifact created successfully"}
+
+
+
+
+
+# API endpoint to search for artifacts
+@app.get("/search_artifacts/", response_model=List[Artifact])
+def search_artifacts(
+    set: Optional[str] = Query(None),
+    type: Optional[str] = Query(None),
+    main_stat: Optional[str] = Query(None),
+    number_of_substats: Optional[int] = Query(None),
+    atk_percent: Optional[int] = Query(None),
+    hp_percent: Optional[int] = Query(None),
+    def_percent: Optional[int] = Query(None),
+    atk: Optional[int] = Query(None),
+    hp: Optional[int] = Query(None),
+    defense: Optional[int] = Query(None),
+    er: Optional[int] = Query(None),
+    em: Optional[int] = Query(None),
+    crit_rate: Optional[int] = Query(None),
+    crit_dmg: Optional[int] = Query(None),
+    where_got_it: Optional[str] = Query(None),
+    score: Optional[str] = Query(None),
+    db: pymysql.connections.Connection = Depends(get_db_connection)
+):
+    query = "SELECT * FROM `Artifact itself` WHERE 1=1"
+    if set:
+        query += f' AND `Set` = "{set}"'
+    if type:
+        query += f" AND `Type` = '{type}'"
+    if main_stat:
+        query += f" AND `Main Stat` = '{main_stat}'"
+    if number_of_substats is not None:
+        query += f" AND `Number of substat` = {number_of_substats}"
+    if atk_percent is not None:
+        query += f" AND `%ATK` = {atk_percent}"
+    if hp_percent is not None:
+        query += f" AND `%HP` = {hp_percent}"
+    if def_percent is not None:
+        query += f" AND `%DEF` = {def_percent}"
+    if atk is not None:
+        query += f" AND `ATK` = {atk}"
+    if hp is not None:
+        query += f" AND `HP` = {hp}"
+    if defense is not None:
+        query += f" AND `DEF` = {defense}"
+    if er is not None:
+        query += f" AND `ER` = {er}"
+    if em is not None:
+        query += f" AND `EM` = {em}"
+    if crit_rate is not None:
+        query += f" AND `Crit Rate` = {crit_rate}"
+    if crit_dmg is not None:
+        query += f" AND `Crit DMG` = {crit_dmg}"
+    if where_got_it:
+        query += f" AND `Where got it` = '{where_got_it}'"
+    if score:
+        query += f" AND `Score` = '{score}'"
+
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        artifacts = [
+            {
+                "id": row[0],
+                "set": row[1],
+                "type": row[2],
+                "main_stat": row[3],
+                "number_of_substats": row[4],
+                "atk_percent": row[5],
+                "hp_percent": row[6],
+                "def_percent": row[7],
+                "atk": row[8],
+                "hp": row[9],
+                "defense": row[10],
+                "er": row[11],
+                "em": row[12],
+                "crit_rate": row[13],
+                "crit_dmg": row[14],
+                "where_got_it": row[15],
+                "score": row[16],
+            }
+            for row in rows
+        ]
+    return artifacts

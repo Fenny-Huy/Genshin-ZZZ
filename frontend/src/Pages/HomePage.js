@@ -10,6 +10,7 @@ const HomePage = () => {
       <div>
         <Link to="/artifactcreate" className="button">Create Artifact</Link>
         <Link to="/artifact-list" className="button">Artifact List</Link>
+        <Link to="/search-artifacts" className="button">Search Artifacts</Link>
       </div>
     </div>
   );
