@@ -63,7 +63,7 @@ const ArtifactCreate = () => {
       const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat?.value);
     
       const scores = ["Complete trash", "Trash", "Usable", "Good", "Excellent", "Marvelous", "Unknown"];
-      const sources = ["Domain Farming", "Bosses", "Strongbox", "Spiral Abyss"];
+      const sources = ["Domain farming", "Bosses", "Strongbox", "Spiral Abyss"];
     
       const artifactSets = [
         "Archaic Petra",

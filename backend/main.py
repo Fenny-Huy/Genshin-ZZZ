@@ -3,6 +3,15 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import pymysql
 from typing import List, Optional
+import logging
+
+
+
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+
 
 # Database connection settings
 DB_HOST = "localhost"
@@ -193,3 +202,41 @@ def search_artifacts(
             for row in rows
         ]
     return artifacts
+
+
+
+
+
+
+@app.put("/genshinartifacts/{artifact_id}/")
+def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = f"""
+        UPDATE `Artifact itself` SET
+            `Set` = "{artifact.set}",
+            `Type` = '{artifact.type}',
+            `Main Stat` = '{artifact.main_stat}',
+            `Number of substat` = {artifact.number_of_substats},
+            `%ATK` = {artifact.atk_percent},
+            `%HP` = {artifact.hp_percent},
+            `%DEF` = {artifact.def_percent},
+            `ATK` = {artifact.atk},
+            `HP` = {artifact.hp},
+            `DEF` = {artifact.defense},
+            `ER` = {artifact.er},
+            `EM` = {artifact.em},
+            `Crit Rate` = {artifact.crit_rate},
+            `Crit DMG` = {artifact.crit_dmg},
+            `Where got it` = '{artifact.where_got_it}',
+            `Score` = '{artifact.score}'
+        WHERE `id` = {artifact_id}
+    """
+
+    # Log the query
+    logging.info(f"Executing query: {query}")
+
+
+
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        db.commit()
+    return {"message": "Artifact updated successfully"}
