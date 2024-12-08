@@ -10,14 +10,16 @@ const ArtifactListingForm = ({ artifact }) => {
   const [artifactData, setArtifactData] = useState(null);
   const [artifactLevelingData, setArtifactLevelingData] = useState(null);
   const [notification, setNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   const renderCheckbox = (value) => (
     <input type="checkbox" checked={value === 1} readOnly />
   );
 
-  const handleUpdateSuccess = () => {
+  const handleUpdateSuccess = (message) => {
     setNotification(true);
-    setTimeout(() => setNotification(false), 3000); // Hide notification after 3 seconds
+    setNotificationMessage(message);
+    setTimeout(() => setNotification(false), 2000); // Hide notification after 3 seconds
   };
 
   const openLevelingModal = async () => {
@@ -61,7 +63,7 @@ const ArtifactListingForm = ({ artifact }) => {
         <EditArtifactModal
           artifact={artifact}
           onClose={() => setIsEditModalOpen(false)}
-          onUpdateSuccess={handleUpdateSuccess}
+          onUpdateSuccess={() => handleUpdateSuccess('Artifact updated successfully!')}
         />
       )}
       {isLevelingModalOpen && artifactData && (
@@ -69,9 +71,10 @@ const ArtifactListingForm = ({ artifact }) => {
           artifact={artifactData}
           artifactLeveling={artifactLevelingData}
           onClose={() => setIsLevelingModalOpen(false)}
+          onUpdateSuccess={() => handleUpdateSuccess('Artifact leveling added or updated successfully!')}
         />
       )}
-      {notification && <div className="notification">Artifact updated successfully!</div>}
+      {notification && <div className="notification">{notificationMessage}</div>}
     </>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddArtifactLevelingModal.css'; // Import the CSS file
 
-const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose }) => {
+const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
     L_HP: 0,
     L_ATK: 0,
@@ -90,6 +90,7 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose }) => {
 
     try {
       await axios.post(`http://localhost:8000/artifactleveling/`, payload);
+      onUpdateSuccess();
       onClose();
     } catch (error) {
       console.error('Error adding or updating artifact leveling:', error);
