@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
+import './EditArtifactModal.css'; // Import the CSS file
 
 const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
