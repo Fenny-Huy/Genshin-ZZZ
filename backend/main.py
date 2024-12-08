@@ -10,6 +10,7 @@ import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 
@@ -61,6 +62,22 @@ class Artifact(BaseModel):
     crit_dmg: int
     where_got_it: str
     score: str
+
+
+class ArtifactLeveling(BaseModel):
+    id: int
+    L_HP: int = 0
+    L_ATK: int = 0
+    L_DEF: int = 0
+    L_HP_per: int = 0
+    L_ATK_per: int = 0
+    L_DEF_per: int = 0
+    L_EM: int = 0
+    L_ER: int = 0
+    L_CritRate: int = 0
+    L_CritDMG: int = 0
+    addedSubstat: str = ""
+
 
 # API endpoint to fetch all artifacts
 @app.get("/genshinartifacts/", response_model=List[Artifact])
@@ -240,3 +257,103 @@ def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connection
         cursor.execute(query)
         db.commit()
     return {"message": "Artifact updated successfully"}
+
+
+
+
+@app.post("/artifactleveling/")
+def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query_check = "SELECT * FROM `Artifact leveling` WHERE ID = %s"
+    with db.cursor() as cursor:
+        cursor.execute(query_check, (leveling.id,))
+        row = cursor.fetchone()
+        if row:
+            query_update = f"""
+            UPDATE `Artifact leveling` SET
+                `L_HP` = {leveling.L_HP},
+                `L_ATK` = {leveling.L_ATK},
+                `L_DEF` = {leveling.L_DEF},
+                `L_%HP` = {leveling.L_HP_per},
+                `L_%ATK` = {leveling.L_ATK_per},
+                `L_%DEF` = {leveling.L_DEF_per},
+                `L_EM` = {leveling.L_EM},
+                `L_ER` = {leveling.L_ER},
+                `L_Crit Rate` = {leveling.L_CritRate},
+                `L_Crit DMG` = {leveling.L_CritDMG},
+                `Added substat` = '{leveling.addedSubstat}'
+            WHERE ID = {leveling.id}
+            """
+            
+            logger.info(f"Executing query: {query_update}")
+            cursor.execute(query_update)
+        else:
+            query_insert = f"""
+            INSERT INTO `Artifact leveling` (`ID`, `L_HP`, `L_ATK`, `L_DEF`, `L_%HP`, `L_%ATK`, `L_%DEF`, `L_EM`, `L_ER`, `L_Crit Rate`, `L_Crit DMG`, `Added substat`)
+            VALUES ({leveling.id}, {leveling.L_HP}, {leveling.L_ATK}, {leveling.L_DEF}, {leveling.L_HP_per}, {leveling.L_ATK_per}, {leveling.L_DEF_per}, {leveling.L_EM}, {leveling.L_ER}, {leveling.L_CritRate}, {leveling.L_CritDMG}, '{leveling.addedSubstat}')
+            """
+            logger.info(f"Executing query: {query_insert}")
+            cursor.execute(query_insert)
+        
+        db.commit()
+
+
+    return {"message": "Artifact leveling record added or updated successfully"}
+
+
+
+@app.get("/artifactleveling/{artifact_id}")
+def get_artifact_leveling(artifact_id: int, db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = "SELECT * FROM `Artifact leveling` WHERE ID = %s"
+    with db.cursor() as cursor:
+        cursor.execute(query, (artifact_id,))
+        row = cursor.fetchone()
+        if not row:
+            return None
+        artifact_leveling = {
+            "id": row[0],
+            "L_HP": row[1],
+            "L_ATK": row[2],
+            "L_DEF": row[3],
+            "L_HP_per": row[4],
+            "L_ATK_per": row[5],
+            "L_DEF_per": row[6],
+            "L_EM": row[7],
+            "L_ER": row[8],
+            "L_CritRate": row[9],
+            "L_CritDMG": row[10],
+            "addedSubstat": row[11],
+        }
+    return artifact_leveling
+
+
+
+
+@app.get("/artifact/{artifact_id}")
+def get_artifact(artifact_id: int, db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = "SELECT * FROM `Artifact itself` WHERE ID = %s"
+    with db.cursor() as cursor:
+        cursor.execute(query, (artifact_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Artifact not found")
+        
+        artifact = {
+            "id": row[0],
+            "set": row[1],
+            "type": row[2],
+            "main_stat": row[3],
+            "number_of_substats": row[4],
+            "atk_percent": row[5],
+            "hp_percent": row[6],
+            "def_percent": row[7],
+            "atk": row[8],
+            "hp": row[9],
+            "defense": row[10],
+            "er": row[11],
+            "em": row[12],
+            "crit_rate": row[13],
+            "crit_dmg": row[14],
+            "where_got_it": row[15],
+            "score": row[16],
+        }
+    return artifact

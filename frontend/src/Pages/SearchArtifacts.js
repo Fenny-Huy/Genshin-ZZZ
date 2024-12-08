@@ -108,8 +108,7 @@ const SearchArtifacts = () => {
     setFormData((prev) => ({
       ...prev,
       [field]: selectedOption,
-      ...(field === "type" && { mainStat: null, substats: [], numberOfSubstats: "" }),
-      ...(field === "mainStat" && { substats: [] }),
+      
     }));
   };
 
