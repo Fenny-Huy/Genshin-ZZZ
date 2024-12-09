@@ -15,7 +15,7 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     L_ER: 0,
     L_CritRate: 0,
     L_CritDMG: 0,
-    addedSubstat: '',
+    addedSubstat: 'None',
   });
 
   const [availableSubstats, setAvailableSubstats] = useState([]);
