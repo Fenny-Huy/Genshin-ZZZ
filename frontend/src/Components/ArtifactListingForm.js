@@ -1,16 +1,22 @@
 // src/Components/ArtifactListingForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditArtifactModal from './EditArtifactModal';
 import AddArtifactLevelingModal from './AddArtifactLevelingModal';
 import axios from 'axios';
 
-const ArtifactListingForm = ({ artifact }) => {
+const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLevelingModalOpen, setIsLevelingModalOpen] = useState(false);
   const [artifactData, setArtifactData] = useState(null);
   const [artifactLevelingData, setArtifactLevelingData] = useState(null);
   const [notification, setNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  
+  useEffect(() => {
+
+    onEditModalChange(isEditModalOpen);
+
+  }, [isEditModalOpen, onEditModalChange]);
 
   const renderCheckbox = (value) => (
     <input type="checkbox" checked={value === 1} readOnly />

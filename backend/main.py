@@ -357,3 +357,52 @@ def get_artifact(artifact_id: int, db: pymysql.connections.Connection = Depends(
             "score": row[16],
         }
     return artifact
+
+
+
+
+@app.get("/artifactlevelinglist/")
+def get_artifact_leveling_list(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    SELECT al.`ID`, al.`L_HP`, al.`L_ATK`, al.`L_DEF`, al.`L_%HP`, al.`L_%ATK`, al.`L_%DEF`, al.`L_EM`, al.`L_ER`, al.`L_Crit Rate`, al.`L_Crit DMG`, al.`Added substat`,
+           ai.`Set`, ai.`Type`, ai.`Main Stat`, ai.`Number of substat`, ai.`%ATK`, ai.`%HP`, ai.`%DEF`, ai.`ATK`, ai.`HP`, ai.`DEF`, ai.`ER`, ai.`EM`, ai.`Crit Rate`, ai.`Crit DMG`, ai.`Where got it`, ai.`Score`
+    FROM `Artifact leveling` al
+    JOIN `Artifact itself` ai ON al.ID = ai.ID
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts = [
+            {
+                "id": row[0],
+                "L_HP": row[1],
+                "L_ATK": row[2],
+                "L_DEF": row[3],
+                "L_HP_per": row[4],
+                "L_ATK_per": row[5],
+                "L_DEF_per": row[6],
+                "L_EM": row[7],
+                "L_ER": row[8],
+                "L_CritRate": row[9],
+                "L_CritDMG": row[10],
+                "addedSubstat": row[11],
+                "set": row[12],
+                "type": row[13],
+                "main_stat": row[14],
+                "number_of_substats": row[15],
+                "atk_percent": row[16],
+                "hp_percent": row[17],
+                "def_percent": row[18],
+                "atk": row[19],
+                "hp": row[20],
+                "defense": row[21],
+                "er": row[22],
+                "em": row[23],
+                "crit_rate": row[24],
+                "crit_dmg": row[25],
+                "where_got_it": row[26],
+                "score": row[27],
+            }
+            for row in rows
+        ]
+    return artifacts

@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 
 
 const ArtifactListing = () => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [artifacts, setArtifacts] = useState([]);
@@ -17,6 +18,10 @@ const ArtifactListing = () => {
 
   // Invoke when user click to request another page.
   
+  const handleEditModalChange = (isOpen) => {
+    setIsEditModalOpen(isOpen);
+  };
+
 
   useEffect(() => {
     const fetchArtifacts = async () => {
@@ -28,7 +33,7 @@ const ArtifactListing = () => {
       }
     };
     fetchArtifacts();
-  }, []);
+  }, [isEditModalOpen]);
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -73,7 +78,7 @@ const ArtifactListing = () => {
         </thead>
         <tbody>
           {currentItems.map((artifact, index) => (
-            <ArtifactListingForm key={index} artifact={artifact} />
+            <ArtifactListingForm key={index} artifact={artifact} onEditModalChange={handleEditModalChange} />
           ))}
         </tbody>
       </table>
