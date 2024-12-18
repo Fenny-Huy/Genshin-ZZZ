@@ -5,6 +5,10 @@ import ArtifactSearchForm from '../Components/ArtifactSearchForm';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
 
 const SearchArtifacts = () => {
+  
+  const handleEditModalChange = () => {
+    
+  };
   const [formData, setFormData] = useState({
     artifactSet: null,
     type: null,
@@ -201,7 +205,7 @@ const SearchArtifacts = () => {
         </thead>
         <tbody>
           {artifacts.map((artifact, index) => (
-            <ArtifactListingForm key={index} artifact={artifact} />
+            <ArtifactListingForm key={index} artifact={artifact} onEditModalChange={handleEditModalChange} />
           ))}
         </tbody>
       </table>

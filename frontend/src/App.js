@@ -8,6 +8,7 @@ import ArtifactCreate from "./Pages/ArtifactCreate";
 import ArtifactListing from './Pages/ArtifactListing';
 import SearchArtifacts from './Pages/SearchArtifacts';
 import ArtifactLevelingList from './Pages/ArtifactLevelingList';
+import StatisticsPage from './Pages/StatisticsPage';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/artifact-list" element={<ArtifactListing />} />
           <Route path="/search-artifacts" element={<SearchArtifacts />} />
           <Route path="/leveling-list" element={<ArtifactLevelingList />} />
+          <Route path="/statistics/mainstat" element={<StatisticsPage />} />
         </Routes>
       </Router>
       

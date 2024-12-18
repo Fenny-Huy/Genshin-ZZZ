@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 DB_HOST = "localhost"
 DB_USER = "root"
 DB_PASSWORD = "Fennik123@"
-DB_NAME = "genshinartifacts"
+DB_NAME = "artifactstest"
 
 # FastAPI app initialization
 app = FastAPI()
@@ -280,7 +280,8 @@ def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.conn
                 `L_ER` = {leveling.L_ER},
                 `L_Crit Rate` = {leveling.L_CritRate},
                 `L_Crit DMG` = {leveling.L_CritDMG},
-                `Added substat` = '{leveling.addedSubstat}'
+                `Added substat` = '{leveling.addedSubstat}',
+                `LastAdded` = CURDATE()
             WHERE ID = {leveling.id}
             """
             
@@ -406,3 +407,35 @@ def get_artifact_leveling_list(db: pymysql.connections.Connection = Depends(get_
             for row in rows
         ]
     return artifacts
+
+
+
+#statistics
+
+@app.get("/statistics/mainstat")
+def get_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    try:
+        with db.cursor() as cursor:
+            # Fetch percentages of each type
+            cursor.execute("""
+                SELECT `Type`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself`) AS percentage
+                FROM `Artifact itself`
+                GROUP BY `Type`
+            """)
+            type_percentages = cursor.fetchall()
+
+            # Fetch percentages of each main stat grouped by type
+            cursor.execute("""
+                SELECT `Type`, `Main Stat`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself` WHERE `Type` = t.`Type`) AS percentage
+                FROM `Artifact itself` t
+                GROUP BY `Type`, `Main Stat`
+            """)
+            main_stat_percentages = cursor.fetchall()
+
+        return {
+            "type_percentages": type_percentages,
+            "main_stat_percentages": main_stat_percentages,
+        }
+    except Exception as e:
+        logger.error(f"Error fetching statistics: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
