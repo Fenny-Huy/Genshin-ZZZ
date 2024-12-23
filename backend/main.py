@@ -63,7 +63,7 @@ class Artifact(BaseModel):
     where_got_it: str
     score: str
 
-
+# Data model for artifact leveling
 class ArtifactLeveling(BaseModel):
     id: int
     L_HP: int = 0
@@ -224,7 +224,7 @@ def search_artifacts(
 
 
 
-
+# API endpoint to update an artifact
 @app.put("/genshinartifacts/{artifact_id}/")
 def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connections.Connection = Depends(get_db_connection)):
     query = f"""
@@ -260,7 +260,7 @@ def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connection
 
 
 
-
+# API endpoint for insert or update an artifact leveling
 @app.post("/artifactleveling/")
 def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.connections.Connection = Depends(get_db_connection)):
     query_check = "SELECT * FROM `Artifact leveling` WHERE ID = %s"
@@ -301,7 +301,7 @@ def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.conn
     return {"message": "Artifact leveling record added or updated successfully"}
 
 
-
+# API endpoint to fetch one artifact leveling
 @app.get("/artifactleveling/{artifact_id}")
 def get_artifact_leveling(artifact_id: int, db: pymysql.connections.Connection = Depends(get_db_connection)):
     query = "SELECT * FROM `Artifact leveling` WHERE ID = %s"
@@ -328,7 +328,7 @@ def get_artifact_leveling(artifact_id: int, db: pymysql.connections.Connection =
 
 
 
-
+# API endpoint to fetch an artifact
 @app.get("/artifact/{artifact_id}")
 def get_artifact(artifact_id: int, db: pymysql.connections.Connection = Depends(get_db_connection)):
     query = "SELECT * FROM `Artifact itself` WHERE ID = %s"
@@ -361,7 +361,7 @@ def get_artifact(artifact_id: int, db: pymysql.connections.Connection = Depends(
 
 
 
-
+# API endpoint to fetch all artifact leveling list
 @app.get("/artifactlevelinglist/")
 def get_artifact_leveling_list(db: pymysql.connections.Connection = Depends(get_db_connection)):
     query = """
@@ -410,7 +410,7 @@ def get_artifact_leveling_list(db: pymysql.connections.Connection = Depends(get_
 
 
 
-#statistics
+# API endpoint for statistics of mainstat and types
 
 @app.get("/statistics/mainstat")
 def get_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
@@ -418,7 +418,7 @@ def get_statistics(db: pymysql.connections.Connection = Depends(get_db_connectio
         with db.cursor() as cursor:
             # Fetch percentages of each type
             cursor.execute("""
-                SELECT `Type`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself`) AS percentage
+                SELECT `Type`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself`) AS percentage, Count(*) as count
                 FROM `Artifact itself`
                 GROUP BY `Type`
             """)
@@ -426,7 +426,7 @@ def get_statistics(db: pymysql.connections.Connection = Depends(get_db_connectio
 
             # Fetch percentages of each main stat grouped by type
             cursor.execute("""
-                SELECT `Type`, `Main Stat`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself` WHERE `Type` = t.`Type`) AS percentage
+                SELECT `Type`, `Main Stat`, COUNT(*) * 100.0 / (SELECT COUNT(*) FROM `Artifact itself` WHERE `Type` = t.`Type`) AS percentage, Count(*) as count
                 FROM `Artifact itself` t
                 GROUP BY `Type`, `Main Stat`
             """)
@@ -439,3 +439,38 @@ def get_statistics(db: pymysql.connections.Connection = Depends(get_db_connectio
     except Exception as e:
         logger.error(f"Error fetching statistics: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+
+#API endpoint for statistics of substats
+
+@app.get("/statistics/substats")
+def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    SELECT `Type`, `Main Stat`, Count(`Type`) AS TypeCount, SUM(`%ATK`) AS `%ATK`, SUM(`%HP`) AS `%HP`, SUM(`%DEF`) AS `%DEF`, SUM(`ATK`) AS `ATK`, SUM(`HP`) AS `HP`, SUM(`DEF`) AS `DEF`, SUM(`ER`) AS `ER`, SUM(`EM`) AS `EM`, SUM(`Crit Rate`) AS `Crit_Rate`, SUM(`Crit DMG`) AS `Crit_DMG`, SUM(`%ATK`+`%HP`+`%DEF`+`ATK`+`HP`+`DEF`+`ER`+`EM`+`Crit Rate`+`Crit DMG`) AS `SubstatCount`
+    FROM `Artifact itself`
+    GROUP BY `Type`, `Main Stat`;
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts_with_subs = [
+            {
+                "type": row[0],
+                "main_stat": row[1],
+                "ArtifactCount": row[2],
+                "sub_ATK_per": row[3],
+                "sub_HP_per": row[4],
+                "sub_DEF_per": row[5],
+                "sub_ATK": row[6],
+                "sub_HP": row[7],
+                "sub_DEF": row[8],
+                "sub_ER": row[9],
+                "sub_EM": row[10],
+                "sub_Crit_Rate": row[11],
+                "sub_Crit_DMG": row[12],
+                "substatCount": row[13],
+                
+            }
+            for row in rows
+        ]
+    return artifacts_with_subs

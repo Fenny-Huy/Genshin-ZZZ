@@ -27,7 +27,7 @@ function App() {
           <Route path="/artifact-list" element={<ArtifactListing />} />
           <Route path="/search-artifacts" element={<SearchArtifacts />} />
           <Route path="/leveling-list" element={<ArtifactLevelingList />} />
-          <Route path="/statistics/mainstat" element={<StatisticsPage />} />
+          <Route path="/statistics/" element={<StatisticsPage />} />
         </Routes>
       </Router>
       
