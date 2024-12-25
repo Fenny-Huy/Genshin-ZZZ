@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Pie, Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import './StatisticsPage.css'; // Import the CSS file
+import config from '../config/config'; // Import the configuration file
 
 const StatisticsPage = () => {
   const [typeData, setTypeData] = useState([]);
@@ -17,7 +18,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/statistics/mainstat');
+        const response = await axios.get(`${config.apiUrl}/statistics/mainstat`);
         console.log('API Response:', response.data); // Log the API response
         setTypeData(response.data.type_percentages);
         setMainStatData(response.data.main_stat_percentages);
@@ -32,7 +33,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchSubstatStatistics = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/statistics/substats');
+        const response = await axios.get(`${config.apiUrl}/statistics/substats`);
         console.log('Substat API Response:', response.data); // Log the API response
         setSubstatData(response.data);
       } catch (error) {

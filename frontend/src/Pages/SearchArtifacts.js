@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import ArtifactSearchForm from '../Components/ArtifactSearchForm';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
+import config from '../config/config'; // Import the configuration file
 
 const SearchArtifacts = () => {
   
@@ -155,7 +156,7 @@ const SearchArtifacts = () => {
     };
 
     try {
-      const response = await axios.get('http://localhost:8000/search_artifacts/', {
+      const response = await axios.get(`${config.apiUrl}/search_artifacts/`, {
         params: payload
       });
       setArtifacts(response.data);

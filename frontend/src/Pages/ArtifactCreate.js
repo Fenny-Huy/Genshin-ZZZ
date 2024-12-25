@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import axios from "axios";
 import ArtifactCreateForm from '../Components/ArtifactCreateForm';
+import config from '../config/config'; // Import the configuration file
 
 const ArtifactCreate = () => {
 
@@ -171,7 +172,7 @@ const ArtifactCreate = () => {
         };
     
         try {
-          const response = await axios.post("http://localhost:8000/genshinartifacts/", payload);
+          const response = await axios.post(`${config.apiUrl}/genshinartifacts/`, payload);
           alert(response.data.message);
         } catch (error) {
           console.error("Error creating artifact:", error);

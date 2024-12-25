@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import './EditArtifactModal.css'; // Import the CSS file
+import config from '../config/config'; // Import the configuration file
 
 const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
@@ -174,7 +175,7 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
     };
 
     try {
-      await axios.put(`http://localhost:8000/genshinartifacts/${artifact.id}/`, payload);
+      await axios.put(`${config.apiUrl}/genshinartifacts/${artifact.id}/`, payload);
       onUpdateSuccess(); // Call the callback function
       onClose();
     } catch (error) {

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
 import ReactPaginate from 'react-paginate';
+import config from '../config/config'; // Import the configuration file
 
 
 
@@ -26,7 +27,7 @@ const ArtifactListing = () => {
   useEffect(() => {
     const fetchArtifacts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/genshinartifacts/'); // Adjust the URL as needed
+        const response = await axios.get(`${config.apiUrl}/genshinartifacts/`); // Adjust the URL as needed
         setArtifacts(response.data);
       } catch (error) {
         console.error('Error fetching artifacts:', error);

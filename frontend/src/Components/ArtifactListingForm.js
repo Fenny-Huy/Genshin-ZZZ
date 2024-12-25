@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EditArtifactModal from './EditArtifactModal';
 import AddArtifactLevelingModal from './AddArtifactLevelingModal';
 import axios from 'axios';
+import config from '../config/config'; // Import the configuration file
 
 const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -30,9 +31,9 @@ const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
 
   const openLevelingModal = async () => {
     try {
-      const artifactResponse = await axios.get(`http://localhost:8000/artifact/${artifact.id}`);
+      const artifactResponse = await axios.get(`${config.apiUrl}/artifact/${artifact.id}`);
       setArtifactData(artifactResponse.data);
-      const levelingResponse = await axios.get(`http://localhost:8000/artifactleveling/${artifact.id}`);
+      const levelingResponse = await axios.get(`${config.apiUrl}/artifactleveling/${artifact.id}`);
       setArtifactLevelingData(levelingResponse.data);
       setIsLevelingModalOpen(true);
     } catch (error) {
