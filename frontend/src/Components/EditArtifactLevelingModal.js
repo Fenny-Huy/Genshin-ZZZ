@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config/config'; // Import the configuration file
-import './EditArtifactLevelingModal.css'; // Import the CSS file
+import '../Styles/EditArtifactLevelingModal.css'; // Import the CSS file
 
 const EditArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({

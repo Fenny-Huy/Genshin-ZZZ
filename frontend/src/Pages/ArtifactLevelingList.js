@@ -4,6 +4,7 @@ import axios from 'axios';
 import ArtifactLevelingListTable from '../Components/ArtifactLevelingListTable';
 import EditArtifactLevelingModal from '../Components/EditArtifactLevelingModal';
 import config from '../config/config'; // Import the configuration file
+import '../Styles/Pages.css';
 
 
 const ArtifactLevelingList = () => {

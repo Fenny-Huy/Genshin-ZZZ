@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
-import './EditArtifactModal.css'; // Import the CSS file
+import '../Styles/EditArtifactModal.css'; // Import the CSS file
 import config from '../config/config'; // Import the configuration file
 
 const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
@@ -30,90 +30,16 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
 
 
 
-  const artifactTypes = [
-    { value: 'Flower', label: 'Flower' },
-    { value: 'Plume', label: 'Plume' },
-    { value: 'Sand', label: 'Sand' },
-    { value: 'Goblet', label: 'Goblet' },
-    { value: 'Circlet', label: 'Circlet' },
-  ];
-
-  const mainStatsOptions = {
-    Flower: [{ value: 'HP', label: 'HP' }],
-    Plume: [{ value: 'ATK', label: 'ATK' }],
-    Sand: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'ER', label: 'ER' },
-      { value: 'EM', label: 'EM' },
-    ],
-    Goblet: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'EM', label: 'EM' },
-      { value: 'Physical', label: 'Physical' },
-      { value: 'Anemo', label: 'Anemo' },
-      { value: 'Geo', label: 'Geo' },
-      { value: 'Electro', label: 'Electro' },
-      { value: 'Dendro', label: 'Dendro' },
-      { value: 'Hydro', label: 'Hydro' },
-      { value: 'Pyro', label: 'Pyro' },
-      { value: 'Cryo', label: 'Cryo' },
-    ],
-    Circlet: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'EM', label: 'EM' },
-      { value: 'Crit Rate', label: 'Crit Rate' },
-      { value: 'Crit DMG', label: 'Crit DMG' },
-      { value: 'Healing', label: 'Healing' },
-    ],
-  };
-
-  const allSubstats = ['HP', '%HP', 'ATK', '%ATK', 'DEF', '%DEF', 'ER', 'EM', 'Crit Rate', 'Crit DMG'];
-  const scores = ['Complete trash', 'Trash', 'Usable', 'Good', 'Excellent', 'Marvelous', 'Unknown'];
-  const sources = ['Domain farming', 'Bosses', 'Strongbox', 'Spiral Abyss'];
-  const artifactSets = [
-    "Archaic Petra",
-    "Blizzard Strayer",
-    "Bloodstained Chivalry",
-    "Crimson Witch of Flames",
-    "Deepwood Memories",
-    "Desert Pavilion Chronicle",
-    "Echoes of an Offering",
-    "Emblem of Severed Fate",
-    "Flower of Paradise Lost",
-    "Fragment of Harmonic Whimsy",
-    "Gilded Dreams",
-    "Gladiator's Finale",
-    "Golden Troupe",
-    "Heart of Depth",
-    "Husk of Opulent Dreams",
-    "Lavawalker",
-    "Maiden Beloved",
-    "Marechaussee Hunter",
-    "Nighttime of Whispers in the Echoing Woods",
-    "Noblesse Oblige",
-    "Nymph's Dream",
-    "Obsidian Codex",
-    "Ocean-Hued Clam",
-    "Pale Flame",
-    "Retracing Bolide",
-    "Scroll of the Hero of Cinder City",
-    "Shimenawa's Reminiscence",
-    "Song of Days Past",
-    "Tenacity of the Millelith",
-    "Thundering Fury",
-    "Thundersoother",
-    "Unfinished Reverie",
-    "Vermillion Hereafter",
-    "Viridescent Venerer",
-    "Vourukasha's Glow",
-    "Wanderer's Troupe"
-  ];
+  const artifactTypes = config.artifactTypes;
+    
+      const mainStatsOptions = config.mainStatsOptions;
+    
+      const allSubstats = config.allSubstats;
+    
+      const scores = config.scores;
+      const sources = config.sources;
+    
+      const artifactSets = config.artifactSets;
 
   const handleSelectChange = (selectedOption, field) => {
     setFormData((prev) => {

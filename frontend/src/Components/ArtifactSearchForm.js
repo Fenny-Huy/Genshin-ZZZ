@@ -1,10 +1,13 @@
 // src/Components/ArtifactSearchForm.js
 import React from 'react';
 import Select from "react-select"; // Import React-Select
+import '../Styles/ArtifactSearchForm.css';
+import config from '../config/config'; // Import the configuration file
+
 
 const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOptions, scores, sources, artifactSets, handleSelectChange, handleInputChange }) => {
   // Define all substats
-  const allSubstats = ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"];
+  const allSubstats = config.allSubstats;
 
 
 

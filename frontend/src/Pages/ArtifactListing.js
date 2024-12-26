@@ -4,6 +4,7 @@ import axios from 'axios';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
 import ReactPaginate from 'react-paginate';
 import config from '../config/config'; // Import the configuration file
+import '../Styles/Pages.css';
 
 
 
@@ -15,7 +16,7 @@ const ArtifactListing = () => {
   // Here we use item offsets; we could also use page offsets
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 13;
+  const itemsPerPage = 12;
 
   // Invoke when user click to request another page.
   
@@ -55,7 +56,7 @@ const ArtifactListing = () => {
   return (
     <div>
       <h1>Artifact List</h1>
-      <table className="artifact-table">
+      <table className="artifact-listing-table">
         <thead>
           <tr>
             <th>ID</th>

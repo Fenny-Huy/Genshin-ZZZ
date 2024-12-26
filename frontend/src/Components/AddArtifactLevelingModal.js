@@ -1,7 +1,7 @@
 // src/Components/AddArtifactLevelingModal.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './AddArtifactLevelingModal.css'; // Import the CSS file
+import '../Styles/AddArtifactLevelingModal.css'; // Import the CSS file
 import config from '../config/config'; // Import the configuration file
 
 const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
@@ -119,15 +119,15 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     <div className="leveling-modal">
       <div className="leveling-modal-content">
         <h2>{isUpdating ? 'Update' : 'Add'} Artifact Leveling</h2>
-        <form className="leveling-form">
+        <form className="form">
           {artifact.number_of_substats === 3 && (!formData.addedSubstat || formData.addedSubstat === "None") && (
-            <div className="leveling-inputGroup">
-              <label className="leveling-label">Added Substat:</label>
+            <div className="inputGroup">
+              <label className="label">Added Substat:</label>
               <select
                 name="addedSubstat"
                 value={formData.addedSubstat}
                 onChange={handleSelectChange}
-                className="leveling-select"
+                className="select"
               >
                 <option value="">Select Substat</option>
                 {availableSubstats.map((substat) => (
@@ -139,23 +139,23 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
             </div>
           )}
           {(initialSubstats.concat(formData.addedSubstat && formData.addedSubstat !== "None" ? formData.addedSubstat : []).filter(Boolean)).map((substat) => (
-            <div className="leveling-inputGroup" key={substat}>
-              <label className="leveling-label">{substat}:</label>
+            <div className="inputGroup" key={substat}>
+              <label className="label">{substat}:</label>
               <input
                 type="number"
                 name={getFormDataKey(substat)}
                 value={formData[getFormDataKey(substat)]}
                 onChange={handleInputChange}
-                className="leveling-input"
+                className="input"
                 min="0"
               />
             </div>
           ))}
-          <div className="leveling-modal-actions">
-            <button type="button" className="leveling-button" onClick={handleSave} disabled={isSaveDisabled}>
+          <div className="actions">
+            <button type="button" className="button" onClick={handleSave} disabled={isSaveDisabled}>
               Save
             </button>
-            <button type="button" className="leveling-button" onClick={onClose}>
+            <button type="button" className="button" onClick={onClose}>
               Cancel
             </button>
           </div>

@@ -1,7 +1,7 @@
 // src/Components/ArtifactLevelingListTable.js
 
 import React, { useEffect, useState } from 'react';
-import './ArtifactLevelingListTable.css'; // Import the CSS file
+import '../Styles/ArtifactLevelingListTable.css'; // Import the CSS file
 import ReactPaginate from 'react-paginate';
 
 const ArtifactLevelingListTable = ({ artifacts, onEdit }) => {

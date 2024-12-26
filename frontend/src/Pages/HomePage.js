@@ -1,10 +1,11 @@
 // src/Pages/HomePage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../Styles/Pages.css';
 
 const HomePage = () => {
   return (
-    <div className="container">
+    <div className="homepage-container">
       <h1>Welcome to Genshin Artifacts</h1>
       <p>This application allows you to create and list artifacts for Genshin Impact.</p>
       <div>

@@ -4,6 +4,7 @@ import EditArtifactModal from './EditArtifactModal';
 import AddArtifactLevelingModal from './AddArtifactLevelingModal';
 import axios from 'axios';
 import config from '../config/config'; // Import the configuration file
+import '../Styles/ArtifactListingForm.css';
 
 const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
