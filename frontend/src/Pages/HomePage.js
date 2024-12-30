@@ -13,6 +13,7 @@ const HomePage = () => {
         <Link to="/artifact-list" className="button">Artifact List</Link>
         <Link to="/search-artifacts" className="button">Search Artifacts</Link>
         <Link to="/leveling-list" className="button">Artifact Leveling List</Link>
+        <Link to="/statistics" className="button">Statistics</Link>
       </div>
     </div>
   );
