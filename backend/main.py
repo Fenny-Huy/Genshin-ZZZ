@@ -474,3 +474,105 @@ def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_
             for row in rows
         ]
     return artifacts_with_subs
+
+
+
+
+
+@app.get("/statistics/leveling")
+def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    SELECT 
+        i.`Type`, 
+        i.`Main Stat`, 
+        COUNT(*) AS TypeCount, 
+        SUM(`%ATK`) AS `%ATK`, 
+        SUM(`%HP`) AS `%HP`, 
+        SUM(`%DEF`) AS `%DEF`, 
+        SUM(`ATK`) AS `ATK`, 
+        SUM(`HP`) AS `HP`, 
+        SUM(`DEF`) AS `DEF`, 
+        SUM(`ER`) AS `ER`, 
+        SUM(`EM`) AS `EM`, 
+        SUM(`Crit Rate`) AS `Crit_Rate`, 
+        SUM(`Crit DMG`) AS `Crit_DMG`, 
+        SUM(`%ATK` + `%HP` + `%DEF` + `ATK` + `HP` + `DEF` + `ER` + `EM` + `Crit Rate` + `Crit DMG`) AS `SubstatCount`, 
+        SUM(`L_HP`) AS `L_HP`, 
+        SUM(`L_ATK`) AS `L_ATK`, 
+        SUM(`L_DEF`) AS `L_DEF`, 
+        SUM(`L_%HP`) AS `L_HP_per`, 
+        SUM(`L_%ATK`) AS `L_ATK_per`, 
+        SUM(`L_%DEF`) AS `L_DEF_per`, 
+        SUM(`L_EM`) AS `L_EM`, 
+        SUM(`L_ER`) AS `L_ER`, 
+        SUM(`L_Crit Rate`) AS `L_Crit_Rate`, 
+        SUM(`L_Crit DMG`) AS `L_Crit_DMG`,
+        SUM(`L_HP` + `L_ATK` + `L_DEF` + `L_%HP` + `L_%ATK` + `L_%DEF` + `L_EM` + `L_ER` + `L_Crit Rate` + `L_Crit DMG`) AS `TotalRolls`,
+        SUM(CASE WHEN l.`Added Substat` = 'ATK' THEN 1 ELSE 0 END) AS `AddedSubstat_ATK`,
+        SUM(CASE WHEN l.`Added Substat` = 'DEF' THEN 1 ELSE 0 END) AS `AddedSubstat_DEF`,
+        SUM(CASE WHEN l.`Added Substat` = 'HP' THEN 1 ELSE 0 END) AS `AddedSubstat_HP`,
+        SUM(CASE WHEN l.`Added Substat` = '%ATK' THEN 1 ELSE 0 END) AS `AddedSubstat_%ATK`,
+        SUM(CASE WHEN l.`Added Substat` = '%DEF' THEN 1 ELSE 0 END) AS `AddedSubstat_%DEF`,
+        SUM(CASE WHEN l.`Added Substat` = '%HP' THEN 1 ELSE 0 END) AS `AddedSubstat_%HP`,
+        SUM(CASE WHEN l.`Added Substat` = 'ER' THEN 1 ELSE 0 END) AS `AddedSubstat_ER`,
+        SUM(CASE WHEN l.`Added Substat` = 'EM' THEN 1 ELSE 0 END) AS `AddedSubstat_EM`,
+        SUM(CASE WHEN l.`Added Substat` = 'Crit Rate' THEN 1 ELSE 0 END) AS `AddedSubstat_Crit_Rate`,
+        SUM(CASE WHEN l.`Added Substat` = 'Crit DMG' THEN 1 ELSE 0 END) AS `AddedSubstat_Crit_DMG`,
+        SUM(CASE WHEN l.`Added Substat` = 'None' THEN 1 ELSE 0 END) AS `AddedSubstat_None`
+    FROM 
+        `Artifact leveling` l
+    INNER JOIN 
+        `Artifact itself` i
+    ON 
+        l.ID = i.ID
+    GROUP BY 
+        `Type`, 
+        `Main Stat`;
+
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts_with_subs = [
+            {
+                    "type": row[0],
+                    "main_stat": row[1],
+                    "ArtifactCount": row[2],
+                    "sub_ATK_per": row[3],
+                    "sub_HP_per": row[4],
+                    "sub_DEF_per": row[5],
+                    "sub_ATK": row[6],
+                    "sub_HP": row[7],
+                    "sub_DEF": row[8],
+                    "sub_ER": row[9],
+                    "sub_EM": row[10],
+                    "sub_Crit_Rate": row[11],
+                    "sub_Crit_DMG": row[12],
+                    "substatCount": row[13],
+                    "roll_HP": row[14],
+                    "roll_ATK": row[15],
+                    "roll_DEF": row[16],
+                    "roll_HP_per": row[17],
+                    "roll_ATK_per": row[18],
+                    "roll_DEF_per": row[19],
+                    "roll_EM": row[20],
+                    "roll_ER": row[21],
+                    "roll_Crit_Rate": row[22],
+                    "roll_Crit_DMG": row[23],
+                    "TotalRoll": row[24],
+                    "added_ATK": row[25],
+                    "added_DEF": row[26],
+                    "added_HP": row[27],
+                    "added_ATK_per": row[28],
+                    "added_DEF_per": row[29],
+                    "added_HP_per": row[30],
+                    "added_ER": row[31],
+                    "added_EM": row[32],
+                    "added_Crit_Rate": row[33],
+                    "added_Crit_DMG": row[34],
+                    "added_None": row[35]
+                
+            }
+            for row in rows
+        ]
+    return artifacts_with_subs
