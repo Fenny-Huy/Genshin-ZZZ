@@ -340,6 +340,242 @@ const StatisticsPage = () => {
     );
   };
 
+  const renderLevelingSpecific = () => {
+    const handleTypeSelection = (type) => {
+      setSelectedType(type);
+      setSelectedMainStat(null); // Reset main stat selection when type changes
+    };
+  
+    const handleMainStatSelection = (mainStat) => {
+      setSelectedMainStat(mainStat);
+    };
+  
+    const substatKeyToMainStat = {
+      sub_ATK_per: '%ATK',
+      sub_HP_per: '%HP',
+      sub_DEF_per: '%DEF',
+      sub_ATK: 'ATK',
+      sub_HP: 'HP',
+      sub_DEF: 'DEF',
+      sub_ER: 'ER',
+      sub_EM: 'EM',
+      sub_Crit_Rate: 'Crit Rate',
+      sub_Crit_DMG: 'Crit DMG',
+    };
+
+    const leveingsubstatKeyToMainStat = {
+      roll_ATK_per: '%ATK',
+      roll_HP_per: '%HP',
+      roll_DEF_per: '%DEF',
+      roll_ATK: 'ATK',
+      roll_HP: 'HP',
+      roll_DEF: 'DEF',
+      roll_ER: 'ER',
+      roll_EM: 'EM',
+      roll_Crit_Rate: 'Crit Rate',
+      roll_Crit_DMG: 'Crit DMG',
+    };
+
+    const substatToLevelingKeys = {
+      sub_ATK_per: 'roll_ATK_per',
+      sub_HP_per: 'roll_HP_per',
+      sub_DEF_per: 'roll_DEF_per',
+      sub_ATK: 'roll_ATK',
+      sub_HP: 'roll_HP',
+      sub_DEF: 'roll_DEF',
+      sub_ER: 'roll_ER',
+      sub_EM: 'roll_EM',
+      sub_Crit_Rate: 'roll_Crit_Rate',
+      sub_Crit_DMG: 'roll_Crit_DMG',
+    };
+
+    const addedToMainStatKey = {
+      added_ATK_per: '%ATK',
+      added_HP_per: '%HP',
+      added_DEF_per: '%DEF',
+      added_ATK: 'ATK',
+      added_HP: 'HP',
+      added_DEF: 'DEF',
+      added_ER: 'ER',
+      added_EM: 'EM',
+      added_Crit_Rate: 'Crit Rate',
+      added_Crit_DMG: 'Crit DMG',
+      added_None: 'None'
+    };
+  
+    const filteredLevelingData = levelingData.filter(item => item.type === selectedType && item.main_stat === selectedMainStat);
+  
+    const substatTotals = filteredLevelingData.reduce((acc, item) => {
+      Object.keys(item).forEach(key => {
+        if (key.startsWith('sub_')) {
+          acc[key] = (acc[key] || 0) + item[key];
+        }
+      });
+      return acc;
+    }, {});
+  
+    const totalSubstatCounts = Object.keys(substatKeyToMainStat).reduce((acc, key) => {
+      acc[key] = filteredLevelingData.reduce((sum, item) => {
+        return sum + item.substatCount;
+      }, 0);
+      return acc;
+    }, {});
+  
+    const levelingCount = filteredLevelingData.reduce((acc, item) => {
+      Object.keys(item).forEach(key => {
+        if (key.startsWith('roll_')) {
+          acc[key] = (acc[key] || 0) + item[key];
+        }
+      });
+      return acc;
+    }, {});
+  
+    const totalLevelingCount = Object.keys(leveingsubstatKeyToMainStat).reduce((acc, key) => {
+      acc[key] = filteredLevelingData.reduce((sum, item) => {
+        return sum + item.TotalRoll;
+      }, 0);
+      return acc;
+    }, {});
+  
+    const substatDistribution = Object.keys(substatTotals).map(key => ({
+      substat: substatKeyToMainStat[key],
+      appearancePercentage: (substatTotals[key] / totalSubstatCounts[key]) * 100,
+      rollPercentage: (levelingCount[substatToLevelingKeys[key]] / totalLevelingCount[substatToLevelingKeys[key]]) * 100,
+      substatcount: substatTotals[key],
+      rollcount: levelingCount[substatToLevelingKeys[key]],
+    }));
+  
+    const addedSubstatDistribution = filteredLevelingData.reduce((acc, item) => {
+      Object.keys(item).forEach(key => {
+        if (key.startsWith('added_')) {
+          acc[key] = (acc[key] || 0) + item[key];
+        }
+      });
+      return acc;
+    }, {});
+  
+    const totalAdded = filteredLevelingData.reduce((acc, item) => {
+      Object.keys(item).forEach(key => {
+        if (key.startsWith('added_') && item.main_stat !== addedToMainStatKey[key]) {
+          acc = (acc || 0) + item[key];
+        }
+      });
+      return acc;
+    }, 0);
+  
+    const addedSubstatData = Object.keys(addedSubstatDistribution).map(key => ({
+      substat: addedToMainStatKey[key],
+      percentage: (addedSubstatDistribution[key] / totalAdded) * 100,
+      count: addedSubstatDistribution[key],
+    }));
+  
+    return (
+      <>
+        <div className="button-container">
+          {levelingData.map(item => item.type).filter((value, index, self) => self.indexOf(value) === index).map(type => (
+            <button
+              key={type}
+              className={selectedType === type ? 'active' : ''}
+              onClick={() => handleTypeSelection(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+        {selectedType && (
+          <div className="button-container">
+            {levelingData.filter(item => item.type === selectedType).map(item => item.main_stat).filter((value, index, self) => self.indexOf(value) === index).map(mainStat => (
+              <button
+                key={mainStat}
+                className={selectedMainStat === mainStat ? 'active' : ''}
+                onClick={() => handleMainStatSelection(mainStat)}
+              >
+                {mainStat}
+              </button>
+            ))}
+          </div>
+        )}
+        {selectedType && selectedMainStat && (
+          <>
+            <div className="substat-chart-table-container">
+              <div className="chart-container">
+                <h2>Leveling Substat Distribution</h2>
+                <div className="bar-chart">
+                  <Bar data={prepareLevelingChartData(substatDistribution, 'substat', ['appearancePercentage', 'rollPercentage'])} />
+                </div>
+              </div>
+              <div className="table-container">
+                <h2>Leveling Substat Counts</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Substat</th>
+                      <th>Appearance Percentage</th>
+                      <th>Roll Percentage</th>
+                      <th>Substat Count</th>
+                      <th>Roll Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {substatDistribution.map(item => (
+                      <tr key={item.substat}>
+                        <td>{item.substat}</td>
+                        <td>{item.appearancePercentage.toFixed(2)}%</td>
+                        <td>{item.rollPercentage.toFixed(2)}%</td>
+                        <td>{item.substatcount}</td>
+                        <td>{item.rollcount}</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td><strong>Total</strong></td>
+                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.appearancePercentage, 0).toFixed(2)}%</strong></td>
+                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollPercentage, 0).toFixed(2)}%</strong></td>
+                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.substatcount, 0)}</strong></td>
+                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollcount, 0)}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="substat-chart-table-container">
+              <div className="chart-container">
+                <h2>Added Substat Distribution</h2>
+                <div className="pie-chart">
+                  <Pie data={prepareChartData(addedSubstatData, 'substat', 'percentage')} />
+                </div>
+              </div>
+              <div className="table-container">
+                <h2>Added Substat Counts</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Substat</th>
+                      <th>Percentage</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {addedSubstatData.map(item => (
+                      <tr key={item.substat}>
+                        <td>{item.substat}</td>
+                        <td>{item.percentage.toFixed(2)}%</td>
+                        <td>{item.count}</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td><strong>Total</strong></td>
+                      <td><strong>{addedSubstatData.reduce((sum, item) => sum + item.percentage, 0).toFixed(2)}%</strong></td>
+                      <td><strong>{Object.values(addedSubstatDistribution).reduce((sum, count) => sum + count, 0)}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+      </>
+    );
+  };
 
   const renderSubstatOverall = () => {
     const substatKeyToMainStat = {
@@ -503,7 +739,7 @@ const StatisticsPage = () => {
             <button className={selectedLevelingChart === 'Specific' ? 'active' : ''} onClick={() => setSelectedLevelingChart('Specific')}>Specific</button>
           </div>
           {selectedLevelingChart === 'Overall' && renderLevelingOverall()}
-          {/* {selectedLevelingChart === 'Specific' && renderLevelingSpecific()} */}
+          {selectedLevelingChart === 'Specific' && renderLevelingSpecific()}
         </>
       );
     }
