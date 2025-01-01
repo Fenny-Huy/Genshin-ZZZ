@@ -5,6 +5,7 @@ import { Pie, Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import '../Styles/Pages.css';
 import config from '../config/config'; // Import the configuration file
+import LevelingChartTable from '../Components/LevelingChartTable';
 
 const StatisticsPage = () => {
   const [typeData, setTypeData] = useState([]);
@@ -60,7 +61,10 @@ const StatisticsPage = () => {
     fetchLevelingStatistics();
   }, []);
 
-  
+  useEffect(() => {
+    setSelectedMainStat(null);
+    setSelectedType(null);
+  }, [selectedCategory]);
 
   const prepareChartData = (data, labelKey, valueKey) => {
     // Sort data in descending order based on the value
@@ -261,82 +265,15 @@ const StatisticsPage = () => {
     }));
 
     return (
-      <>
-        <div className="substat-chart-table-container">
-          <div className="chart-container">
-            <h2>Leveling Substat Distribution</h2>
-            <div className="bar-chart">
-              <Bar data={prepareLevelingChartData(substatDistribution, 'substat', ['appearancePercentage', 'rollPercentage'])} />
-            </div>
-          </div>
-          <div className="table-container">
-            <h2>Leveling Substat Counts</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Substat</th>
-                  <th>Appearance Percentage</th>
-                  <th>Roll Percentage</th>
-                  <th>Substat Count</th>
-                  <th>Roll Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {substatDistribution.map(item => (
-                  <tr key={item.substat}>
-                    <td>{item.substat}</td>
-                    <td>{item.appearancePercentage.toFixed(2)}%</td>
-                    <td>{item.rollPercentage.toFixed(2)}%</td>
-                    <td>{item.substatcount}</td>
-                    <td>{item.rollcount}</td>
-                  </tr>
-                ))}
-                <tr>
-                  <td><strong>Total</strong></td>
-                  <td><strong>{substatDistribution.reduce((sum, item) => sum + item.appearancePercentage, 0).toFixed(2)}%</strong></td>
-                  <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollPercentage, 0).toFixed(2)}%</strong></td>
-                  <td><strong>{substatDistribution.reduce((sum, item) => sum + item.substatcount, 0)}</strong></td>
-                  <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollcount, 0)}</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="substat-chart-table-container">
-          <div className="chart-container">
-            <h2>Added Substat Distribution</h2>
-            <div className="pie-chart">
-              <Bar data={prepareChartData(addedSubstatData, 'substat', 'percentage')} />
-            </div>
-          </div>
-          <div className="table-container">
-            <h2>Added Substat Counts</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Substat</th>
-                  <th>Percentage</th>
-                  <th>Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {addedSubstatData.map(item => (
-                  <tr key={item.substat}>
-                    <td>{item.substat}</td>
-                    <td>{item.percentage.toFixed(2)}%</td>
-                    <td>{item.count}</td>
-                  </tr>
-                ))}
-                <tr>
-                  <td><strong>Total</strong></td>
-                  <td><strong>{addedSubstatData.reduce((sum, item) => sum + item.percentage, 0).toFixed(2)}%</strong></td>
-                  <td><strong>{Object.values(addedSubstatDistribution).reduce((sum, count) => sum + count, 0)}</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </>
+      
+        <LevelingChartTable
+          chartType="bar"
+          levelingChartData = {prepareLevelingChartData(substatDistribution, 'substat', ['appearancePercentage', 'rollPercentage'])}
+          levelingTableData={substatDistribution}
+          addedChartData={prepareChartData(addedSubstatData, 'substat', 'percentage')}
+          addedTableData={addedSubstatData}
+        />
+      
     );
   };
 
@@ -497,80 +434,13 @@ const StatisticsPage = () => {
         )}
         {selectedType && selectedMainStat && (
           <>
-            <div className="substat-chart-table-container">
-              <div className="chart-container">
-                <h2>Leveling Substat Distribution</h2>
-                <div className="bar-chart">
-                  <Bar data={prepareLevelingChartData(substatDistribution, 'substat', ['appearancePercentage', 'rollPercentage'])} />
-                </div>
-              </div>
-              <div className="table-container">
-                <h2>Leveling Substat Counts</h2>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Substat</th>
-                      <th>Appearance Percentage</th>
-                      <th>Roll Percentage</th>
-                      <th>Substat Count</th>
-                      <th>Roll Count</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {substatDistribution.map(item => (
-                      <tr key={item.substat}>
-                        <td>{item.substat}</td>
-                        <td>{item.appearancePercentage.toFixed(2)}%</td>
-                        <td>{item.rollPercentage.toFixed(2)}%</td>
-                        <td>{item.substatcount}</td>
-                        <td>{item.rollcount}</td>
-                      </tr>
-                    ))}
-                    <tr>
-                      <td><strong>Total</strong></td>
-                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.appearancePercentage, 0).toFixed(2)}%</strong></td>
-                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollPercentage, 0).toFixed(2)}%</strong></td>
-                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.substatcount, 0)}</strong></td>
-                      <td><strong>{substatDistribution.reduce((sum, item) => sum + item.rollcount, 0)}</strong></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="substat-chart-table-container">
-              <div className="chart-container">
-                <h2>Added Substat Distribution</h2>
-                <div className="pie-chart">
-                  <Pie data={prepareChartData(addedSubstatData, 'substat', 'percentage')} />
-                </div>
-              </div>
-              <div className="table-container">
-                <h2>Added Substat Counts</h2>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Substat</th>
-                      <th>Percentage</th>
-                      <th>Count</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {addedSubstatData.map(item => (
-                      <tr key={item.substat}>
-                        <td>{item.substat}</td>
-                        <td>{item.percentage.toFixed(2)}%</td>
-                        <td>{item.count}</td>
-                      </tr>
-                    ))}
-                    <tr>
-                      <td><strong>Total</strong></td>
-                      <td><strong>{addedSubstatData.reduce((sum, item) => sum + item.percentage, 0).toFixed(2)}%</strong></td>
-                      <td><strong>{Object.values(addedSubstatDistribution).reduce((sum, count) => sum + count, 0)}</strong></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <LevelingChartTable
+            chartType="pie"
+            levelingChartData = {prepareLevelingChartData(substatDistribution, 'substat', ['appearancePercentage', 'rollPercentage'])}
+            levelingTableData={substatDistribution}
+            addedChartData={prepareChartData(addedSubstatData, 'substat', 'percentage')}
+            addedTableData={addedSubstatData}
+          />
           </>
         )}
       </>
