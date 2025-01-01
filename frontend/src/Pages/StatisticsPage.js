@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ChartTable from '../Components/ChartTable'; // Import the new component
-import { Pie, Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import '../Styles/Pages.css';
 import config from '../config/config'; // Import the configuration file
