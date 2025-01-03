@@ -617,6 +617,7 @@ const StatisticsPage = () => {
 
 
   const renderSetSourceContent = () => {
+    const combineCap = 4; //records with value under this cap will be combined into 'Other'
     const prepareTableSetData = (data) => {
       const total = data.reduce((sum, item) => sum + item.count, 0);
       return data.map(item => ({
@@ -641,7 +642,7 @@ const StatisticsPage = () => {
       };
     
       const filteredData = processedData.filter(item => {
-        if (item.percentage < 4) {
+        if (item.percentage < combineCap) {
           other.percentage += item.percentage;
           other.count += item.count;
           return false;
@@ -691,7 +692,7 @@ const StatisticsPage = () => {
       };
     
       const filteredData = processedData.filter(item => {
-        if (item.percentage < 4) {
+        if (item.percentage < combineCap) {
           other.percentage += item.percentage;
           other.count += item.count;
           return false;
