@@ -576,3 +576,67 @@ def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_
             for row in rows
         ]
     return artifacts_with_subs
+
+#set, where got it statistics
+@app.get("/set/set_where")
+def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    select `Set`, `Where got it`, count(*) as totalcount from `Artifact itself`
+    group by `Set`, `Where got it`
+    order by totalcount desc;
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts_with_subs = [
+            {
+                "set": row[0],
+                "where": row[1],
+                "count": row[2],
+                
+            }
+            for row in rows
+        ]
+    return artifacts_with_subs
+
+
+@app.get("/set/set")
+def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    select `Set`, count(*) as totalcount from `Artifact itself`
+    group by `Set`
+    order by totalcount desc;
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts_with_subs = [
+            {
+                "set": row[0],
+                "count": row[1],
+                
+            }
+            for row in rows
+        ]
+    return artifacts_with_subs
+
+
+@app.get("/set/where")
+def get_substats_statistics(db: pymysql.connections.Connection = Depends(get_db_connection)):
+    query = """
+    select `Where got it`, count(*) as totalcount from `Artifact itself`
+    group by `Where got it`
+    order by totalcount desc;
+    """
+    with db.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        artifacts_with_subs = [
+            {
+                "where": row[0],
+                "count": row[1],
+                
+            }
+            for row in rows
+        ]
+    return artifacts_with_subs

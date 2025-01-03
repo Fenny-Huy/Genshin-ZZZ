@@ -18,6 +18,13 @@ const StatisticsPage = () => {
   const [levelingData, setLevelingData] = useState([]);
   const [selectedLevelingChart, setSelectedLevelingChart] = useState('Overall');
 
+
+  const [setData, setSetData] = useState([]);
+  const [sourceData, setSourceData] = useState([]);
+  const [setSourceComboData, setSetSourceComboData] = useState([]);
+  const [isSetSelected, setIsSetSelected] = useState(false);
+  const [isSourceSelected, setIsSourceSelected] = useState(false);
+
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
@@ -64,6 +71,48 @@ const StatisticsPage = () => {
     setSelectedMainStat(null);
     setSelectedType(null);
   }, [selectedCategory]);
+
+
+
+
+  useEffect(() => {
+    const fetchSetData = async () => {
+      try {
+        const response = await axios.get(`${config.apiUrl}/set/set`);
+        setSetData(response.data);
+      } catch (error) {
+        console.error('Error fetching set data:', error);
+      }
+    };
+  
+    fetchSetData();
+  }, []);
+  
+  useEffect(() => {
+    const fetchSourceData = async () => {
+      try {
+        const response = await axios.get(`${config.apiUrl}/set/where`);
+        setSourceData(response.data);
+      } catch (error) {
+        console.error('Error fetching source data:', error);
+      }
+    };
+  
+    fetchSourceData();
+  }, []);
+  
+  useEffect(() => {
+    const fetchSetSourceComboData = async () => {
+      try {
+        const response = await axios.get(`${config.apiUrl}/set/set_where`);
+        setSetSourceComboData(response.data);
+      } catch (error) {
+        console.error('Error fetching set and source data:', error);
+      }
+    };
+  
+    fetchSetSourceComboData();
+  }, []);
 
   const prepareChartData = (data, labelKey, valueKey) => {
     // Sort data in descending order based on the value
@@ -565,6 +614,136 @@ const StatisticsPage = () => {
     );
   };
 
+
+
+  const renderSetSourceContent = () => {
+    const prepareTableSetData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      return data.map(item => ({
+        substat: item.set,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    };
+
+    const prepareChartSetData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      const processedData = data.map(item => ({
+        label: item.set,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    
+      const other = {
+        label: 'Other',
+        percentage: 0,
+        count: 0,
+      };
+    
+      const filteredData = processedData.filter(item => {
+        if (item.percentage < 4) {
+          other.percentage += item.percentage;
+          other.count += item.count;
+          return false;
+        }
+        return true;
+      });
+    
+      if (other.count > 0) {
+        filteredData.push(other);
+      }
+    
+      return filteredData;
+    };
+    
+    const prepareSourceData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      return data.map(item => ({
+        label: item.where,
+        substat: item.where,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    };
+    
+    const prepareTableSetSourceComboData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      return data.map(item => ({
+        substat: `${item.set} - ${item.where}`,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    };
+
+    const prepareChartSetSourceComboData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      const processedData = data.map(item => ({
+        label: `${item.set} - ${item.where}`,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    
+      const other = {
+        label: 'Other',
+        substat: 'Other',
+        percentage: 0,
+        count: 0,
+      };
+    
+      const filteredData = processedData.filter(item => {
+        if (item.percentage < 4) {
+          other.percentage += item.percentage;
+          other.count += item.count;
+          return false;
+        }
+        return true;
+      });
+    
+      if (other.count > 0) {
+        filteredData.push(other);
+      }
+    
+      return filteredData;
+    };
+
+
+
+
+    let chartdata = [];
+    let tabledata = [];
+    let title = '';
+  
+    if (isSetSelected && isSourceSelected) {
+      tabledata = prepareTableSetSourceComboData(setSourceComboData);
+      chartdata = prepareChartSetSourceComboData(setSourceComboData);
+      title = 'Set and Source Distribution';
+    } else if (isSetSelected) {
+      chartdata = prepareChartSetData(setData);
+      tabledata = prepareTableSetData(setData);
+      title = 'Set Distribution';
+    } else if (isSourceSelected) {
+      chartdata = prepareSourceData(sourceData);
+      tabledata = prepareSourceData(sourceData);
+      title = 'Source Distribution';
+    }
+
+  
+    return (
+      <>
+        {(isSetSelected || isSourceSelected) && (
+          <ChartTable
+            chartType="pie"
+            chartData={prepareChartData(chartdata, 'label', 'percentage')}
+            tableData={tabledata}
+            chartTitle={title}
+            tableTitle={title}
+            tableFirstField="Label"
+          />
+        )}
+      </>
+    );
+  };
+
   const renderContent = () => {
     if (selectedCategory === 'Main Stat') {
       const data = selectedChart === 'Types'
@@ -611,6 +790,16 @@ const StatisticsPage = () => {
           {selectedLevelingChart === 'Specific' && renderLevelingSpecific()}
         </>
       );
+    } else if (selectedCategory === 'Set/Source') {
+      return (
+        <>
+          <div className="button-container">
+            <button className={isSetSelected ? 'active' : ''} onClick={() => setIsSetSelected(!isSetSelected)}>Set</button>
+            <button className={isSourceSelected ? 'active' : ''} onClick={() => setIsSourceSelected(!isSourceSelected)}>Source</button>
+          </div>
+          {renderSetSourceContent()}
+        </>
+      );
     }
 
   };
@@ -622,6 +811,7 @@ const StatisticsPage = () => {
         <button className={selectedCategory === 'Main Stat' ? 'active' : ''} onClick={() => setSelectedCategory('Main Stat')}>Main Stat</button>
         <button className={selectedCategory === 'Substats' ? 'active' : ''} onClick={() => setSelectedCategory('Substats')}>Substats</button>
         <button className={selectedCategory === 'Leveling' ? 'active' : ''} onClick={() => setSelectedCategory('Leveling')}>Leveling</button>
+        <button className={selectedCategory === 'Set/Source' ? 'active' : ''} onClick={() => setSelectedCategory('Set/Source')}>Set/Source</button>
       </div>
       {renderContent()}
     </div>
