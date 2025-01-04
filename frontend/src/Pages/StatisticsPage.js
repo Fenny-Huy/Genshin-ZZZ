@@ -25,6 +25,10 @@ const StatisticsPage = () => {
   const [isSetSelected, setIsSetSelected] = useState(false);
   const [isSourceSelected, setIsSourceSelected] = useState(false);
 
+  const [isSpecificSelected, setIsSpecificSelected] = useState(false);
+  const [selectedSource, setSelectedSource] = useState('');
+  const [selectedSet, setSelectedSet] = useState('');
+
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
@@ -666,6 +670,26 @@ const StatisticsPage = () => {
         count: item.count,
       }));
     };
+
+    const prepareSetSpecificData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      return data.map(item => ({
+        label: item.set,
+        substat: item.set,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    };
+
+    const prepareSourceSpecificData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.count, 0);
+      return data.map(item => ({
+        label: item.where,
+        substat: item.where,
+        percentage: (item.count / total) * 100,
+        count: item.count,
+      }));
+    };
     
     const prepareTableSetSourceComboData = (data) => {
       const total = data.reduce((sum, item) => sum + item.count, 0);
@@ -708,29 +732,73 @@ const StatisticsPage = () => {
     };
 
 
+    const renderDropdown = () => {
+      if (isSpecificSelected) {
+        if (isSetSelected) {
+          const sources = [...new Set(setSourceComboData.map(item => item.where))];
+          return (
+            <select value={selectedSource} onChange={(e) => setSelectedSource(e.target.value)}>
+              <option value="">Select Source</option>
+              {sources.map(source => (
+                <option key={source} value={source}>{source}</option>
+              ))}
+            </select>
+          );
+        } else if (isSourceSelected) {
+          const sets = [...new Set(setSourceComboData.map(item => item.set))];
+          return (
+            <select value={selectedSet} onChange={(e) => setSelectedSet(e.target.value)}>
+              <option value="">Select Set</option>
+              {sets.map(set => (
+                <option key={set} value={set}>{set}</option>
+              ))}
+            </select>
+          );
+        }
+      }
+      return null;
+    };
+
+
 
 
     let chartdata = [];
     let tabledata = [];
     let title = '';
-  
-    if (isSetSelected && isSourceSelected) {
-      tabledata = prepareTableSetSourceComboData(setSourceComboData);
-      chartdata = prepareChartSetSourceComboData(setSourceComboData);
-      title = 'Set and Source Distribution';
-    } else if (isSetSelected) {
-      chartdata = prepareChartSetData(setData);
-      tabledata = prepareTableSetData(setData);
-      title = 'Set Distribution';
-    } else if (isSourceSelected) {
-      chartdata = prepareSourceData(sourceData);
-      tabledata = prepareSourceData(sourceData);
-      title = 'Source Distribution';
+
+    if (isSpecificSelected) {
+      if (isSetSelected && selectedSource) {
+        chartdata = prepareSetSpecificData(setSourceComboData.filter(item => item.where === selectedSource));
+        tabledata = prepareSetSpecificData(setSourceComboData.filter(item => item.where === selectedSource));
+        title = `Set Distribution for Source: ${selectedSource}`;
+      } else if (isSourceSelected && selectedSet) {
+        chartdata = prepareSourceSpecificData(setSourceComboData.filter(item => item.set === selectedSet));
+        tabledata = prepareSourceSpecificData(setSourceComboData.filter(item => item.set === selectedSet));
+        title = `Source Distribution for Set: ${selectedSet}`;
+      }
+    } else
+    {
+      if (isSetSelected && isSourceSelected) {
+        tabledata = prepareTableSetSourceComboData(setSourceComboData);
+        chartdata = prepareChartSetSourceComboData(setSourceComboData);
+        title = 'Set and Source Distribution';
+      } else if (isSetSelected) {
+        chartdata = prepareChartSetData(setData);
+        tabledata = prepareTableSetData(setData);
+        title = 'Set Distribution';
+      } else if (isSourceSelected) {
+        chartdata = prepareSourceData(sourceData);
+        tabledata = prepareSourceData(sourceData);
+        title = 'Source Distribution';
+      }
     }
+    
+    
 
   
     return (
       <>
+        {renderDropdown()}
         {(isSetSelected || isSourceSelected) && (
           <ChartTable
             chartType="pie"
@@ -743,6 +811,29 @@ const StatisticsPage = () => {
         )}
       </>
     );
+  };
+
+
+  const handleSetSelection = () => {
+    if (isSpecificSelected) {
+      setIsSourceSelected(false);
+    }
+    setIsSetSelected(!isSetSelected);
+  };
+  
+  const handleSourceSelection = () => {
+    if (isSpecificSelected) {
+      setIsSetSelected(false);
+    }
+    setIsSourceSelected(!isSourceSelected);
+  };
+  
+  const handleSpecificSelection = () => {
+    setIsSpecificSelected(!isSpecificSelected);
+    setIsSetSelected(false);
+    setIsSourceSelected(false);
+    setSelectedSource('');
+    setSelectedSet('');
   };
 
   const renderContent = () => {
@@ -795,8 +886,9 @@ const StatisticsPage = () => {
       return (
         <>
           <div className="button-container">
-            <button className={isSetSelected ? 'active' : ''} onClick={() => setIsSetSelected(!isSetSelected)}>Set</button>
-            <button className={isSourceSelected ? 'active' : ''} onClick={() => setIsSourceSelected(!isSourceSelected)}>Source</button>
+          <button className={isSetSelected ? 'active' : ''} onClick={handleSetSelection}>Set</button>
+          <button className={isSourceSelected ? 'active' : ''} onClick={handleSourceSelection}>Source</button>
+          <button className={isSpecificSelected ? 'active' : ''} onClick={handleSpecificSelection}>Specific</button>
           </div>
           {renderSetSourceContent()}
         </>
