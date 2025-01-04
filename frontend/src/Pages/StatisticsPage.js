@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Select from 'react-select';
 import ChartTable from '../Components/ChartTable'; // Import the new component
 import 'chart.js/auto';
 import '../Styles/Pages.css';
@@ -732,33 +733,47 @@ const StatisticsPage = () => {
     };
 
 
+    
     const renderDropdown = () => {
       if (isSpecificSelected) {
         if (isSetSelected) {
-          const sources = [...new Set(setSourceComboData.map(item => item.where))];
+          const sources = [...new Set(setSourceComboData.map(item => item.where))].map(source => ({
+            value: source,
+            label: source,
+          }));
           return (
-            <select value={selectedSource} onChange={(e) => setSelectedSource(e.target.value)}>
-              <option value="">Select Source</option>
-              {sources.map(source => (
-                <option key={source} value={source}>{source}</option>
-              ))}
-            </select>
+            <div className="select-container">
+              <Select
+                value={sources.find(option => option.value === selectedSource)}
+                onChange={(selectedOption) => setSelectedSource(selectedOption ? selectedOption.value : '')}
+                options={sources}
+                placeholder="Select or type to search Source"
+                isClearable
+                classNamePrefix="select"
+              />
+            </div>
           );
         } else if (isSourceSelected) {
-          const sets = [...new Set(setSourceComboData.map(item => item.set))];
+          const sets = [...new Set(setSourceComboData.map(item => item.set))].map(set => ({
+            value: set,
+            label: set,
+          }));
           return (
-            <select value={selectedSet} onChange={(e) => setSelectedSet(e.target.value)}>
-              <option value="">Select Set</option>
-              {sets.map(set => (
-                <option key={set} value={set}>{set}</option>
-              ))}
-            </select>
+            <div className="select-container">
+              <Select
+                value={sets.find(option => option.value === selectedSet)}
+                onChange={(selectedOption) => setSelectedSet(selectedOption ? selectedOption.value : '')}
+                options={sets}
+                placeholder="Select or type to search Set"
+                isClearable
+                classNamePrefix="select"
+              />
+            </div>
           );
         }
       }
       return null;
     };
-
 
 
 
