@@ -8,8 +8,7 @@ import '../Styles/Pages.css';
 
 const ArtifactCreate = () => {
 
-
-    const [formData, setFormData] = useState({
+      const initialFormData = {
         type: null, // Track selected artifact type
         mainStat: null, // Track selected main stat
         substats: [],
@@ -17,7 +16,10 @@ const ArtifactCreate = () => {
         score: "",
         source: "",
         artifactSet: null, // Track selected artifact set
-      });
+      };
+
+
+      const [formData, setFormData] = useState(initialFormData);
     
       const artifactTypes = config.artifactTypes;
     
@@ -100,6 +102,7 @@ const ArtifactCreate = () => {
         try {
           const response = await axios.post(`${config.apiUrl}/genshinartifacts/`, payload);
           alert(response.data.message);
+          setFormData(initialFormData); // Reset form data
         } catch (error) {
           console.error("Error creating artifact:", error);
           alert("Failed to create artifact. Check console for details.");
