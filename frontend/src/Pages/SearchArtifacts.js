@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import ArtifactSearchForm from '../Components/ArtifactSearchForm';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig, artifactConfig } from '../config/config';
 import '../Styles/Pages.css';
 
 const SearchArtifacts = () => {
@@ -22,17 +22,17 @@ const SearchArtifacts = () => {
   });
   const [artifacts, setArtifacts] = useState([]);
 
-  const artifactTypes = config.artifactTypes;
+  const artifactTypes = artifactConfig.artifactTypes;
     
-  const mainStatsOptions = config.mainStatsOptions;
+  const mainStatsOptions = artifactConfig.mainStatsOptions;
 
-  const allSubstats = config.allSubstats;
+  const allSubstats = artifactConfig.allSubstats;
   const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat?.value);
 
-  const scores = config.scores;
-  const sources = config.sources;
+  const scores = artifactConfig.scores;
+  const sources = artifactConfig.sources;
 
-  const artifactSets = config.artifactSets;
+  const artifactSets = artifactConfig.artifactSets;
 
   const handleSelectChange = (selectedOption, field) => {
     setFormData((prev) => ({
@@ -81,7 +81,7 @@ const SearchArtifacts = () => {
     };
 
     try {
-      const response = await axios.get(`${config.apiUrl}/search_artifacts/`, {
+      const response = await axios.get(`${apiConfig.apiUrl}/search_artifacts/`, {
         params: payload
       });
       setArtifacts(response.data);

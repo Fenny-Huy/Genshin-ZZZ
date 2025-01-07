@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import '../Styles/EditArtifactModal.css'; // Import the CSS file
-import config from '../config/config'; // Import the configuration file
+import { apiConfig, artifactConfig } from '../config/config';
 
 const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
@@ -30,16 +30,16 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
 
 
 
-  const artifactTypes = config.artifactTypes;
+  const artifactTypes = artifactConfig.artifactTypes;
     
-      const mainStatsOptions = config.mainStatsOptions;
+      const mainStatsOptions = artifactConfig.mainStatsOptions;
     
-      const allSubstats = config.allSubstats;
+      const allSubstats = artifactConfig.allSubstats;
     
-      const scores = config.scores;
-      const sources = config.sources;
+      const scores = artifactConfig.scores;
+      const sources = artifactConfig.sources;
     
-      const artifactSets = config.artifactSets;
+      const artifactSets = artifactConfig.artifactSets;
 
   const handleSelectChange = (selectedOption, field) => {
     setFormData((prev) => {
@@ -101,7 +101,7 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
     };
 
     try {
-      await axios.put(`${config.apiUrl}/genshinartifacts/${artifact.id}/`, payload);
+      await axios.put(`${apiConfig.apiUrl}/genshinartifacts/${artifact.id}/`, payload);
       onUpdateSuccess(); // Call the callback function
       onClose();
     } catch (error) {

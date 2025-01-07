@@ -2,12 +2,12 @@
 import React from 'react';
 import Select from "react-select"; // Import React-Select
 import '../Styles/ArtifactSearchForm.css';
-import config from '../config/config'; // Import the configuration file
+import { artifactConfig } from '../config/config';
 
 
 const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOptions, scores, sources, artifactSets, handleSelectChange, handleInputChange }) => {
   // Define all substats
-  const allSubstats = config.allSubstats;
+  const allSubstats = artifactConfig.allSubstats;
 
 
 

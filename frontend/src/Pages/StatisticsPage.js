@@ -4,7 +4,7 @@ import Select from 'react-select';
 import ChartTable from '../Components/ChartTable'; // Import the new component
 import 'chart.js/auto';
 import '../Styles/Pages.css';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig } from '../config/config';
 import LevelingChartTable from '../Components/LevelingChartTable';
 
 const StatisticsPage = () => {
@@ -33,7 +33,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/statistics/mainstat`);
+        const response = await axios.get(`${apiConfig.apiUrl}/statistics/mainstat`);
         
         setTypeData(response.data.type_percentages);
         setMainStatData(response.data.main_stat_percentages);
@@ -48,7 +48,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchSubstatStatistics = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/statistics/substats`);
+        const response = await axios.get(`${apiConfig.apiUrl}/statistics/substats`);
         
         setSubstatData(response.data);
       } catch (error) {
@@ -62,7 +62,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchLevelingStatistics = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/statistics/leveling`);
+        const response = await axios.get(`${apiConfig.apiUrl}/statistics/leveling`);
         setLevelingData(response.data);
       } catch (error) {
         console.error('Error fetching leveling statistics:', error);
@@ -83,7 +83,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchSetData = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/set/set`);
+        const response = await axios.get(`${apiConfig.apiUrl}/set/set`);
         setSetData(response.data);
       } catch (error) {
         console.error('Error fetching set data:', error);
@@ -96,7 +96,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchSourceData = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/set/where`);
+        const response = await axios.get(`${apiConfig.apiUrl}/set/where`);
         setSourceData(response.data);
       } catch (error) {
         console.error('Error fetching source data:', error);
@@ -109,7 +109,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchSetSourceComboData = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/set/set_where`);
+        const response = await axios.get(`${apiConfig.apiUrl}/set/set_where`);
         setSetSourceComboData(response.data);
       } catch (error) {
         console.error('Error fetching set and source data:', error);

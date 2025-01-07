@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ArtifactLevelingListTable from '../Components/ArtifactLevelingListTable';
 import EditArtifactLevelingModal from '../Components/EditArtifactLevelingModal';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig } from '../config/config';
 import '../Styles/Pages.css';
 
 
@@ -15,7 +15,7 @@ const ArtifactLevelingList = () => {
   useEffect(() => {
     const fetchArtifacts = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/artifactlevelinglist/`);
+        const response = await axios.get(`${apiConfig.apiUrl}/artifactlevelinglist/`);
         setArtifacts(response.data);
       } catch (error) {
         console.error('Error fetching artifacts:', error);

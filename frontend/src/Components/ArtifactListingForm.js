@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import EditArtifactModal from './EditArtifactModal';
 import AddArtifactLevelingModal from './AddArtifactLevelingModal';
 import axios from 'axios';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig } from '../config/config';
 import '../Styles/ArtifactListingForm.css';
 
 const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
@@ -32,9 +32,9 @@ const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
 
   const openLevelingModal = async () => {
     try {
-      const artifactResponse = await axios.get(`${config.apiUrl}/artifact/${artifact.id}`);
+      const artifactResponse = await axios.get(`${apiConfig.apiUrl}/artifact/${artifact.id}`);
       setArtifactData(artifactResponse.data);
-      const levelingResponse = await axios.get(`${config.apiUrl}/artifactleveling/${artifact.id}`);
+      const levelingResponse = await axios.get(`${apiConfig.apiUrl}/artifactleveling/${artifact.id}`);
       setArtifactLevelingData(levelingResponse.data);
       setIsLevelingModalOpen(true);
     } catch (error) {

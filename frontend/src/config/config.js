@@ -1,5 +1,8 @@
-const config = {
+const apiConfig = {
     apiUrl: 'http://localhost:8000',
+  };
+  
+  const artifactConfig = {
     artifactTypes: [
         { value: "Flower", label: "Flower" },
         { value: "Plume", label: "Plume" },
@@ -82,7 +85,6 @@ const config = {
         "Vourukasha's Glow",
         "Wanderer's Troupe"
       ],
-
-};
+  };
   
-export default config;
+  export { apiConfig, artifactConfig };

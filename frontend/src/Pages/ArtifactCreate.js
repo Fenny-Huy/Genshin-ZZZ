@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import axios from "axios";
 import ArtifactCreateForm from '../Components/ArtifactCreateForm';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig, artifactConfig } from '../config/config';
 import '../Styles/Pages.css';
 
 
@@ -21,17 +21,17 @@ const ArtifactCreate = () => {
 
       const [formData, setFormData] = useState(initialFormData);
     
-      const artifactTypes = config.artifactTypes;
+      const artifactTypes = artifactConfig.artifactTypes;
     
-      const mainStatsOptions = config.mainStatsOptions;
+      const mainStatsOptions = artifactConfig.mainStatsOptions;
     
-      const allSubstats = config.allSubstats;
+      const allSubstats = artifactConfig.allSubstats;
       const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat?.value);
     
-      const scores = config.scores;
-      const sources = config.sources;
+      const scores = artifactConfig.scores;
+      const sources = artifactConfig.sources;
     
-      const artifactSets = config.artifactSets;
+      const artifactSets = artifactConfig.artifactSets;
     
       const handleSelectChange = (selectedOption, field) => {
         setFormData((prev) => ({
@@ -100,7 +100,7 @@ const ArtifactCreate = () => {
         };
     
         try {
-          const response = await axios.post(`${config.apiUrl}/genshinartifacts/`, payload);
+          const response = await axios.post(`${apiConfig.apiUrl}/genshinartifacts/`, payload);
           alert(response.data.message);
           setFormData(initialFormData); // Reset form data
         } catch (error) {

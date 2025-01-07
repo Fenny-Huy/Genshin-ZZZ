@@ -1,7 +1,7 @@
 // src/Components/EditArtifactLevelingModal.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import config from '../config/config'; // Import the configuration file
+import { apiConfig } from '../config/config';
 import '../Styles/EditArtifactLevelingModal.css'; // Import the CSS file
 
 const EditArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
@@ -60,7 +60,7 @@ const EditArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpda
     };
 
     try {
-      await axios.post(`${config.apiUrl}/artifactleveling/`, payload);
+      await axios.post(`${apiConfig.apiUrl}/artifactleveling/`, payload);
       onUpdateSuccess();
       onClose();
     } catch (error) {
