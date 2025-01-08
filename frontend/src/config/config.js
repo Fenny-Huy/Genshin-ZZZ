@@ -86,5 +86,20 @@ const apiConfig = {
         "Wanderer's Troupe"
       ],
   };
+
+  const keysConfig = [
+    ["sub_ATK_per", "roll_ATK_per", "added_ATK_per", '%ATK'],
+    ["sub_HP_per", "roll_HP_per", "added_HP_per", '%HP'],
+    ["sub_DEF_per", "roll_DEF_per", "added_DEF_per", '%DEF'],
+    ["sub_ATK", "roll_ATK", "added_ATK", 'ATK'],
+    ["sub_HP", "roll_HP", "added_HP", 'HP'],
+    ["sub_DEF", "roll_DEF", "added_DEF", 'DEF'],
+    ["sub_ER", "roll_ER", "added_ER", 'ER'],
+    ["sub_EM", "roll_EM", "added_EM", 'EM'],
+    ["sub_Crit_Rate", "roll_Crit_Rate", "added_Crit_Rate", 'Crit Rate'],
+    ["sub_Crit_DMG", "roll_Crit_DMG", "added_Crit_DMG", 'Crit DMG'],
+    [null, null, "added_None", "None"]
+  ];
+
   
-  export { apiConfig, artifactConfig };
+  export { apiConfig, artifactConfig, keysConfig };

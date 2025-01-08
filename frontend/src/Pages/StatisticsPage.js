@@ -4,7 +4,7 @@ import Select from 'react-select';
 import ChartTable from '../Components/ChartTable'; // Import the new component
 import 'chart.js/auto';
 import '../Styles/Pages.css';
-import { apiConfig } from '../config/config';
+import { apiConfig, keysConfig } from '../config/config';
 import LevelingChartTable from '../Components/LevelingChartTable';
 
 const StatisticsPage = () => {
@@ -187,58 +187,18 @@ const StatisticsPage = () => {
   };
 
   const renderLevelingOverall = () => {
-    const substatKeyToMainStat = {
-      sub_ATK_per: '%ATK',
-      sub_HP_per: '%HP',
-      sub_DEF_per: '%DEF',
-      sub_ATK: 'ATK',
-      sub_HP: 'HP',
-      sub_DEF: 'DEF',
-      sub_ER: 'ER',
-      sub_EM: 'EM',
-      sub_Crit_Rate: 'Crit Rate',
-      sub_Crit_DMG: 'Crit DMG',
-    };
+    const substatKeyToMainStat = {};
+    const levelingSubstatKeyToMainStat = {};
+    const substatToLevelingKeys = {};
+    const addedToMainStatKey = {};
 
-    const leveingsubstatKeyToMainStat = {
-      roll_ATK_per: '%ATK',
-      roll_HP_per: '%HP',
-      roll_DEF_per: '%DEF',
-      roll_ATK: 'ATK',
-      roll_HP: 'HP',
-      roll_DEF: 'DEF',
-      roll_ER: 'ER',
-      roll_EM: 'EM',
-      roll_Crit_Rate: 'Crit Rate',
-      roll_Crit_DMG: 'Crit DMG',
-    };
-
-    const substatToLevelingKeys = {
-      sub_ATK_per: 'roll_ATK_per',
-      sub_HP_per: 'roll_HP_per',
-      sub_DEF_per: 'roll_DEF_per',
-      sub_ATK: 'roll_ATK',
-      sub_HP: 'roll_HP',
-      sub_DEF: 'roll_DEF',
-      sub_ER: 'roll_ER',
-      sub_EM: 'roll_EM',
-      sub_Crit_Rate: 'roll_Crit_Rate',
-      sub_Crit_DMG: 'roll_Crit_DMG',
-    };
-
-    const addedToMainStatKey = {
-      added_ATK_per: '%ATK',
-      added_HP_per: '%HP',
-      added_DEF_per: '%DEF',
-      added_ATK: 'ATK',
-      added_HP: 'HP',
-      added_DEF: 'DEF',
-      added_ER: 'ER',
-      added_EM: 'EM',
-      added_Crit_Rate: 'Crit Rate',
-      added_Crit_DMG: 'Crit DMG',
-      added_None: 'None'
-    };
+    keysConfig.forEach(mapping => {
+      const [subKey, rollKey, addedKey, value] = mapping;
+      if (subKey) substatKeyToMainStat[subKey] = value;
+      if (rollKey) levelingSubstatKeyToMainStat[rollKey] = value;
+      if (subKey && rollKey) substatToLevelingKeys[subKey] = rollKey;
+      if (addedKey) addedToMainStatKey[addedKey] = value;
+    });
 
     const substatTotals = levelingData.reduce((acc, item) => {
       Object.keys(item).forEach(key => {
@@ -262,7 +222,7 @@ const StatisticsPage = () => {
 
     const levelingCount = levelingData.reduce((acc, item) => {
       Object.keys(item).forEach(key => {
-        if (key.startsWith('roll_') && item.main_stat !== leveingsubstatKeyToMainStat[key]) {
+        if (key.startsWith('roll_') && item.main_stat !== levelingSubstatKeyToMainStat[key]) {
           acc[key] = (acc[key] || 0) + item[key];
         }
       });
@@ -270,9 +230,9 @@ const StatisticsPage = () => {
     }, {});
 
 
-    const totalLevelingCount = Object.keys(leveingsubstatKeyToMainStat).reduce((acc, key) => {
+    const totalLevelingCount = Object.keys(levelingSubstatKeyToMainStat).reduce((acc, key) => {
       acc[key] = levelingData.reduce((sum, item) => {
-        if (item.main_stat !== leveingsubstatKeyToMainStat[key]) {
+        if (item.main_stat !== levelingSubstatKeyToMainStat[key]) {
           return sum + item.TotalRoll;
         }
         return sum;
@@ -340,58 +300,18 @@ const StatisticsPage = () => {
       setSelectedMainStat(mainStat);
     };
   
-    const substatKeyToMainStat = {
-      sub_ATK_per: '%ATK',
-      sub_HP_per: '%HP',
-      sub_DEF_per: '%DEF',
-      sub_ATK: 'ATK',
-      sub_HP: 'HP',
-      sub_DEF: 'DEF',
-      sub_ER: 'ER',
-      sub_EM: 'EM',
-      sub_Crit_Rate: 'Crit Rate',
-      sub_Crit_DMG: 'Crit DMG',
-    };
-
-    const leveingsubstatKeyToMainStat = {
-      roll_ATK_per: '%ATK',
-      roll_HP_per: '%HP',
-      roll_DEF_per: '%DEF',
-      roll_ATK: 'ATK',
-      roll_HP: 'HP',
-      roll_DEF: 'DEF',
-      roll_ER: 'ER',
-      roll_EM: 'EM',
-      roll_Crit_Rate: 'Crit Rate',
-      roll_Crit_DMG: 'Crit DMG',
-    };
-
-    const substatToLevelingKeys = {
-      sub_ATK_per: 'roll_ATK_per',
-      sub_HP_per: 'roll_HP_per',
-      sub_DEF_per: 'roll_DEF_per',
-      sub_ATK: 'roll_ATK',
-      sub_HP: 'roll_HP',
-      sub_DEF: 'roll_DEF',
-      sub_ER: 'roll_ER',
-      sub_EM: 'roll_EM',
-      sub_Crit_Rate: 'roll_Crit_Rate',
-      sub_Crit_DMG: 'roll_Crit_DMG',
-    };
-
-    const addedToMainStatKey = {
-      added_ATK_per: '%ATK',
-      added_HP_per: '%HP',
-      added_DEF_per: '%DEF',
-      added_ATK: 'ATK',
-      added_HP: 'HP',
-      added_DEF: 'DEF',
-      added_ER: 'ER',
-      added_EM: 'EM',
-      added_Crit_Rate: 'Crit Rate',
-      added_Crit_DMG: 'Crit DMG',
-      added_None: 'None'
-    };
+    const substatKeyToMainStat = {};
+    const levelingSubstatKeyToMainStat = {};
+    const substatToLevelingKeys = {};
+    const addedToMainStatKey = {};
+    
+    keysConfig.forEach(mapping => {
+      const [subKey, rollKey, addedKey, value] = mapping;
+      if (subKey) substatKeyToMainStat[subKey] = value;
+      if (rollKey) levelingSubstatKeyToMainStat[rollKey] = value;
+      if (subKey && rollKey) substatToLevelingKeys[subKey] = rollKey;
+      if (addedKey) addedToMainStatKey[addedKey] = value;
+    });
   
     const filteredLevelingData = levelingData.filter(item => item.type === selectedType && item.main_stat === selectedMainStat);
   
@@ -420,7 +340,7 @@ const StatisticsPage = () => {
       return acc;
     }, {});
   
-    const totalLevelingCount = Object.keys(leveingsubstatKeyToMainStat).reduce((acc, key) => {
+    const totalLevelingCount = Object.keys(levelingSubstatKeyToMainStat).reduce((acc, key) => {
       acc[key] = filteredLevelingData.reduce((sum, item) => {
         return sum + item.TotalRoll;
       }, 0);
@@ -501,18 +421,13 @@ const StatisticsPage = () => {
   };
 
   const renderSubstatOverall = () => {
-    const substatKeyToMainStat = {
-      sub_ATK_per: '%ATK',
-      sub_HP_per: '%HP',
-      sub_DEF_per: '%DEF',
-      sub_ATK: 'ATK',
-      sub_HP: 'HP',
-      sub_DEF: 'DEF',
-      sub_ER: 'ER',
-      sub_EM: 'EM',
-      sub_Crit_Rate: 'Crit Rate',
-      sub_Crit_DMG: 'Crit DMG',
-    };
+    const substatKeyToMainStat = {};
+
+    
+    keysConfig.forEach(mapping => {
+      const [subKey, rollKey, addedKey, value] = mapping;
+      if (subKey) substatKeyToMainStat[subKey] = value;
+    });
 
     const substatTotals = substatData.reduce((acc, item) => {
       Object.keys(item).forEach(key => {
@@ -553,18 +468,13 @@ const StatisticsPage = () => {
 
   const renderSubstatSpecific = () => {
 
-    const substatKeyToMainStat = {
-      sub_ATK_per: '%ATK',
-      sub_HP_per: '%HP',
-      sub_DEF_per: '%DEF',
-      sub_ATK: 'ATK',
-      sub_HP: 'HP',
-      sub_DEF: 'DEF',
-      sub_ER: 'ER',
-      sub_EM: 'EM',
-      sub_Crit_Rate: 'Crit Rate',
-      sub_Crit_DMG: 'Crit DMG',
-    };
+    const substatKeyToMainStat = {};
+
+    
+    keysConfig.forEach(mapping => {
+      const [subKey, rollKey, addedKey, value] = mapping;
+      if (subKey) substatKeyToMainStat[subKey] = value;
+    });
 
 
     const handleTypeSelection = (type) => {

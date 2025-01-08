@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../Styles/AddArtifactLevelingModal.css'; // Import the CSS file
-import { apiConfig } from '../config/config';
+import { apiConfig, artifactConfig } from '../config/config';
 
 const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
@@ -38,7 +38,7 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     if (artifact.crit_dmg) substats.push('Crit DMG');
     setInitialSubstats(substats);
 
-    const allSubstats = ['HP', '%HP', 'ATK', '%ATK', 'DEF', '%DEF', 'ER', 'EM', 'Crit Rate', 'Crit DMG'];
+    const allSubstats = artifactConfig.allSubstats;
     const available = allSubstats.filter(substat => !substats.includes(substat) && substat !== artifact.main_stat);
     setAvailableSubstats(available);
 
