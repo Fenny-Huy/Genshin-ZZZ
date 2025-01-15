@@ -4,7 +4,7 @@ import axios from 'axios';
 import ArtifactListingForm from '../Components/ArtifactListingForm';
 import ReactPaginate from 'react-paginate';
 import { apiConfig } from '../config/config';
-import '../Styles/Pages.css';
+import styles from '../Styles/Pages/ArtifactListing.module.css';
 
 
 
@@ -56,24 +56,24 @@ const ArtifactListing = () => {
   return (
     <div>
       <h1>Artifact List</h1>
-      <table className="artifact-listing-table">
+      <table className={styles.artifact_listing_table}>
         <thead>
           <tr>
             <th>ID</th>
             <th>Set</th>
             <th>Type</th>
             <th>Main Stat</th>
-            <th>Subs Numb</th>
-            <th>%ATK</th>
-            <th>%HP</th>
-            <th>%DEF</th>
-            <th>ATK</th>
-            <th>HP</th>
-            <th>DEF</th>
-            <th>ER</th>
-            <th>EM</th>
-            <th>C.Rate</th>
-            <th>C.DMG</th>
+            <th className={styles.center_checkbox}>Numb</th>
+            <th className={styles.center_checkbox}>%ATK</th>
+            <th className={styles.center_checkbox}>%HP</th>
+            <th className={styles.center_checkbox}>%DEF</th>
+            <th className={styles.center_checkbox}>ATK</th>
+            <th className={styles.center_checkbox}>HP</th>
+            <th className={styles.center_checkbox}>DEF</th>
+            <th className={styles.center_checkbox}>ER</th>
+            <th className={styles.center_checkbox}>EM</th>
+            <th className={styles.center_checkbox}>C.Rate</th>
+            <th className={styles.center_checkbox}>C.DMG</th>
             <th>Source</th>
             <th>Score</th>
           </tr>

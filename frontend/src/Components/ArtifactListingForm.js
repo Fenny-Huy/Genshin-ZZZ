@@ -4,7 +4,7 @@ import EditArtifactModal from './EditArtifactModal';
 import AddArtifactLevelingModal from './AddArtifactLevelingModal';
 import axios from 'axios';
 import { apiConfig } from '../config/config';
-import '../Styles/ArtifactListingForm.css';
+import styles from '../Styles/Components/ArtifactListingForm.module.css';
 
 const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -61,22 +61,22 @@ const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
 
   return (
     <>
-      <tr className="artifact-row">
+      <tr className={styles.artifact_row}>
         <td>{artifact.id}</td>
         <td>{artifact.set}</td>
         <td>{artifact.type}</td>
         <td>{artifact.main_stat}</td>
-        <td>{artifact.number_of_substats}</td>
-        <td>{renderCheckbox(artifact.atk_percent)}</td>
-        <td>{renderCheckbox(artifact.hp_percent)}</td>
-        <td>{renderCheckbox(artifact.def_percent)}</td>
-        <td>{renderCheckbox(artifact.atk)}</td>
-        <td>{renderCheckbox(artifact.hp)}</td>
-        <td>{renderCheckbox(artifact.defense)}</td>
-        <td>{renderCheckbox(artifact.er)}</td>
-        <td>{renderCheckbox(artifact.em)}</td>
-        <td>{renderCheckbox(artifact.crit_rate)}</td>
-        <td>{renderCheckbox(artifact.crit_dmg)}</td>
+        <td className={styles.center_checkbox}>{artifact.number_of_substats}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.atk_percent)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.hp_percent)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.def_percent)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.atk)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.hp)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.defense)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.er)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.em)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.crit_rate)}</td>
+        <td className={styles.center_checkbox}>{renderCheckbox(artifact.crit_dmg)}</td>
         <td>{artifact.where_got_it}</td>
         <td>{artifact.score}</td>
         <td>
@@ -105,7 +105,7 @@ const ArtifactListingForm = ({ artifact, onEditModalChange }) => {
           onUpdateSuccess={() => handleUpdateSuccess('Artifact leveling added or updated successfully!')}
         />
       )}
-      {notification && <div className="notification">{notificationMessage}</div>}
+      {notification && <div className={styles.notification}>{notificationMessage}</div>}
     </>
   );
 };
