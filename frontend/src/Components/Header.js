@@ -14,6 +14,7 @@ const Header = () => {
         <Link to="/search-artifacts">Search Artifacts</Link>
         <Link to="/leveling-list">Artifact Leveling List</Link>
         <Link to="/statistics">Statistics</Link>
+        <Link to="/substatistics">Substatistics</Link>
       </div>
     </header>
   );
