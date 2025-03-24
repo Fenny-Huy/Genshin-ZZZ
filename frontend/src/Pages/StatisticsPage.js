@@ -501,7 +501,7 @@ const StatisticsPage = () => {
         )}
         {selectedType && selectedMainStat && (
           <ChartTable
-            chartType="pie"
+            chartType="bar"
             chartData={prepareChartData(substatDistribution, 'substat', 'percentage')}
             tableData={substatDistribution}
             chartTitle={`${selectedType} - ${selectedMainStat} Substat Distribution`}

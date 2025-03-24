@@ -1,5 +1,5 @@
 const apiConfig = {
-    apiUrl: 'http://localhost:8001',
+    apiUrl: 'http://192.168.68.127:8001',
   };
   
   const artifactConfig = {

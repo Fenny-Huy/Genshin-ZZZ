@@ -379,6 +379,7 @@ def get_artifact_leveling_list(db: pymysql.connections.Connection = Depends(get_
            ai.`Set`, ai.`Type`, ai.`Main Stat`, ai.`Number of substat`, ai.`%ATK`, ai.`%HP`, ai.`%DEF`, ai.`ATK`, ai.`HP`, ai.`DEF`, ai.`ER`, ai.`EM`, ai.`Crit Rate`, ai.`Crit DMG`, ai.`Where got it`, ai.`Score`
     FROM `Artifact leveling` al
     JOIN `Artifact itself` ai ON al.ID = ai.ID
+    ORDER BY al.CreateDate
     """
     with db.cursor() as cursor:
         cursor.execute(query)
