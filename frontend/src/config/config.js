@@ -83,7 +83,9 @@ const apiConfig = {
         "Vermillion Hereafter",
         "Viridescent Venerer",
         "Vourukasha's Glow",
-        "Wanderer's Troupe"
+        "Wanderer's Troupe",
+        "Long Night's Oath",
+        "Finale of the Deep Galleries"
       ],
   };
 
