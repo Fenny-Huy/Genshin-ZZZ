@@ -128,7 +128,7 @@ def get_artifacts(db: pymysql.connections.Connection = Depends(get_local_db)):
 
 # API endpoint to create a new artifact
 @app.post("/genshinartifacts/")
-def create_artifact(artifact: Artifact, db: pymysql.connections.Connection = Depends(get_local_db)):
+def create_artifact(artifact: Artifact, local_db: pymysql.connections.Connection = Depends(get_local_db), prod_db: pymysql.connections.Connection = Depends(get_prod_db)):
     # Construct the SQL query dynamically
     query = f"""
         INSERT INTO `Artifact itself` (
@@ -145,7 +145,7 @@ def create_artifact(artifact: Artifact, db: pymysql.connections.Connection = Dep
     # Execute the query
     for db in (local_db, prod_db):
         with db.cursor() as cursor:
-            cursor.execute(query, params)
+            cursor.execute(query)
             db.commit()
     return {"message": "Drive disc created successfully"}
 
@@ -278,7 +278,7 @@ def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connection
 
 # API endpoint for insert or update an artifact leveling
 @app.post("/artifactleveling/")
-def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.connections.Connection = Depends(get_local_db)):
+def add_or_update_artifact_leveling(leveling: ArtifactLeveling, local_db: pymysql.connections.Connection = Depends(get_local_db), prod_db: pymysql.connections.Connection = Depends(get_prod_db)):
     query_check = "SELECT 1 FROM `Drive Disc leveling` WHERE ID = %s"
     with local_db.cursor() as cursor:
         cursor.execute(query_check, (leveling.id,))
@@ -310,7 +310,7 @@ def add_or_update_artifact_leveling(leveling: ArtifactLeveling, db: pymysql.conn
     for db in (local_db, prod_db):
         with db.cursor() as cursor:
             logger.info(f"Executing query: {sql}")
-            cursor.execute(sql, params)
+            cursor.execute(sql)
         db.commit()
     return {"message": "Artifacts leveling record added/updated locally and backed up remotely"}
 
