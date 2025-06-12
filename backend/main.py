@@ -14,13 +14,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-
-# Database connection settings
-DB_HOST = "localhost"
-DB_USER = "root"
-DB_PASSWORD = "Fennik123@"
-DB_NAME = "artifactstest"
-
 # FastAPI app initialization
 app = FastAPI()
 app.add_middleware(
