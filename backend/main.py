@@ -242,7 +242,7 @@ def search_artifacts(
 
 # API endpoint to update an artifact
 @app.put("/genshinartifacts/{artifact_id}/")
-def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connections.Connection = Depends(get_local_db)):
+def update_artifact(artifact_id: int, artifact: Artifact, local_db: pymysql.connections.Connection = Depends(get_local_db), prod_db: pymysql.connections.Connection = Depends(get_prod_db)):
     query = f"""
         UPDATE `Artifact itself` SET
             `Set` = "{artifact.set}",
@@ -269,8 +269,9 @@ def update_artifact(artifact_id: int, artifact: Artifact, db: pymysql.connection
 
 
 
-    with db.cursor() as cursor:
-        cursor.execute(query)
+    for db in (local_db, prod_db):
+        with db.cursor() as cursor:
+            cursor.execute(query)
         db.commit()
     return {"message": "Artifact updated successfully"}
 
