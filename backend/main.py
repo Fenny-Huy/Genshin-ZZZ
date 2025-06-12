@@ -147,7 +147,7 @@ def create_artifact(artifact: Artifact, local_db: pymysql.connections.Connection
         with db.cursor() as cursor:
             cursor.execute(query)
             db.commit()
-    return {"message": "Drive disc created successfully"}
+    return {"message": "Artifact created successfully"}
 
 
 
@@ -280,7 +280,7 @@ def update_artifact(artifact_id: int, artifact: Artifact, local_db: pymysql.conn
 # API endpoint for insert or update an artifact leveling
 @app.post("/artifactleveling/")
 def add_or_update_artifact_leveling(leveling: ArtifactLeveling, local_db: pymysql.connections.Connection = Depends(get_local_db), prod_db: pymysql.connections.Connection = Depends(get_prod_db)):
-    query_check = "SELECT 1 FROM `Drive Disc leveling` WHERE ID = %s"
+    query_check = "SELECT 1 FROM `Artifact leveling` WHERE ID = %s"
     with local_db.cursor() as cursor:
         cursor.execute(query_check, (leveling.id,))
         exists = cursor.fetchone() is not None
