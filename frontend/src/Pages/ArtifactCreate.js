@@ -20,6 +20,7 @@ const ArtifactCreate = () => {
 
 
       const [formData, setFormData] = useState(initialFormData);
+      const [isLoading, setIsLoading] = useState(false);
     
       const artifactTypes = artifactConfig.artifactTypes;
     
@@ -74,11 +75,14 @@ const ArtifactCreate = () => {
           !artifactSet ||
           substats.length !== parseInt(numberOfSubstats, 10)
         );
-      };
-    
-      const handleSubmit = async (e) => {
+      };      const handleSubmit = async (e) => {
         e.preventDefault();
-    
+        
+        // Prevent multiple submissions
+        if (isLoading) return;
+        
+        setIsLoading(true);
+
         const payload = {
           id: 1,
           set: formData.artifactSet.value,
@@ -98,7 +102,7 @@ const ArtifactCreate = () => {
           where_got_it: formData.source,
           score: formData.score,
         };
-    
+
         try {
           const response = await axios.post(`${apiConfig.apiUrl}/genshinartifacts/`, payload);
           alert(response.data.message);
@@ -106,6 +110,8 @@ const ArtifactCreate = () => {
         } catch (error) {
           console.error("Error creating artifact:", error);
           alert("Failed to create artifact. Check console for details.");
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -114,7 +120,20 @@ const ArtifactCreate = () => {
         
           <div className={styles.artifact_create_container}>
             <h1>Create Artifact</h1>
-            <ArtifactCreateForm formData={formData} handleSubmit={handleSubmit} artifactTypes={artifactTypes} mainStatsOptions={mainStatsOptions} filteredSubstats={filteredSubstats} scores={scores} sources={sources} artifactSets={artifactSets} handleSelectChange={handleSelectChange} handleInputChange={handleInputChange} isSubmitDisabled={isSubmitDisabled} />
+            <ArtifactCreateForm 
+              formData={formData} 
+              handleSubmit={handleSubmit} 
+              artifactTypes={artifactTypes} 
+              mainStatsOptions={mainStatsOptions} 
+              filteredSubstats={filteredSubstats} 
+              scores={scores} 
+              sources={sources} 
+              artifactSets={artifactSets} 
+              handleSelectChange={handleSelectChange} 
+              handleInputChange={handleInputChange} 
+              isSubmitDisabled={isSubmitDisabled} 
+              isLoading={isLoading}
+            />
           </div>
 
         </div>

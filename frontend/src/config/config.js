@@ -1,5 +1,5 @@
 const apiConfig = {
-    apiUrl: 'http://172.26.233.163:8001',
+    apiUrl: process.env.REACT_APP_API_URL || "http://localhost:8001",
   };
   
   const artifactConfig = {
