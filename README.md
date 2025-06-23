@@ -20,3 +20,9 @@ REMOTE_DB_NAME=""
 
 
 add these in .env file in backend
+
+run these to host the webpage on linux
+
+uvicorn main:app --host 0.0.0.0 --port 8001
+
+BROWSER=none PORT=3001 npm run start
