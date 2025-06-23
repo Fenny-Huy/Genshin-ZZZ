@@ -27,10 +27,11 @@ app.add_middleware(
 # Database Dependency
 def get_local_db():
     connection = pymysql.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME
+        host=settings.local_db_host,
+        user=settings.local_db_user,
+        password=settings.local_db_password,
+        database=settings.local_db_name,
+        port=settings.local_db_port,
     )
     try:
         yield connection
