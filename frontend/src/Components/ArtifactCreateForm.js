@@ -4,8 +4,81 @@ import Select from "react-select"; // Import React-Select
 import styles from "../Styles/Components/ArtifactCreateForm.module.css";
 
 const ArtifactCreateForm = ({ formData, handleSubmit, artifactTypes, mainStatsOptions, filteredSubstats, scores, sources, artifactSets, handleSelectChange, handleInputChange, isSubmitDisabled, isLoading }) => {
+  
+  // Substat icons/symbols mapping
+  const substatIcons = {
+    '%ATK': '⚔️',
+    '%HP': '❤️',
+    '%DEF': '🛡️',
+    'ATK': '⚡',
+    'HP': '💊',
+    'DEF': '🏰',
+    'ER': '🔋',
+    'EM': '🧪',
+    'Crit Rate': '🎯',
+    'Crit DMG': '💥'
+  };
+
+  // Calculate form completion progress
+  const getFormProgress = () => {
+    const fields = [
+      formData.artifactSet,
+      formData.type,
+      formData.mainStat,
+      formData.numberOfSubstats,
+      formData.substats.length === parseInt(formData.numberOfSubstats || 0, 10) && formData.substats.length > 0,
+      formData.score,
+      formData.source
+    ];
+    
+    const completed = fields.filter(Boolean).length;
+    const total = fields.length;
+    return { completed, total, percentage: (completed / total) * 100 };
+  };
+
+  const progress = getFormProgress();
+
+  // Get substat selection feedback
+  const getSubstatFeedback = () => {
+    if (!formData.numberOfSubstats) return null;
+    
+    const requiredCount = parseInt(formData.numberOfSubstats, 10);
+    const selectedCount = formData.substats.length;
+    
+    if (selectedCount === requiredCount) {
+      return { type: 'success', message: `Perfect! You've selected ${selectedCount} substats.` };
+    } else if (selectedCount > requiredCount) {
+      return { type: 'warning', message: `Too many substats selected. You need ${requiredCount} but have ${selectedCount}.` };
+    } else if (selectedCount > 0) {
+      return { type: 'info', message: `Select ${requiredCount - selectedCount} more substat${requiredCount - selectedCount > 1 ? 's' : ''}.` };
+    }
+    
+    return { type: 'info', message: `Select ${requiredCount} substats to continue.` };
+  };
+
+  const substatFeedback = getSubstatFeedback();
+
   return (
     <div className='artifact-create-form'>
+      {/* Progress Bar */}
+      <div className={styles.progressSection}>
+        <div className={styles.progressHeader}>
+          <h3 className={styles.progressTitle}>Form Progress</h3>
+          <span className={styles.progressText}>{progress.completed}/{progress.total} completed</span>
+        </div>
+        <div className={styles.progressBar}>
+          <div className={styles.progressFill} style={{ width: `${progress.percentage}%` }}></div>
+        </div>
+        <div className={styles.progressDots}>
+          {Array.from({ length: progress.total }, (_, i) => (
+            <div
+              key={i}
+              className={`${styles.progressDot} ${i < progress.completed ? styles.completed : ''}`}
+            ></div>
+          ))}
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit} className={styles.form}>
 
           <div className={styles.inputGroup}>
@@ -69,10 +142,16 @@ const ArtifactCreateForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
                     className={styles.checkbox}
                     disabled={!formData.numberOfSubstats}
                   />
-                  {substat}
+                  <span className={styles.substatIcon}>{substatIcons[substat] || '⭐'}</span>
+                  <span className={styles.substatName}>{substat}</span>
                 </label>
               ))}
             </div>
+            {substatFeedback && (
+              <div className={`${styles.substatFeedback} ${styles[substatFeedback.type]}`}>
+                {substatFeedback.message}
+              </div>
+            )}
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Score:</label>
