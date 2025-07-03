@@ -21,19 +21,21 @@ const ArtifactCreateForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
 
   // Calculate form completion progress
   const getFormProgress = () => {
-    const fields = [
-      formData.artifactSet,
-      formData.type,
-      formData.mainStat,
-      formData.numberOfSubstats,
-      formData.substats.length === parseInt(formData.numberOfSubstats || 0, 10) && formData.substats.length > 0,
-      formData.score,
-      formData.source
+    const steps = [
+      { name: 'Artifact Set', completed: !!formData.artifactSet },
+      { name: 'Artifact Type', completed: !!formData.type },
+      { name: 'Main Stat', completed: !!formData.mainStat },
+      { name: 'Number of Substats', completed: !!formData.numberOfSubstats },
+      { name: 'Substats Selection', completed: formData.numberOfSubstats && formData.substats.length === parseInt(formData.numberOfSubstats, 10) },
+      { name: 'Score', completed: !!formData.score },
+      { name: 'Source', completed: !!formData.source }
     ];
     
-    const completed = fields.filter(Boolean).length;
-    const total = fields.length;
-    return { completed, total, percentage: (completed / total) * 100 };
+    const completed = steps.filter(step => step.completed).length;
+    const total = steps.length;
+    const percentage = (completed / total) * 100;
+    
+    return { steps, completed, total, percentage };
   };
 
   const progress = getFormProgress();
@@ -67,14 +69,20 @@ const ArtifactCreateForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
           <span className={styles.progressText}>{progress.completed}/{progress.total} completed</span>
         </div>
         <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: `${progress.percentage}%` }}></div>
+          <div 
+            className={styles.progressFill} 
+            style={{ width: `${progress.percentage}%` }}
+          ></div>
         </div>
         <div className={styles.progressDots}>
-          {Array.from({ length: progress.total }, (_, i) => (
-            <div
-              key={i}
-              className={`${styles.progressDot} ${i < progress.completed ? styles.completed : ''}`}
-            ></div>
+          {progress.steps.map((step, index) => (
+            <div 
+              key={index} 
+              className={`${styles.progressDot} ${step.completed ? styles.completed : ''}`}
+              title={step.name}
+            >
+              {step.completed && <span className={styles.checkmark}>✓</span>}
+            </div>
           ))}
         </div>
       </div>
