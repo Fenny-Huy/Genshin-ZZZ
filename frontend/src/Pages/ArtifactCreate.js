@@ -116,10 +116,15 @@ const ArtifactCreate = () => {
       };
 
       return (
-        <div className="artifact-create">
-        
-          <div className={styles.artifact_create_container}>
-            <h1>Create Artifact</h1>
+        <div className={styles.artifact_create_container}>
+          <div className={styles.page_header}>
+            <h1 className={styles.page_title}>Create New Artifact</h1>
+            <p className={styles.page_subtitle}>
+              Add a new artifact to your collection with detailed stats and substats
+            </p>
+          </div>
+          
+          <div className={styles.form_container}>
             <ArtifactCreateForm 
               formData={formData} 
               handleSubmit={handleSubmit} 
@@ -135,7 +140,6 @@ const ArtifactCreate = () => {
               isLoading={isLoading}
             />
           </div>
-
         </div>
       );
 

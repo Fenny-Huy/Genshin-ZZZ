@@ -57,7 +57,7 @@ const ArtifactCreateForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Substats:</label>
-            <div>
+            <div className={styles.checkboxContainer}>
               {filteredSubstats.map((substat) => (
                 <label key={substat} className={styles.checkboxLabel}>
                   <input
