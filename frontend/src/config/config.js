@@ -46,7 +46,7 @@ const apiConfig = {
     },
     allSubstats: ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"],
     scores: ["Complete trash", "Trash", "Usable", "Good", "Excellent", "Marvelous", "Unknown"],
-    sources: ["Domain farming", "Bosses", "Strongbox", "Spiral Abyss"],
+    sources: ["Domain farming", "Bosses", "Strongbox", "Spiral Abyss", "Stygian Onslaught"],
     artifactSets: [
         "Archaic Petra",
         "Blizzard Strayer",
