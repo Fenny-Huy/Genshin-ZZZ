@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: genshin-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: genshin_user
+      POSTGRES_PASSWORD: genshin_password
+      POSTGRES_DB: genshin_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./Misc:/docker-entrypoint-initdb.d
+
+# Notes:
+# - The `volumes` section mounts the `Misc` folder to `/docker-entrypoint-initdb.d` in the container.
+# - PostgreSQL automatically executes all `.sql` scripts in `/docker-entrypoint-initdb.d` in alphabetical order.
+# - Ensure the SQL scripts are named in the desired execution order (e.g., `01_`, `02_`, etc.).
