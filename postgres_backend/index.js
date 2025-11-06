@@ -27,9 +27,13 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const genshinArtifactsRouter = require('./api/genshinartifacts');
+const searchArtifactsRouter = require("./api/search_artifacts");
 
 // Use the genshinartifacts API router
 app.use('/genshinartifacts', genshinArtifactsRouter);
+
+// Use the search_artifacts API router
+app.use("/search_artifacts", searchArtifactsRouter);
 
 // Start the server
 app.listen(port, () => {

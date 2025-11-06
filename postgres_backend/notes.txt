@@ -1,0 +1,1 @@
+/search_artifacts get URL has slight different with / before ?
