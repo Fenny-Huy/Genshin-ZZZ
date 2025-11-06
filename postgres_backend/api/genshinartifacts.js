@@ -9,7 +9,28 @@ genshinArtifactsRouter.use(express.json());
 genshinArtifactsRouter.get("/", async (req, res) => {
   try {
     const artifacts = await sql`SELECT * FROM "Artifact_itself"`;
-    res.status(200).json(artifacts);
+
+    const formattedArtifacts = artifacts.map(row => ({
+      id: row.ID,
+      set: row.Set,
+      type: row.Type,
+      main_stat: row.Main_Stat,
+      number_of_substats: row.Number_of_substat,
+      atk_percent: row.Percent_ATK,
+      hp_percent: row.Percent_HP,
+      def_percent: row.Percent_DEF,
+      atk: row.ATK,
+      hp: row.HP,
+      defense: row.DEF,
+      er: row.ER,
+      em: row.EM,
+      crit_rate: row.Crit_Rate,
+      crit_dmg: row.Crit_DMG,
+      where_got_it: row.Where_got_it,
+      score: row.Score,
+    }));
+
+    res.status(200).json(formattedArtifacts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
