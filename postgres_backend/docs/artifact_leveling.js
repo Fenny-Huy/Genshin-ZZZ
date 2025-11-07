@@ -54,3 +54,54 @@
  *       500:
  *         description: Internal Server Error
  */
+/**
+ * @swagger
+ * /artifactleveling/{artifact_id}:
+ *   get:
+ *     tags: [Artifact Leveling]
+ *     summary: Fetch a single artifact leveling record
+ *     description: Retrieve a specific artifact leveling record by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: artifact_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the artifact leveling record to fetch
+ *     responses:
+ *       200:
+ *         description: Artifact leveling record retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 L_HP:
+ *                   type: integer
+ *                 L_ATK:
+ *                   type: integer
+ *                 L_DEF:
+ *                   type: integer
+ *                 L_HP_per:
+ *                   type: integer
+ *                 L_ATK_per:
+ *                   type: integer
+ *                 L_DEF_per:
+ *                   type: integer
+ *                 L_EM:
+ *                   type: integer
+ *                 L_ER:
+ *                   type: integer
+ *                 L_CritRate:
+ *                   type: integer
+ *                 L_CritDMG:
+ *                   type: integer
+ *                 addedSubstat:
+ *                   type: string
+ *       404:
+ *         description: Artifact leveling record not found
+ *       500:
+ *         description: Internal Server Error
+ */

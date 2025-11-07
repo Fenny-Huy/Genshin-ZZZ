@@ -87,4 +87,38 @@ artifactLevelingRouter.post("/", async (req, res) => {
   }
 });
 
+artifactLevelingRouter.get("/:artifact_id", async (req, res) => {
+  try {
+    const { artifact_id } = req.params;
+
+    const query = `SELECT * FROM "Artifact_leveling" WHERE "ID" = $1`;
+    const rows = await sql.unsafe(query, [artifact_id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Artifact leveling record not found" });
+    }
+
+    const row = rows[0];
+    const artifactLeveling = {
+      id: row.ID,
+      L_HP: row.L_HP,
+      L_ATK: row.L_ATK,
+      L_DEF: row.L_DEF,
+      L_HP_per: row.L_Percent_HP,
+      L_ATK_per: row.L_Percent_ATK,
+      L_DEF_per: row.L_Percent_DEF,
+      L_EM: row.L_EM,
+      L_ER: row.L_ER,
+      L_CritRate: row.L_Crit_Rate,
+      L_CritDMG: row.L_Crit_DMG,
+      addedSubstat: row.Added_substat
+    };
+
+    res.status(200).json(artifactLeveling);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = artifactLevelingRouter;
