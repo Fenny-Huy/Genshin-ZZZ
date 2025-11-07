@@ -77,4 +77,59 @@ genshinArtifactsRouter.post("/", async (req, res) => {
   }
 });
 
+genshinArtifactsRouter.put("/:artifact_id", async (req, res) => {
+  try {
+    const { artifact_id } = req.params;
+    const {
+      set,
+      type,
+      main_stat,
+      number_of_substats,
+      atk_percent,
+      hp_percent,
+      def_percent,
+      atk,
+      hp,
+      defense,
+      er,
+      em,
+      crit_rate,
+      crit_dmg,
+      where_got_it,
+      score
+    } = req.body;
+
+    const updatedArtifact = await sql`
+      UPDATE "Artifact_itself" SET
+        "Set" = ${set},
+        "Type" = ${type},
+        "Main_Stat" = ${main_stat},
+        "Number_of_substat" = ${number_of_substats},
+        "Percent_ATK" = ${atk_percent},
+        "Percent_HP" = ${hp_percent},
+        "Percent_DEF" = ${def_percent},
+        "ATK" = ${atk},
+        "HP" = ${hp},
+        "DEF" = ${defense},
+        "ER" = ${er},
+        "EM" = ${em},
+        "Crit_Rate" = ${crit_rate},
+        "Crit_DMG" = ${crit_dmg},
+        "Where_got_it" = ${where_got_it},
+        "Score" = ${score}
+      WHERE "ID" = ${artifact_id}
+      RETURNING *;
+    `;
+
+    if (updatedArtifact.length === 0) {
+      return res.status(404).json({ error: "Artifact not found" });
+    }
+
+    res.status(200).json(updatedArtifact[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = genshinArtifactsRouter;
