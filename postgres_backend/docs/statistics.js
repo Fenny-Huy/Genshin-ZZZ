@@ -69,3 +69,49 @@
  *                         - type: string
  *                         - type: number
  */
+/**
+ * @swagger
+ * /statistics/substats:
+ *   get:
+ *     summary: Fetch statistics of substats
+ *     tags:
+ *       - Statistics
+ *     responses:
+ *       200:
+ *         description: Statistics of artifact substats
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                   main_stat:
+ *                     type: string
+ *                   ArtifactCount:
+ *                     type: integer
+ *                   sub_ATK_per:
+ *                     type: number
+ *                   sub_HP_per:
+ *                     type: number
+ *                   sub_DEF_per:
+ *                     type: number
+ *                   sub_ATK:
+ *                     type: number
+ *                   sub_HP:
+ *                     type: number
+ *                   sub_DEF:
+ *                     type: number
+ *                   sub_ER:
+ *                     type: number
+ *                   sub_EM:
+ *                     type: number
+ *                   sub_Crit_Rate:
+ *                     type: number
+ *                   sub_Crit_DMG:
+ *                     type: number
+ *                   substatCount:
+ *                     type: number
+ */
