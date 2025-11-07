@@ -30,6 +30,7 @@ const genshinArtifactsRouter = require('./api/genshinartifacts');
 const searchArtifactsRouter = require("./api/search_artifacts");
 const artifactLevelingRouter = require("./api/artifact_leveling");
 const artifactLevelingIdsRouter = require("./api/artifact_leveling_ids");
+const artifactRouter = require("./api/artifact");
 
 // Use the genshinartifacts API router
 app.use('/genshinartifacts', genshinArtifactsRouter);
@@ -42,6 +43,9 @@ app.use("/artifactleveling", artifactLevelingRouter);
 
 // Use the artifact_leveling_ids API router
 app.use("/artifactlevelingids", artifactLevelingIdsRouter);
+
+// Use the artifact API router
+app.use("/artifact", artifactRouter);
 
 // Start the server
 app.listen(port, () => {
