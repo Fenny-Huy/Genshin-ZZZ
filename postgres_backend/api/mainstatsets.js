@@ -1,7 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const sql = require("../db.js");
 
 const mainstatsetsRouter = express.Router();
+mainstatsetsRouter.use(cors());
 
 mainstatsetsRouter.get("/", async (req, res) => {
   try {

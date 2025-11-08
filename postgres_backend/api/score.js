@@ -1,7 +1,10 @@
 const express = require("express");
+const cors = require("cors");
+
 const sql = require("../db.js");
 
 const scoreRouter = express.Router();
+scoreRouter.use(cors());
 
 // Endpoint to get artifact scores with their counts
 scoreRouter.get("/", async (req, res) => {

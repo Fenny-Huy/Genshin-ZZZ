@@ -1,7 +1,10 @@
 const express = require("express");
+const cors = require("cors");
+
 const sql = require("../db.js");
 
 const setRouter = express.Router();
+setRouter.use(cors());
 
 // Endpoint to get artifact sets with their counts
 setRouter.get("/set", async (req, res) => {

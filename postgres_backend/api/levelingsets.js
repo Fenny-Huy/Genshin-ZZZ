@@ -1,7 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const sql = require("../db.js");
 
 const levelingsetsRouter = express.Router();
+levelingsetsRouter.use(cors());
 
 levelingsetsRouter.get("/", async (req, res) => {
   try {
