@@ -4,7 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 // PostgreSQL connection pool
 const pool = new Pool({

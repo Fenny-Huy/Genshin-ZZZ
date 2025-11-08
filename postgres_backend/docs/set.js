@@ -59,4 +59,26 @@
  *                     type: string
  *                   count:
  *                     type: integer
+ *
+ * /set/set_where:
+ *   get:
+ *     tags:
+ *       - Set Routes
+ *     summary: Retrieve statistics for artifact sets and their sources
+ *     responses:
+ *       200:
+ *         description: A list of artifact sets and their sources with counts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   set:
+ *                     type: string
+ *                   where:
+ *                     type: string
+ *                   count:
+ *                     type: integer
  */

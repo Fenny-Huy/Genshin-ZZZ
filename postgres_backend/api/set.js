@@ -69,4 +69,26 @@ setRouter.get("/score", async (req, res) => {
   }
 });
 
+// Endpoint to get statistics for artifact sets and their sources
+setRouter.get("/set_where", async (req, res) => {
+  try {
+    const query = `
+      SELECT "Set", "Where_got_it", COUNT(*) AS totalcount
+      FROM "Artifact_itself"
+      GROUP BY "Set", "Where_got_it"
+      ORDER BY totalcount DESC;
+    `;
+    const rows = await sql.unsafe(query);
+    const artifactsWithSubs = rows.map(row => ({
+      set: row.Set,
+      where: row.Where_got_it,
+      count: parseInt(row.totalcount, 10), // Ensure count is an integer
+    }));
+    res.status(200).json(artifactsWithSubs);
+  } catch (error) {
+    console.error("Error fetching set and where statistics:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = setRouter;
