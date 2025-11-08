@@ -115,3 +115,56 @@
  *                   substatCount:
  *                     type: number
  */
+/**
+ * @swagger
+ * /statistics/substats/{setname}:
+ *   get:
+ *     summary: Fetch statistics of substats for a specific set
+ *     tags:
+ *       - Statistics
+ *     parameters:
+ *       - in: path
+ *         name: setname
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The name of the artifact set
+ *     responses:
+ *       200:
+ *         description: Statistics of artifact substats for the specified set
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                   main_stat:
+ *                     type: string
+ *                   ArtifactCount:
+ *                     type: integer
+ *                   sub_ATK_per:
+ *                     type: number
+ *                   sub_HP_per:
+ *                     type: number
+ *                   sub_DEF_per:
+ *                     type: number
+ *                   sub_ATK:
+ *                     type: integer
+ *                   sub_HP:
+ *                     type: integer
+ *                   sub_DEF:
+ *                     type: integer
+ *                   sub_ER:
+ *                     type: integer
+ *                   sub_EM:
+ *                     type: integer
+ *                   sub_Crit_Rate:
+ *                     type: number
+ *                   sub_Crit_DMG:
+ *                     type: number
+ *                   substatCount:
+ *                     type: integer
+ */
