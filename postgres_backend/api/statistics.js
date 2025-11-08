@@ -372,4 +372,39 @@ statisticsRouter.get("/leveling/:setname", async (req, res) => {
   }
 });
 
+statisticsRouter.get("/levelinginvestment", async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+          i."Type",
+          i."Set",
+          COUNT(*) AS "TypeCount",
+          SUM("L_HP" + "L_ATK" + "L_DEF" + "L_Percent_HP" + "L_Percent_ATK" + "L_Percent_DEF" + "L_EM" + "L_ER" + "L_Crit_Rate" + "L_Crit_DMG") AS "TotalRolls"
+      FROM 
+          "Artifact_leveling" l
+      INNER JOIN 
+          "Artifact_itself" i
+      ON 
+          l."ID" = i."ID"
+      GROUP BY 
+          i."Type",
+          i."Set"
+      ORDER BY "TotalRolls" DESC;
+    `;
+
+    const rows = await sql.unsafe(query);
+    const artifactsWithSubs = rows.map(row => ({
+      type: row.Type,
+      set: row.Set,
+      ArtifactCount: parseInt(row.TypeCount, 10),
+      TotalRoll: parseInt(row.TotalRolls, 10),
+    }));
+
+    res.status(200).json(artifactsWithSubs);
+  } catch (error) {
+    console.error("Error fetching leveling investment statistics:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = statisticsRouter;

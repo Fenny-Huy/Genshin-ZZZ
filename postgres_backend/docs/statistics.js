@@ -355,3 +355,29 @@
  *                   added_None:
  *                     type: integer
  */
+/**
+ * @swagger
+ * /statistics/levelinginvestment:
+ *   get:
+ *     summary: Fetch leveling investment statistics
+ *     tags:
+ *       - Statistics
+ *     responses:
+ *       200:
+ *         description: Leveling investment statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                   set:
+ *                     type: string
+ *                   ArtifactCount:
+ *                     type: integer
+ *                   TotalRoll:
+ *                     type: integer
+ */
