@@ -70,7 +70,7 @@ genshinArtifactsRouter.post("/", async (req, res) => {
       ) RETURNING *;
     `;
 
-    res.status(201).json(newArtifact);
+    res.status(201).json({ message: "Artifact created successfully", artifact: newArtifact });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -95,7 +95,7 @@ artifactLevelingRouter.get("/:artifact_id", async (req, res) => {
     const rows = await sql.unsafe(query, [artifact_id]);
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: "Artifact leveling record not found" });
+      return res.status(200).json(null); // Return null when not found
     }
 
     const row = rows[0];
