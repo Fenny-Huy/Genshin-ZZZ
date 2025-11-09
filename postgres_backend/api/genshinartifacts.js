@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const genshinArtifactsRouter = express.Router();
 genshinArtifactsRouter.use(cors());
@@ -8,7 +8,7 @@ genshinArtifactsRouter.use(express.json());
 
 genshinArtifactsRouter.get("/", async (req, res) => {
   try {
-    const artifacts = await sql`SELECT * FROM "Artifact_itself"`;
+    const artifacts = await localDb`SELECT * FROM "Artifact_itself"`;
 
     const formattedArtifacts = artifacts.map(row => ({
       id: row.ID,
@@ -58,17 +58,20 @@ genshinArtifactsRouter.post("/", async (req, res) => {
       score
     } = req.body;
 
-    const newArtifact = await sql`
-      INSERT INTO "Artifact_itself" (
-        "Set", "Type", "Main_Stat", "Number_of_substat", "Percent_ATK",
-        "Percent_HP", "Percent_DEF", "ATK", "HP", "DEF", "ER", "EM",
-        "Crit_Rate", "Crit_DMG", "Where_got_it", "Score"
-      ) VALUES (
-        ${set}, ${type}, ${main_stat}, ${number_of_substats}, ${atk_percent},
-        ${hp_percent}, ${def_percent}, ${atk}, ${hp}, ${defense}, ${er}, ${em},
-        ${crit_rate}, ${crit_dmg}, ${where_got_it}, ${score}
-      ) RETURNING *;
-    `;
+    let newArtifact;
+    for (const db of [localDb, cloudDb]) {
+      newArtifact = await db`
+        INSERT INTO "Artifact_itself" (
+          "Set", "Type", "Main_Stat", "Number_of_substat", "Percent_ATK",
+          "Percent_HP", "Percent_DEF", "ATK", "HP", "DEF", "ER", "EM",
+          "Crit_Rate", "Crit_DMG", "Where_got_it", "Score"
+        ) VALUES (
+          ${set}, ${type}, ${main_stat}, ${number_of_substats}, ${atk_percent},
+          ${hp_percent}, ${def_percent}, ${atk}, ${hp}, ${defense}, ${er}, ${em},
+          ${crit_rate}, ${crit_dmg}, ${where_got_it}, ${score}
+        ) RETURNING *;
+      `;
+    }
 
     res.status(201).json({ message: "Artifact created successfully", artifact: newArtifact });
   } catch (error) {
@@ -99,29 +102,32 @@ genshinArtifactsRouter.put("/:artifact_id", async (req, res) => {
       score
     } = req.body;
 
-    const updatedArtifact = await sql`
-      UPDATE "Artifact_itself" SET
-        "Set" = ${set},
-        "Type" = ${type},
-        "Main_Stat" = ${main_stat},
-        "Number_of_substat" = ${number_of_substats},
-        "Percent_ATK" = ${atk_percent},
-        "Percent_HP" = ${hp_percent},
-        "Percent_DEF" = ${def_percent},
-        "ATK" = ${atk},
-        "HP" = ${hp},
-        "DEF" = ${defense},
-        "ER" = ${er},
-        "EM" = ${em},
-        "Crit_Rate" = ${crit_rate},
-        "Crit_DMG" = ${crit_dmg},
-        "Where_got_it" = ${where_got_it},
-        "Score" = ${score}
-      WHERE "ID" = ${artifact_id}
-      RETURNING *;
-    `;
+    let updatedArtifact;
+    for (const db of [localDb, cloudDb]) {
+      updatedArtifact = await db`
+        UPDATE "Artifact_itself" SET
+          "Set" = ${set},
+          "Type" = ${type},
+          "Main_Stat" = ${main_stat},
+          "Number_of_substat" = ${number_of_substats},
+          "Percent_ATK" = ${atk_percent},
+          "Percent_HP" = ${hp_percent},
+          "Percent_DEF" = ${def_percent},
+          "ATK" = ${atk},
+          "HP" = ${hp},
+          "DEF" = ${defense},
+          "ER" = ${er},
+          "EM" = ${em},
+          "Crit_Rate" = ${crit_rate},
+          "Crit_DMG" = ${crit_dmg},
+          "Where_got_it" = ${where_got_it},
+          "Score" = ${score}
+        WHERE "ID" = ${artifact_id}
+        RETURNING *;
+      `;
+    }
 
-    if (updatedArtifact.length === 0) {
+    if (!updatedArtifact || updatedArtifact.length === 0) {
       return res.status(404).json({ error: "Artifact not found" });
     }
 
