@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const levelingsetsRouter = express.Router();
 levelingsetsRouter.use(cors());
@@ -14,7 +14,7 @@ levelingsetsRouter.get("/", async (req, res) => {
       GROUP BY \"Set\" 
       ORDER BY \"Set\";
     `;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const sets = rows.map(row => row.Set);
     res.status(200).json(sets);
   } catch (error) {

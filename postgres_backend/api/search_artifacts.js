@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const searchArtifactsRouter = express.Router();
 searchArtifactsRouter.use(cors());
@@ -78,7 +78,7 @@ searchArtifactsRouter.get("/", async (req, res) => {
       params.push(queryParams.score);
     }
 
-    const rows = await sql.unsafe(query, params);
+    const rows = await localDb.unsafe(query, params);
 
     const artifacts = rows.map(row => ({
       id: row.ID,

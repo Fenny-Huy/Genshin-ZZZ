@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const artifactLevelingRouter = express.Router();
 artifactLevelingRouter.use(cors());
@@ -24,7 +24,7 @@ artifactLevelingRouter.post("/", async (req, res) => {
     } = req.body;
 
     const queryCheck = `SELECT 1 FROM "Artifact_leveling" WHERE "ID" = $1`;
-    const exists = await sql.unsafe(queryCheck, [id]);
+    const exists = await localDb.unsafe(queryCheck, [id]);
 
     let query;
     if (exists.length > 0) {
@@ -44,40 +44,49 @@ artifactLevelingRouter.post("/", async (req, res) => {
           "LastAdded" = CURRENT_DATE
         WHERE "ID" = $12
       `;
-      await sql.unsafe(query, [
-        L_HP,
-        L_ATK,
-        L_DEF,
-        L_HP_per,
-        L_ATK_per,
-        L_DEF_per,
-        L_EM,
-        L_ER,
-        L_CritRate,
-        L_CritDMG,
-        addedSubstat,
-        id
-      ]);
+      for (const db of [localDb, cloudDb]) {
+
+        await db.unsafe(query, [
+          L_HP,
+          L_ATK,
+          L_DEF,
+          L_HP_per,
+          L_ATK_per,
+          L_DEF_per,
+          L_EM,
+          L_ER,
+          L_CritRate,
+          L_CritDMG,
+          addedSubstat,
+          id
+        ]);
+
+      }
     } else {
       query = `
         INSERT INTO "Artifact_leveling" (
           "ID", "L_HP", "L_ATK", "L_DEF", "L_Percent_HP", "L_Percent_ATK", "L_Percent_DEF", "L_EM", "L_ER", "L_Crit_Rate", "L_Crit_DMG", "Added_substat"
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       `;
-      await sql.unsafe(query, [
-        id,
-        L_HP,
-        L_ATK,
-        L_DEF,
-        L_HP_per,
-        L_ATK_per,
-        L_DEF_per,
-        L_EM,
-        L_ER,
-        L_CritRate,
-        L_CritDMG,
-        addedSubstat
-      ]);
+
+      for (const db of [localDb, cloudDb]) {
+        await db.unsafe(query, [
+          id,
+          L_HP,
+          L_ATK,
+          L_DEF,
+          L_HP_per,
+          L_ATK_per,
+          L_DEF_per,
+          L_EM,
+          L_ER,
+          L_CritRate,
+          L_CritDMG,
+          addedSubstat
+        ]);
+      }
+
+      
     }
 
     res.status(200).json({ message: "Artifacts leveling record added/updated successfully" });
@@ -92,7 +101,7 @@ artifactLevelingRouter.get("/:artifact_id", async (req, res) => {
     const { artifact_id } = req.params;
 
     const query = `SELECT * FROM "Artifact_leveling" WHERE "ID" = $1`;
-    const rows = await sql.unsafe(query, [artifact_id]);
+    const rows = await localDb.unsafe(query, [artifact_id]);
 
     if (rows.length === 0) {
       return res.status(200).json(null); // Return null when not found

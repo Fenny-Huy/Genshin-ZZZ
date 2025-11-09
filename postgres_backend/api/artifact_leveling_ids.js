@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const artifactLevelingIdsRouter = express.Router();
 artifactLevelingIdsRouter.use(cors());
@@ -9,7 +9,7 @@ artifactLevelingIdsRouter.use(express.json());
 artifactLevelingIdsRouter.get("/", async (req, res) => {
   try {
     const query = `SELECT "ID" FROM "Artifact_leveling"`;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
 
     const ids = rows.map(row => row.ID);
     res.status(200).json(ids);

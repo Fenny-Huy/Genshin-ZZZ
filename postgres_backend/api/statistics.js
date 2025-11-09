@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const statisticsRouter = express.Router();
 statisticsRouter.use(cors());
@@ -14,7 +14,7 @@ statisticsRouter.get("/mainstat", async (req, res) => {
       FROM "Artifact_itself"
       GROUP BY "Type";
     `;
-    const typePercentages = await sql.unsafe(typePercentagesQuery);
+    const typePercentages = await localDb.unsafe(typePercentagesQuery);
 
     // Transform type percentages to match FastAPI output
     const formattedTypePercentages = typePercentages.map(row => [
@@ -29,7 +29,7 @@ statisticsRouter.get("/mainstat", async (req, res) => {
       FROM "Artifact_itself" t
       GROUP BY "Type", "Main_Stat";
     `;
-    const mainStatPercentages = await sql.unsafe(mainStatPercentagesQuery);
+    const mainStatPercentages = await localDb.unsafe(mainStatPercentagesQuery);
 
     // Transform main stat percentages to match FastAPI output
     const formattedMainStatPercentages = mainStatPercentages.map(row => [
@@ -59,7 +59,7 @@ statisticsRouter.get("/mainstat/:setname", async (req, res) => {
       WHERE "Set" = $1
       GROUP BY "Type";
     `;
-    const typePercentages = await sql.unsafe(typePercentagesQuery, [setname]);
+    const typePercentages = await localDb.unsafe(typePercentagesQuery, [setname]);
 
     // Transform type percentages to match FastAPI output
     const formattedTypePercentages = typePercentages.map(row => [
@@ -75,7 +75,7 @@ statisticsRouter.get("/mainstat/:setname", async (req, res) => {
       WHERE "Set" = $1
       GROUP BY "Type", "Main_Stat";
     `;
-    const mainStatPercentages = await sql.unsafe(mainStatPercentagesQuery, [setname]);
+    const mainStatPercentages = await localDb.unsafe(mainStatPercentagesQuery, [setname]);
 
     // Transform main stat percentages to match FastAPI output
     const formattedMainStatPercentages = mainStatPercentages.map(row => [
@@ -108,7 +108,7 @@ statisticsRouter.get("/substats", async (req, res) => {
       GROUP BY "Type", "Main_Stat";
     `;
 
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       type: row.Type,
       main_stat: row.Main_Stat,
@@ -148,7 +148,7 @@ statisticsRouter.get("/substats/:setname", async (req, res) => {
       GROUP BY "Type", "Main_Stat";
     `;
 
-    const rows = await sql.unsafe(query, [setname]);
+    const rows = await localDb.unsafe(query, [setname]);
     const artifactsWithSubs = rows.map(row => ({
       type: row.Type,
       main_stat: row.Main_Stat,
@@ -224,7 +224,7 @@ statisticsRouter.get("/leveling", async (req, res) => {
           i."Main_Stat";
     `;
 
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       type: row.Type,
       main_stat: row.Main_Stat,
@@ -325,7 +325,7 @@ statisticsRouter.get("/leveling/:setname", async (req, res) => {
           i."Main_Stat";
     `;
 
-    const rows = await sql.unsafe(query, [setname]);
+    const rows = await localDb.unsafe(query, [setname]);
     const artifactsWithSubs = rows.map(row => ({
       type: row.Type,
       main_stat: row.Main_Stat,
@@ -392,7 +392,7 @@ statisticsRouter.get("/levelinginvestment", async (req, res) => {
       ORDER BY "TotalRolls" DESC;
     `;
 
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       type: row.Type,
       set: row.Set,

@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const scoreRouter = express.Router();
 scoreRouter.use(cors());
@@ -15,7 +15,7 @@ scoreRouter.get("/", async (req, res) => {
       GROUP BY "Score"
       ORDER BY totalcount DESC;
     `;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       score: row.Score,
       count: parseInt(row.totalcount, 10),
@@ -36,7 +36,7 @@ scoreRouter.get("/set", async (req, res) => {
       GROUP BY "Score", "Set"
       ORDER BY totalcount DESC;
     `;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       score: row.Score,
       set: row.Set,
@@ -58,7 +58,7 @@ scoreRouter.get("/where", async (req, res) => {
       GROUP BY "Score", "Where_got_it"
       ORDER BY totalcount DESC;
     `;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       score: row.Score,
       where: row.Where_got_it,
@@ -80,7 +80,7 @@ scoreRouter.get("/set_where", async (req, res) => {
       GROUP BY "Score", "Set", "Where_got_it"
       ORDER BY totalcount DESC;
     `;
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
     const artifactsWithSubs = rows.map(row => ({
       score: row.Score,
       set: row.Set,

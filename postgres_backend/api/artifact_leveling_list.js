@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const artifactLevelingListRouter = express.Router();
 artifactLevelingListRouter.use(cors());
@@ -16,7 +16,7 @@ artifactLevelingListRouter.get("/", async (req, res) => {
       ORDER BY al."CreateDate";
     `;
 
-    const rows = await sql.unsafe(query);
+    const rows = await localDb.unsafe(query);
 
     const artifacts = rows.map(row => ({
       id: row.ID,

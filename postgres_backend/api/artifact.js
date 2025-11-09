@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const sql = require("../db.js");
+const { localDb, cloudDb } = require("../db.js");
 
 const artifactRouter = express.Router();
 artifactRouter.use(cors());
@@ -11,7 +11,7 @@ artifactRouter.get("/:artifact_id", async (req, res) => {
     const { artifact_id } = req.params;
 
     const query = `SELECT * FROM "Artifact_itself" WHERE "ID" = $1`;
-    const rows = await sql.unsafe(query, [artifact_id]);
+    const rows = await localDb.unsafe(query, [artifact_id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "Artifact not found" });
