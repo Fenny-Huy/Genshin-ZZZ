@@ -46,7 +46,7 @@ const apiConfig = {
     },
     allSubstats: ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"],
     scores: ["Complete trash", "Trash", "Usable", "Good", "Excellent", "Marvelous", "Unknown"],
-    sources: ["Domain farming", "Bosses", "Strongbox", "Spiral Abyss", "Stygian Onslaught"],
+    sources: ["Domain farming", "Bosses", "Strongbox", "Spiral Abyss", "Stygian Onslaught", "Artifact Transmuter"],
     artifactSets: [
         "Archaic Petra",
         "Blizzard Strayer",
@@ -85,7 +85,9 @@ const apiConfig = {
         "Vourukasha's Glow",
         "Wanderer's Troupe",
         "Long Night's Oath",
-        "Finale of the Deep Galleries"
+        "Finale of the Deep Galleries",
+        "Silken Moon's Serenade",
+        "Night of the Sky's Unveiling"
       ],
   };
 

@@ -3,12 +3,12 @@ version: '3.8'
 services:
   postgres:
     image: postgres
-    container_name: genshin-postgres
+    container_name: hoyo-postgres
     restart: always
     environment:
-      POSTGRES_USER: genshin_user
-      POSTGRES_PASSWORD: genshin_password
-      POSTGRES_DB: genshin_db
+      POSTGRES_USER: hoyo
+      POSTGRES_PASSWORD: hoyo_password
+      POSTGRES_DB: hoyo_db
     ports:
       - "5432:5432"
     volumes:
