@@ -10,7 +10,7 @@ export default async function ArtifactCreatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c] py-12 text-white">
+    <main className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-12 pb-55 text-white">
       <div className="container mx-auto px-4">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">

@@ -315,13 +315,14 @@ export default function ArtifactCreateForm() {
             placeholder="Select Score..."
             styles={customStyles}
             isClearable
+            maxMenuHeight={400}
           />
         </div>
 
         {/* Source */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-200">
-            Where did you get it?
+            Where got it?
           </label>
           <Select
             instanceId="source-select"
@@ -331,6 +332,7 @@ export default function ArtifactCreateForm() {
             placeholder="Select Source..."
             styles={customStyles}
             isClearable
+            maxMenuHeight={400}
           />
         </div>
 
