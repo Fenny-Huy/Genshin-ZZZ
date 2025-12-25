@@ -110,8 +110,9 @@ export const artifactRouter = createTRPCRouter({
       }
 
       await ctx.db
-        .update(artifactLeveling)
-        .set({
+        .insert(artifactLeveling)
+        .values({
+          id: input.id,
           lHP: input.lHP,
           lATK: input.lATK,
           lDEF: input.lDEF,
@@ -125,7 +126,23 @@ export const artifactRouter = createTRPCRouter({
           addedSubstat: input.addedSubstat,
           lastAdded: new Date(),
         })
-        .where(eq(artifactLeveling.id, input.id));
+        .onConflictDoUpdate({
+          target: artifactLeveling.id,
+          set: {
+            lHP: input.lHP,
+            lATK: input.lATK,
+            lDEF: input.lDEF,
+            lPercentHP: input.lPercentHP,
+            lPercentATK: input.lPercentATK,
+            lPercentDEF: input.lPercentDEF,
+            lEM: input.lEM,
+            lER: input.lER,
+            lCritRate: input.lCritRate,
+            lCritDMG: input.lCritDMG,
+            addedSubstat: input.addedSubstat,
+            lastAdded: new Date(),
+          },
+        });
     }),
 
   create: protectedProcedure
@@ -169,22 +186,6 @@ export const artifactRouter = createTRPCRouter({
       if (!newArtifact) {
         throw new Error("Failed to create artifact");
       }
-
-      // 2. Create the corresponding leveling entry (initialized to 0s)
-      await ctx.db.insert(artifactLeveling).values({
-        id: newArtifact.id,
-        lHP: 0,
-        lATK: 0,
-        lDEF: 0,
-        lPercentHP: 0,
-        lPercentATK: 0,
-        lPercentDEF: 0,
-        lEM: 0,
-        lER: 0,
-        lCritRate: 0,
-        lCritDMG: 0,
-        addedSubstat: "None",
-      });
 
       return newArtifact;
     }),
