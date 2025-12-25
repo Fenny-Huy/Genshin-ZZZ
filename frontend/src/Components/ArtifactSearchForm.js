@@ -1,12 +1,26 @@
 // src/Components/ArtifactSearchForm.js
 import React from 'react';
 import Select from "react-select"; // Import React-Select
+import styles from '../Styles/Components/ArtifactSearchForm.module.css';
+import { artifactConfig } from '../config/config';
 
-const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOptions, scores, sources, artifactSets, handleSelectChange, handleInputChange }) => {
+const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOptions, scores, sources, artifactSets, handleSelectChange, handleInputChange, isLoading, onReset }) => {
   // Define all substats
-  const allSubstats = ["HP", "%HP", "ATK", "%ATK", "DEF", "%DEF", "ER", "EM", "Crit Rate", "Crit DMG"];
+  const allSubstats = artifactConfig.allSubstats;
 
-
+  // Substat icons mapping
+  const substatIcons = {
+    '%ATK': '⚔️',
+    '%HP': '❤️',
+    '%DEF': '🛡️',
+    'ATK': '⚡',
+    'HP': '💚',
+    'DEF': '🔰',
+    'ER': '🔋',
+    'EM': '🔮',
+    'Crit Rate': '🎯',
+    'Crit DMG': '💥'
+  };
 
   const isSubmitDisabled = !(
     formData.artifactSet ||
@@ -18,10 +32,20 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
     formData.source
   );
 
+  const hasFilters = !!(
+    formData.artifactSet ||
+    formData.type ||
+    formData.mainStat ||
+    formData.numberOfSubstats ||
+    formData.substats.length > 0 ||
+    formData.score ||
+    formData.source
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="form">
-      <div className="inputGroup">
-        <label className="label">Artifact Set:</label>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Artifact Set:</label>
         <Select
           options={artifactSets.map((set) => ({ value: set, label: set }))}
           value={formData.artifactSet}
@@ -32,8 +56,8 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         />
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Artifact Type:</label>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Artifact Type:</label>
         <Select
           options={artifactTypes}
           value={formData.type}
@@ -44,10 +68,11 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         />
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Main Stat:</label>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Main Stat:</label>
         <Select
-          options={Object.values(mainStatsOptions).flat()}
+          options={Array.from(new Set(Object.values(mainStatsOptions).flat().map(stat => stat.value)))
+            .map(value => ({ value, label: value }))}
           value={formData.mainStat}
           onChange={(selected) => handleSelectChange(selected, "mainStat")}
           placeholder="Select or type to search"
@@ -56,13 +81,13 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         />
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Number of Substats:</label>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Number of Substats:</label>
         <select
           name="numberOfSubstats"
           value={formData.numberOfSubstats}
           onChange={handleInputChange}
-          className="select"
+          className={styles.select}
         >
           <option value="">Select Number</option>
           <option value="3">3</option>
@@ -70,28 +95,31 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         </select>
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Substats:</label>
-        <div>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Substats:</label>
+        <div className={styles.substats_grid}>
           {allSubstats.map((substat) => (
-            <label key={substat} className="checkboxLabel">
+            <label key={substat} className={styles.checkboxLabel}>
               <input
                 type="checkbox"
                 name="substats"
                 value={substat}
                 checked={formData.substats.includes(substat)}
                 onChange={handleInputChange}
-                className="checkbox"
+                className={styles.checkbox}
               />
-              {substat}
+              <span className={styles.checkbox_text}>
+                <span className={styles.substat_icon}>{substatIcons[substat]}</span>
+                {substat}
+              </span>
             </label>
           ))}
         </div>
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Score:</label>
-        <select name="score" value={formData.score} onChange={handleInputChange} className="select">
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Score:</label>
+        <select name="score" value={formData.score} onChange={handleInputChange} className={styles.select}>
           <option value="">Select Score</option>
           {scores.map((score) => (
             <option key={score} value={score}>
@@ -101,9 +129,9 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         </select>
       </div>
 
-      <div className="inputGroup">
-        <label className="label">Where Got It:</label>
-        <select name="source" value={formData.source} onChange={handleInputChange} className="select">
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Where Got It:</label>
+        <select name="source" value={formData.source} onChange={handleInputChange} className={styles.select}>
           <option value="">Select Source</option>
           {sources.map((source) => (
             <option key={source} value={source}>
@@ -113,9 +141,33 @@ const ArtifactSearchForm = ({ formData, handleSubmit, artifactTypes, mainStatsOp
         </select>
       </div>
 
-      <button type="submit" className="submitButton" disabled={isSubmitDisabled}>
-        Search
-      </button>
+      <div className={styles.form_actions}>
+        <button type="submit" className={styles.submitButton} disabled={isSubmitDisabled || isLoading}>
+          {isLoading ? (
+            <>
+              <div className={styles.button_spinner}></div>
+              Searching...
+            </>
+          ) : (
+            <>
+              <span className={styles.button_icon}>🔍</span>
+              Search Artifacts
+            </>
+          )}
+        </button>
+        
+        {hasFilters && (
+          <button 
+            type="button" 
+            className={styles.resetButton} 
+            onClick={onReset}
+            disabled={isLoading}
+          >
+            <span className={styles.button_icon}>🗑️</span>
+            Clear Filters
+          </button>
+        )}
+      </div>
     </form>
   );
 };

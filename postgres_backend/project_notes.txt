@@ -1,0 +1,80 @@
+# Project Notes for postgres_backend
+
+## Folder Structure
+- **api/**: Contains modular route files for different endpoints.
+  - Each file corresponds to a specific feature or endpoint group (e.g., `artifact.js`, `statistics.js`).
+- **docs/**: Contains Swagger documentation files for the routes in the `api/` folder.
+  - Each file documents the endpoints in the corresponding `api/` file.
+- **index.js**: The main entry point for the backend.
+  - Registers all routes from the `api/` folder.
+  - Sets up the Express server and Swagger documentation.
+- **db.js**: Handles the PostgreSQL database connection using the `postgres` library.
+
+## Patterns and Conventions
+1. **Route Files**:
+   - Use `express.Router()` to define routes.
+   - Import `sql` from `db.js` for database queries.
+   - Define endpoints using `router.get`, `router.post`, etc.
+   - Export the router using `module.exports`.
+
+2. **Swagger Documentation**:
+   - Each route file in `api/` has a corresponding Swagger file in `docs/`.
+   - Swagger files use the `@swagger` annotation to document endpoints.
+   - The `index.js` file includes all Swagger files using `swagger-jsdoc`.
+
+3. **Database Queries**:
+   - Use `sql.unsafe` for executing queries.
+   - Parameterize queries to prevent SQL injection.
+
+4. **index.js**:
+   - Imports all route files from `api/`.
+   - Registers routes using `app.use()`.
+   - Sets up Swagger documentation at `/api-docs`.
+
+## Important Notes
+- Always follow the existing modular structure for adding new routes.
+- Ensure that Swagger documentation is updated for every new endpoint.
+- Use consistent naming conventions for database fields and API responses.
+- Test all endpoints thoroughly to ensure they align with the PostgreSQL schema.
+
+## Example Workflow for Adding a New Feature
+1. **Create a Route File**:
+   - Add a new file in `api/` (e.g., `new_feature.js`).
+   - Define routes using `express.Router()`.
+   - Use `sql.unsafe` for database queries.
+
+2. **Register the Route**:
+   - Import the new route file in `index.js`.
+   - Register it using `app.use()`.
+
+3. **Add Swagger Documentation**:
+   - Create a corresponding file in `docs/` (e.g., `new_feature.js`).
+   - Document all endpoints using the `@swagger` annotation.
+
+4. **Test the Endpoints**:
+   - Use tools like Postman or Swagger UI to test the new endpoints.
+   - Verify that the responses match the expected format.
+
+## Common Commands
+- **Start the Server**: `npm start`
+- **Access Swagger Docs**: `http://localhost:3000/api-docs`
+
+## Dependencies
+- **Express**: For building the API.
+- **postgres**: For PostgreSQL database queries.
+- **swagger-jsdoc** and **swagger-ui-express**: For API documentation.
+- **dotenv**: For managing environment variables.
+
+## Troubleshooting
+- If the server fails to start, check the `DATABASE_URL` in `.env`.
+- Ensure that all route files are properly registered in `index.js`.
+- Verify that the database schema matches the queries in the route files.
+
+- The `set.js` file has been updated to align with the PostgreSQL schema:
+  - Column names in queries now match the database structure (e.g., `Where_got_it`, `Score`).
+  - Ensure all future queries reference the correct column names as per the schema.
+
+- The PostgreSQL schema may differ slightly from the SQL commands in the FastAPI implementation. Always verify column names and table structures against the schema (e.g., `Where_got_it` instead of `Where got it`).
+
+- Ensure that all numeric fields in API responses, such as `count`, are returned as integers (not strings) to match the FastAPI implementation.
+- Always verify that the input/output of the Node.js API matches the FastAPI routes exactly.

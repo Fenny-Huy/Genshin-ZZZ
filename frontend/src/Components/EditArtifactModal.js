@@ -1,10 +1,12 @@
-// src/Components/EditArtifactModal.js
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import Select from 'react-select';
 import axios from 'axios';
-import './EditArtifactModal.css'; // Import the CSS file
+import styles from '../Styles/Components/EditArtifactModal.module.css'; // Import the CSS file
+import { apiConfig, artifactConfig } from '../config/config';
 
 const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     artifactSet: { value: artifact.set, label: artifact.set },
     type: { value: artifact.type, label: artifact.type },
@@ -26,93 +28,26 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
     source: artifact.where_got_it,
   });
 
-
-
-
-  const artifactTypes = [
-    { value: 'Flower', label: 'Flower' },
-    { value: 'Plume', label: 'Plume' },
-    { value: 'Sand', label: 'Sand' },
-    { value: 'Goblet', label: 'Goblet' },
-    { value: 'Circlet', label: 'Circlet' },
-  ];
-
-  const mainStatsOptions = {
-    Flower: [{ value: 'HP', label: 'HP' }],
-    Plume: [{ value: 'ATK', label: 'ATK' }],
-    Sand: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'ER', label: 'ER' },
-      { value: 'EM', label: 'EM' },
-    ],
-    Goblet: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'EM', label: 'EM' },
-      { value: 'Physical', label: 'Physical' },
-      { value: 'Anemo', label: 'Anemo' },
-      { value: 'Geo', label: 'Geo' },
-      { value: 'Electro', label: 'Electro' },
-      { value: 'Dendro', label: 'Dendro' },
-      { value: 'Hydro', label: 'Hydro' },
-      { value: 'Pyro', label: 'Pyro' },
-      { value: 'Cryo', label: 'Cryo' },
-    ],
-    Circlet: [
-      { value: '%HP', label: '%HP' },
-      { value: '%ATK', label: '%ATK' },
-      { value: '%DEF', label: '%DEF' },
-      { value: 'EM', label: 'EM' },
-      { value: 'Crit Rate', label: 'Crit Rate' },
-      { value: 'Crit DMG', label: 'Crit DMG' },
-      { value: 'Healing', label: 'Healing' },
-    ],
+  // Substat icons mapping
+  const substatIcons = {
+    '%ATK': '⚔️',
+    '%HP': '❤️',
+    '%DEF': '🛡️',
+    'ATK': '⚡',
+    'HP': '💚',
+    'DEF': '🔰',
+    'ER': '🔋',
+    'EM': '🔮',
+    'Crit Rate': '🎯',
+    'Crit DMG': '💥'
   };
 
-  const allSubstats = ['HP', '%HP', 'ATK', '%ATK', 'DEF', '%DEF', 'ER', 'EM', 'Crit Rate', 'Crit DMG'];
-  const scores = ['Complete trash', 'Trash', 'Usable', 'Good', 'Excellent', 'Marvelous', 'Unknown'];
-  const sources = ['Domain farming', 'Bosses', 'Strongbox', 'Spiral Abyss'];
-  const artifactSets = [
-    "Archaic Petra",
-    "Blizzard Strayer",
-    "Bloodstained Chivalry",
-    "Crimson Witch of Flames",
-    "Deepwood Memories",
-    "Desert Pavilion Chronicle",
-    "Echoes of an Offering",
-    "Emblem of Severed Fate",
-    "Flower of Paradise Lost",
-    "Fragment of Harmonic Whimsy",
-    "Gilded Dreams",
-    "Gladiator's Finale",
-    "Golden Troupe",
-    "Heart of Depth",
-    "Husk of Opulent Dreams",
-    "Lavawalker",
-    "Maiden Beloved",
-    "Marechaussee Hunter",
-    "Nighttime of Whispers in the Echoing Woods",
-    "Noblesse Oblige",
-    "Nymph's Dream",
-    "Obsidian Codex",
-    "Ocean-Hued Clam",
-    "Pale Flame",
-    "Retracing Bolide",
-    "Scroll of the Hero of Cinder City",
-    "Shimenawa's Reminiscence",
-    "Song of Days Past",
-    "Tenacity of the Millelith",
-    "Thundering Fury",
-    "Thundersoother",
-    "Unfinished Reverie",
-    "Vermillion Hereafter",
-    "Viridescent Venerer",
-    "Vourukasha's Glow",
-    "Wanderer's Troupe"
-  ];
+  const artifactTypes = artifactConfig.artifactTypes;
+  const mainStatsOptions = artifactConfig.mainStatsOptions;
+  const allSubstats = artifactConfig.allSubstats;
+  const scores = artifactConfig.scores;
+  const sources = artifactConfig.sources;
+  const artifactSets = artifactConfig.artifactSets;
 
   const handleSelectChange = (selectedOption, field) => {
     setFormData((prev) => {
@@ -153,6 +88,11 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
   };
 
   const handleSave = async () => {
+    // Prevent multiple submissions
+    if (isLoading) return;
+    
+    setIsLoading(true);
+
     const payload = {
       id: artifact.id,
       set: formData.artifactSet.value,
@@ -174,11 +114,13 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
     };
 
     try {
-      await axios.put(`http://localhost:8000/genshinartifacts/${artifact.id}/`, payload);
+      await axios.put(`${apiConfig.apiUrl}/genshinartifacts/${artifact.id}/`, payload);
       onUpdateSuccess(); // Call the callback function
       onClose();
     } catch (error) {
       console.error('Error updating artifact:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,18 +135,16 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
     formData.source
   );
 
-
   // Filter substats based on the selected main stat
   const filteredSubstats = allSubstats.filter((substat) => substat !== formData.mainStat?.value);
 
-  return (
-    
-    <div className="modal">
-      <div className="modal-content">
+  return createPortal(
+    <div className={styles.modal}>
+      <div className={styles.modal_content}>
         <h2>Edit Artifact</h2>
-        <form className="form">
-          <div className="inputGroup">
-            <label className="label">Artifact Set:</label>
+        <form className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Artifact Set:</label>
             <Select
               options={artifactSets.map((set) => ({ value: set, label: set }))}
               value={formData.artifactSet}
@@ -215,8 +155,8 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             />
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Artifact Type:</label>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Artifact Type:</label>
             <Select
               options={artifactTypes}
               value={formData.type}
@@ -227,8 +167,8 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             />
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Main Stat:</label>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Main Stat:</label>
             <Select
               options={formData.type ? mainStatsOptions[formData.type.value] : []}
               value={formData.mainStat}
@@ -240,13 +180,13 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             />
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Number of Substats:</label>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Number of Substats:</label>
             <select
               name="numberOfSubstats"
               value={formData.numberOfSubstats}
               onChange={handleInputChange}
-              className="select"
+              className={styles.select}
             >
               <option value="">Select Number</option>
               <option value="3">3</option>
@@ -254,28 +194,29 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             </select>
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Substats:</label>
-            <div>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Substats:</label>
+            <div className={styles.checkboxContainer}>
               {filteredSubstats.map((substat) => (
-                <label key={substat} className="checkboxLabel">
+                <label key={substat} className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
                     name="substats"
                     value={substat}
                     checked={formData.substats.includes(substat)}
                     onChange={handleInputChange}
-                    className="checkbox"
+                    className={styles.checkbox}
                   />
-                  {substat}
+                  <span className={styles.substatIcon}>{substatIcons[substat] || '⭐'}</span>
+                  <span className={styles.substatName}>{substat}</span>
                 </label>
               ))}
             </div>
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Score:</label>
-            <select name="score" value={formData.score} onChange={handleInputChange} className="select">
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Score:</label>
+            <select name="score" value={formData.score} onChange={handleInputChange} className={styles.select}>
               <option value="">Select Score</option>
               {scores.map((score) => (
                 <option key={score} value={score}>
@@ -285,9 +226,9 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             </select>
           </div>
 
-          <div className="inputGroup">
-            <label className="label">Where Got It:</label>
-            <select name="source" value={formData.source} onChange={handleInputChange} className="select">
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Where Got It:</label>
+            <select name="source" value={formData.source} onChange={handleInputChange} className={styles.select}>
               <option value="">Select Source</option>
               {sources.map((source) => (
                 <option key={source} value={source}>
@@ -297,20 +238,18 @@ const EditArtifactModal = ({ artifact, onClose, onUpdateSuccess }) => {
             </select>
           </div>
 
-          <div className="modal-actions">
-            <button type="button" className="button" onClick={handleSave} disabled={isSaveDisabled}>
-              Save
+          <div className={styles.modal_actions}>
+            <button type="button" className={styles.button} onClick={handleSave} disabled={isSaveDisabled || isLoading}>
+              {isLoading ? "Loading..." : "Save"}
             </button>
-            <button type="button" className="button" onClick={onClose}>
+            <button type="button" className={styles.button} onClick={onClose} disabled={isLoading}>
               Cancel
             </button>
           </div>
         </form>
       </div>
-    </div>
-      
-      
-    
+    </div>,
+    document.body
   );
 };
 

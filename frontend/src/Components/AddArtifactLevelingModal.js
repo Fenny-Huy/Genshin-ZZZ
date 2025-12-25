@@ -1,7 +1,9 @@
 // src/Components/AddArtifactLevelingModal.js
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
-import './AddArtifactLevelingModal.css'; // Import the CSS file
+import styles from '../Styles/Components/AddArtifactLevelingModal.module.css'; // Import the CSS file
+import { apiConfig, artifactConfig } from '../config/config';
 
 const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdateSuccess }) => {
   const [formData, setFormData] = useState({
@@ -22,6 +24,7 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
   const [initialSubstats, setInitialSubstats] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const substats = [];
@@ -37,7 +40,7 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     if (artifact.crit_dmg) substats.push('Crit DMG');
     setInitialSubstats(substats);
 
-    const allSubstats = ['HP', '%HP', 'ATK', '%ATK', 'DEF', '%DEF', 'ER', 'EM', 'Crit Rate', 'Crit DMG'];
+    const allSubstats = artifactConfig.allSubstats;
     const available = allSubstats.filter(substat => !substats.includes(substat) && substat !== artifact.main_stat);
     setAvailableSubstats(available);
 
@@ -54,11 +57,31 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const numericValue = Math.max(0, parseInt(value, 10) || 0); // Prevent negative numbers
+    const numericValue = Math.max(0, Math.min(5, parseInt(value, 10) || 0)); // Prevent negative numbers and cap at 5
     setFormData((prev) => ({
       ...prev,
       [name]: numericValue,
     }));
+  };
+
+  const handleIncrement = (fieldName) => {
+    const currentValue = formData[fieldName] || 0;
+    if (currentValue < 5) {
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: currentValue + 1,
+      }));
+    }
+  };
+
+  const handleDecrement = (fieldName) => {
+    const currentValue = formData[fieldName] || 0;
+    if (currentValue > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: currentValue - 1,
+      }));
+    }
   };
 
   const handleSelectChange = (e) => {
@@ -82,18 +105,46 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     setIsSaveDisabled(totalValue > maxTotalValue);
   };
 
+  const getValidationMessage = () => {
+    const totalValue = Object.keys(formData).reduce((sum, key) => {
+      if (key.startsWith('L_')) {
+        return sum + formData[key];
+      }
+      return sum;
+    }, 0);
+
+    const maxTotalValue = artifact.number_of_substats === 3 ? 4 : 5;
+    
+    if (totalValue === 0) {
+      return { type: 'info', message: 'Enter the leveling values for your substats' };
+    } else if (totalValue > maxTotalValue) {
+      return { type: 'error', message: `Total levels exceed maximum (${totalValue}/${maxTotalValue})` };
+    } else if (totalValue === maxTotalValue) {
+      return { type: 'success', message: `Perfect! All ${maxTotalValue} levels allocated` };
+    } else {
+      return { type: 'warning', message: `${maxTotalValue - totalValue} levels remaining to allocate` };
+    }
+  };
+
   const handleSave = async () => {
+    // Prevent multiple submissions
+    if (isLoading) return;
+    
+    setIsLoading(true);
+
     const payload = {
       id: artifact.id,
       ...formData,
     };
 
     try {
-      await axios.post(`http://localhost:8000/artifactleveling/`, payload);
+      await axios.post(`${apiConfig.apiUrl}/artifactleveling/`, payload);
       onUpdateSuccess();
       onClose();
     } catch (error) {
       console.error('Error adding or updating artifact leveling:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -114,19 +165,26 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
     }
   };
 
-  return (
-    <div className="leveling-modal">
-      <div className="leveling-modal-content">
+  return createPortal(
+    <div className={styles.leveling_modal}>
+      <div className={styles.leveling_modal_content}>
         <h2>{isUpdating ? 'Update' : 'Add'} Artifact Leveling</h2>
-        <form className="leveling-form">
+        
+        <div className={styles.artifact_info}>
+          <span className={styles.artifact_badge}>{artifact.set}</span>
+          <span className={styles.artifact_badge}>{artifact.type}</span>
+          <span className={styles.artifact_badge}>{artifact.main_stat}</span>
+        </div>
+
+        <form className={styles.form}>
           {artifact.number_of_substats === 3 && (!formData.addedSubstat || formData.addedSubstat === "None") && (
-            <div className="leveling-inputGroup">
-              <label className="leveling-label">Added Substat:</label>
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Added Substat:</label>
               <select
                 name="addedSubstat"
                 value={formData.addedSubstat}
                 onChange={handleSelectChange}
-                className="leveling-select"
+                className={styles.select}
               >
                 <option value="">Select Substat</option>
                 {availableSubstats.map((substat) => (
@@ -137,30 +195,61 @@ const AddArtifactLevelingModal = ({ artifact, artifactLeveling, onClose, onUpdat
               </select>
             </div>
           )}
-          {(initialSubstats.concat(formData.addedSubstat && formData.addedSubstat !== "None" ? formData.addedSubstat : []).filter(Boolean)).map((substat) => (
-            <div className="leveling-inputGroup" key={substat}>
-              <label className="leveling-label">{substat}:</label>
-              <input
-                type="number"
-                name={getFormDataKey(substat)}
-                value={formData[getFormDataKey(substat)]}
-                onChange={handleInputChange}
-                className="leveling-input"
-                min="0"
-              />
-            </div>
-          ))}
-          <div className="leveling-modal-actions">
-            <button type="button" className="leveling-button" onClick={handleSave} disabled={isSaveDisabled}>
-              Save
+          
+          <div className={styles.substat_grid}>
+            {(initialSubstats.concat(formData.addedSubstat && formData.addedSubstat !== "None" ? formData.addedSubstat : []).filter(Boolean)).map((substat) => (
+              <div className={styles.inputGroup} key={substat}>
+                <label className={styles.label}>{substat}:</label>
+                <div className={styles.input_with_buttons}>
+                  <button
+                    type="button"
+                    className={styles.increment_button}
+                    onClick={() => handleDecrement(getFormDataKey(substat))}
+                    disabled={formData[getFormDataKey(substat)] <= 0}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    name={getFormDataKey(substat)}
+                    value={formData[getFormDataKey(substat)]}
+                    onChange={handleInputChange}
+                    className={styles.input}
+                    min="0"
+                    max="5"
+                    placeholder="0"
+                    readOnly
+                  />
+                  <button
+                    type="button"
+                    className={styles.increment_button}
+                    onClick={() => handleIncrement(getFormDataKey(substat))}
+                    disabled={formData[getFormDataKey(substat)] >= 5}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Validation Message */}
+          <div className={`${styles.validation_message} ${styles[getValidationMessage().type]}`}>
+            {getValidationMessage().message}
+          </div>
+
+          <div className={styles.actions}>
+            <button type="button" className={styles.button} onClick={handleSave} disabled={isSaveDisabled || isLoading}>
+              {isLoading ? "Loading..." : "Save"}
             </button>
-            <button type="button" className="leveling-button" onClick={onClose}>
+            <button type="button" className={styles.button} onClick={onClose} disabled={isLoading}>
               Cancel
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

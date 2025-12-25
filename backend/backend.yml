@@ -1,0 +1,12 @@
+name: genshin-backend-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - fastapi
+  - uvicorn
+  - pymysql
+  - sqlalchemy
+  - cryptography
+  - pydantic_settings
