@@ -52,16 +52,10 @@ const customStyles = {
 
 export default function ArtifactCreateForm() {
   const router = useRouter();
-  const createArtifact = api.artifact.create.useMutation({
-    onSuccess: () => {
-      alert("Artifact created successfully!");
-      setFormData(initialFormData);
-      router.refresh();
-    },
-    onError: (error) => {
-      alert(`Error: ${error.message}`);
-    },
-  });
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const initialFormData = {
     set: "",
@@ -74,6 +68,22 @@ export default function ArtifactCreateForm() {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+
+  const createArtifact = api.artifact.create.useMutation({
+    onSuccess: () => {
+      setNotification({
+        type: "success",
+        message: "Artifact created successfully!",
+      });
+      setFormData(initialFormData);
+      router.refresh();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    onError: (error) => {
+      setNotification({ type: "error", message: `Error: ${error.message}` });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+  });
 
   // Helper to convert string options to { value, label } for React Select
   const toOption = (val: string) => (val ? { value: val, label: val } : null);
@@ -181,6 +191,26 @@ export default function ArtifactCreateForm() {
           ))}
         </div>
       </div>
+
+      {/* Notification */}
+      {notification && (
+        <div
+          className={`mb-6 flex items-center justify-between rounded-md border px-4 py-3 shadow-lg transition-all ${
+            notification.type === "success"
+              ? "border-green-500/50 bg-green-500/20 text-green-200"
+              : "border-red-500/50 bg-red-500/20 text-red-200"
+          }`}
+        >
+          <span className="font-medium">{notification.message}</span>
+          <button
+            onClick={() => setNotification(null)}
+            className="ml-4 rounded-full p-1 transition-colors hover:bg-white/10"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Artifact Set */}
