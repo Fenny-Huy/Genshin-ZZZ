@@ -34,7 +34,6 @@ export function ArtifactList() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-800 text-xs uppercase text-gray-400">
               <tr>
-                <th className="p-3">ID</th>
                 <th className="p-3">Set</th>
                 <th className="p-3">Type</th>
                 <th className="p-3">Main Stat</th>
@@ -64,7 +63,7 @@ export function ArtifactList() {
               ))}
               {data?.artifacts.length === 0 && (
                 <tr>
-                  <td colSpan={18} className="p-8 text-center text-gray-400">
+                  <td colSpan={17} className="p-8 text-center text-gray-400">
                     No artifacts found. Start by adding some!
                   </td>
                 </tr>

@@ -40,7 +40,6 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
   return (
     <>
       <tr className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
-        <td className="p-3 text-gray-400">{artifact.id}</td>
         <td className="p-3 font-medium text-white">{artifact.set}</td>
         <td className="p-3 text-gray-300">{artifact.type}</td>
         <td className="p-3 text-yellow-500 font-medium">{artifact.mainStat}</td>
