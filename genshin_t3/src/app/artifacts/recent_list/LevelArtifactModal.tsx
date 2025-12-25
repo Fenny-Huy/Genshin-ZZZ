@@ -149,7 +149,17 @@ export function LevelArtifactModal({
               </label>
               <select
                 value={formData.addedSubstat}
-                onChange={(e) => setFormData(prev => ({ ...prev, addedSubstat: e.target.value }))}
+                onChange={(e) => {
+                  const newSubstat = e.target.value;
+                  setFormData((prev) => {
+                    const newState = { ...prev, addedSubstat: newSubstat };
+                    if (prev.addedSubstat !== "None") {
+                      const oldKey = getFormDataKey(prev.addedSubstat);
+                      (newState as any)[oldKey] = 0;
+                    }
+                    return newState;
+                  });
+                }}
                 className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
               >
                 <option value="None">Select Substat</option>
