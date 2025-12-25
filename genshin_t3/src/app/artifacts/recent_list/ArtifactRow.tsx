@@ -58,9 +58,12 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
         <td className="p-3 text-gray-400">{artifact.whereGotIt}</td>
         <td className="p-3">
           <span className={`rounded px-2 py-1 text-xs font-bold ${
-            artifact.score === "SSS" ? "bg-yellow-500/20 text-yellow-400" :
-            artifact.score === "SS" ? "bg-purple-500/20 text-purple-400" :
-            artifact.score === "S" ? "bg-blue-500/20 text-blue-400" :
+            artifact.score === "Marvelous" ? "bg-yellow-500/20 text-yellow-400" :
+            artifact.score === "Excellent" ? "bg-purple-500/20 text-purple-400" :
+            artifact.score === "Good" ? "bg-blue-500/20 text-blue-400" :
+            artifact.score === "Usable" ? "bg-green-500/20 text-green-400" :
+            artifact.score === "Trash" ? "bg-red-500/20 text-red-400" :
+            artifact.score === "Complete trash" ? "bg-red-950/40 text-red-500" :
             "bg-gray-700 text-gray-400"
           }`}>
             {artifact.score}
@@ -73,7 +76,7 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
                 onClick={() => setIsLevelingModalOpen(true)}
                 className="flex items-center gap-1 rounded bg-blue-600/20 px-3 py-1.5 text-sm font-medium text-blue-400 hover:bg-blue-600/30 transition-colors"
               >
-                <span>🔄</span> Change
+                Change
               </button>
             ) : (
               <>
@@ -81,13 +84,13 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
                   onClick={() => setIsEditModalOpen(true)}
                   className="flex items-center gap-1 rounded bg-slate-700 px-3 py-1.5 text-sm font-medium text-gray-300 hover:bg-slate-600 transition-colors"
                 >
-                  <span>✏️</span> Edit
+                  Edit
                 </button>
                 <button
                   onClick={() => setIsLevelingModalOpen(true)}
                   className="flex items-center gap-1 rounded bg-green-600/20 px-3 py-1.5 text-sm font-medium text-green-400 hover:bg-green-600/30 transition-colors"
                 >
-                  <span>➕</span> Level
+                  Level
                 </button>
               </>
             )}
