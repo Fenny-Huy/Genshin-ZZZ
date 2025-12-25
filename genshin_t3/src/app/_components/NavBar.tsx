@@ -13,15 +13,27 @@ export async function NavBar() {
         <div className="flex items-center gap-6">
           {session ? (
             <>
+              <Link
+                href="/artifacts/create"
+                className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
+              >
+                Add Artifact
+              </Link>
+              <Link
+                href="/api/auth/signout"
+                className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
+              >
+                Sign Out
+              </Link>
               <span className="text-sm text-gray-400">
                 Welcome, {session.user?.name}
               </span>
-              <Link href="/api/auth/signout" className="hover:text-yellow-400 transition-colors">
-                Sign Out
-              </Link>
             </>
           ) : (
-            <Link href="/api/auth/signin" className="hover:text-yellow-400 transition-colors">
+            <Link
+              href="/api/auth/signin"
+              className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
+            >
               Sign In
             </Link>
           )}
