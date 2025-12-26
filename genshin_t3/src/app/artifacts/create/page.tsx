@@ -10,11 +10,11 @@ export default async function ArtifactCreatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c] pt-12 pb-55 text-white">
+    <main className="min-h-screen pb-20 pt-8 text-white">
       <div className="container mx-auto px-4">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-            Create New <span className="text-[hsl(280,100%,70%)]">Artifact</span>
+            Create New <span className="text-yellow-500">Artifact</span>
           </h1>
           <p className="mt-4 text-lg text-gray-300">
             Add a new artifact to your collection with detailed stats and substats
