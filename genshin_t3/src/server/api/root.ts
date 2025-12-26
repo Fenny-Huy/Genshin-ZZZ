@@ -1,6 +1,7 @@
 // import { postRouter } from "~/server/api/routers/post";
 import { artifactRouter } from "~/server/api/routers/artifact";
 import { levelingRouter } from "~/server/api/routers/leveling";
+import { statisticsRouter } from "~/server/api/routers/statistics";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -11,6 +12,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   artifact: artifactRouter,
   leveling: levelingRouter,
+  statistics: statisticsRouter,
 });
 
 // export type definition of API
