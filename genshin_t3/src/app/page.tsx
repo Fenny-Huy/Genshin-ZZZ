@@ -53,11 +53,20 @@ export default async function Home() {
                 </Link>
                 <Link
                   href="/artifacts/search"
-                  className="flex max-w-xs flex-col gap-4 rounded-xl bg-slate-800 p-6 border border-slate-700 transition-all hover:bg-slate-700 hover:border-slate-600 hover:shadow-xl hover:-translate-y-1 sm:col-span-2 sm:max-w-none"
+                  className="flex max-w-xs flex-col gap-4 rounded-xl bg-slate-800 p-6 border border-slate-700 transition-all hover:bg-slate-700 hover:border-slate-600 hover:shadow-xl hover:-translate-y-1"
                 >
-                  <h3 className="text-2xl font-bold text-green-400">Search Database →</h3>
+                  <h3 className="text-2xl font-bold text-green-400">Search Artifacts →</h3>
                   <div className="text-lg text-gray-300">
                     Advanced search filters to find specific artifacts by stats, set, and score.
+                  </div>
+                </Link>
+                <Link
+                  href="/leveling/search"
+                  className="flex max-w-xs flex-col gap-4 rounded-xl bg-slate-800 p-6 border border-slate-700 transition-all hover:bg-slate-700 hover:border-slate-600 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <h3 className="text-2xl font-bold text-purple-400">Search Leveling →</h3>
+                  <div className="text-lg text-gray-300">
+                    Find artifacts based on specific substat roll distributions and leveling history.
                   </div>
                 </Link>
               </div>
