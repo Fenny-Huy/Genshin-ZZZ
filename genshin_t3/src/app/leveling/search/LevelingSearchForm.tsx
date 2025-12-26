@@ -329,11 +329,20 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
             const isSelected = selectedSubstats.includes(substat);
             
             return (
-              <div key={substat} className="relative flex flex-col gap-2 rounded-lg bg-slate-800/50 p-3 border border-slate-700/50">
+              <div 
+                key={substat} 
+                className={`relative flex flex-col gap-2 rounded-lg p-3 border border-slate-700/50 transition-colors cursor-pointer ${
+                  isSelected ? 'bg-slate-800 border-slate-600' : 'bg-slate-800/50 hover:bg-slate-800'
+                }`}
+                onClick={() => handleSubstatToggle(substat)}
+              >
                 {isSelected && (formData as any)[key] !== "" && (
                   <button
                     type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, [key]: "" }))}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFormData((prev) => ({ ...prev, [key]: "" }));
+                    }}
                     className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-900/30 text-xs text-red-400 hover:bg-red-900/50"
                     title="Clear value"
                   >
@@ -347,18 +356,23 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
                     id={`checkbox-${substat}`}
                     checked={isSelected}
                     onChange={() => handleSubstatToggle(substat)}
+                    onClick={(e) => e.stopPropagation()}
                     className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-yellow-600 focus:ring-yellow-500 focus:ring-offset-slate-900"
                   />
                   <label 
                     htmlFor={`checkbox-${substat}`}
                     className={`text-sm font-medium cursor-pointer ${isSelected ? 'text-white' : 'text-gray-400'}`}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {substat}
                   </label>
                 </div>
                 
                 {isSelected && (
-                  <div className="flex items-center gap-2">
+                  <div 
+                    className="flex items-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       type="button"
                       onClick={() => {
