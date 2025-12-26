@@ -117,6 +117,16 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     });
   };
 
+  const isSearchDisabled = !(
+    formData.artifactSet ||
+    formData.type ||
+    formData.mainStat ||
+    formData.numberOfSubstats ||
+    formData.substats.length > 0 ||
+    formData.score ||
+    formData.source
+  );
+
   // Flatten main stats options for search (allow any main stat)
   const allMainStats = Array.from(
     new Set(
@@ -278,8 +288,8 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
         </button>
         <button
           type="submit"
-          disabled={isLoading}
-          className="rounded-lg bg-yellow-600 px-8 py-2.5 font-bold text-white shadow-lg transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 disabled:opacity-50"
+          disabled={isLoading || isSearchDisabled}
+          className="rounded-lg bg-yellow-600 px-8 py-2.5 font-bold text-white shadow-lg transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Searching..." : "Search Artifacts"}
         </button>
