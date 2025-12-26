@@ -45,11 +45,11 @@ export const calculateSubstatOverall = (substatData: any[]) => {
   });
 
   return Object.keys(substatTotals).map(key => ({
-    substat: SUBSTAT_KEY_TO_LABEL[key],
-    percentage: totalSubstatCounts[key] > 0 
-      ? (substatTotals[key] / totalSubstatCounts[key]) * 100 
+    substat: SUBSTAT_KEY_TO_LABEL[key] ?? key,
+    percentage: (totalSubstatCounts[key] ?? 0) > 0 
+      ? ((substatTotals[key] ?? 0) / (totalSubstatCounts[key] ?? 1)) * 100 
       : 0,
-    count: substatTotals[key],
+    count: substatTotals[key] ?? 0,
   }));
 };
 
