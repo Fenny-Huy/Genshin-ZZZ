@@ -18,7 +18,13 @@ export async function NavBar() {
                 className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
               >
                 My Artifacts
-              </Link>
+              </Link>              
+              <Link
+                href="/artifacts/search"
+                className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
+              >
+                Search Artifacts
+              </Link>              
               <Link
                 href="/artifacts/create"
                 className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
