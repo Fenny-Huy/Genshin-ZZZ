@@ -200,9 +200,12 @@ export const artifactRouter = createTRPCRouter({
         substats: z.array(z.string()).optional(),
         score: z.string().nullable().optional(),
         source: z.string().nullable().optional(),
+        limit: z.number().min(1).max(100).default(10),
+        page: z.number().min(1).default(1),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const offset = (input.page - 1) * input.limit;
       const filters = [eq(artifactItself.userId, ctx.session.user.id)];
 
       if (input.set) filters.push(eq(artifactItself.set, input.set));
@@ -236,12 +239,25 @@ export const artifactRouter = createTRPCRouter({
           filters.push(eq(artifactItself.critDMG, 1));
       }
 
-      return ctx.db.query.artifactItself.findMany({
+      const artifacts = await ctx.db.query.artifactItself.findMany({
         where: and(...filters),
         orderBy: [desc(artifactItself.createDate)],
+        limit: input.limit,
+        offset: offset,
         with: {
           leveling: true,
         },
       });
+
+      const [total] = await ctx.db
+        .select({ count: count() })
+        .from(artifactItself)
+        .where(and(...filters));
+
+      return {
+        artifacts,
+        totalCount: total?.count ?? 0,
+        totalPages: Math.ceil((total?.count ?? 0) / input.limit),
+      };
     }),
 });
