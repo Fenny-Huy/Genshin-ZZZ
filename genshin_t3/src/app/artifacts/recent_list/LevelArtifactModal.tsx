@@ -20,7 +20,7 @@ export function LevelArtifactModal({
   onUpdateSuccess,
 }: LevelArtifactModalProps) {
   const utils = api.useUtils();
-  const updateLeveling = api.artifact.updateLeveling.useMutation({
+  const updateLeveling = api.leveling.updateLeveling.useMutation({
     onSuccess: async () => {
       await utils.artifact.getAll.invalidate();
       onUpdateSuccess();
