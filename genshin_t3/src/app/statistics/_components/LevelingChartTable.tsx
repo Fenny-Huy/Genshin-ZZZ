@@ -143,7 +143,7 @@ const LevelingChartTable: React.FC<LevelingChartTableProps> = ({
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-slate-900/50 font-semibold text-white sticky bottom-0">
+            <tfoot className="bg-slate-900/50 font-semibold text-white">
               <tr>
                 <td className="px-4 py-3 rounded-bl-lg">Total</td>
                 <td className="px-4 py-3 text-right tabular-nums">{levelingTableData.reduce((sum, item) => sum + item.appearancePercentage, 0).toFixed(2)}%</td>
@@ -229,7 +229,7 @@ const LevelingChartTable: React.FC<LevelingChartTableProps> = ({
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-slate-900/50 font-semibold text-white sticky bottom-0">
+            <tfoot className="bg-slate-900/50 font-semibold text-white">
               <tr>
                 <td className="px-4 py-3 rounded-bl-lg">Total</td>
                 <td className="px-4 py-3 text-right tabular-nums">{addedTableData.reduce((sum, item) => sum + item.percentage, 0).toFixed(2)}%</td>
