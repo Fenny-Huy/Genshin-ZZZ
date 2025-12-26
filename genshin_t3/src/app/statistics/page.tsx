@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { api } from "~/trpc/react";
 import { MainStatSection } from './_components/MainStatSection';
 import { SubstatSection } from './_components/SubstatSection';
+import { LevelingSection } from './_components/LevelingSection';
 
 const customStyles = {
   control: (provided: any) => ({
@@ -68,6 +69,11 @@ export default function StatisticsPage() {
     { enabled: selectedCategory === 'Substats' }
   );
 
+  const { data: levelingData, isLoading: isLoadingLeveling } = api.statistics.getLevelingStats.useQuery(
+    { set: selectedSet },
+    { enabled: selectedCategory === 'Leveling' }
+  );
+
   const renderContent = () => {
     switch (selectedCategory) {
       case 'Main Stat':
@@ -93,9 +99,10 @@ export default function StatisticsPage() {
         );
       case 'Leveling':
         return (
-          <div className="flex h-64 items-center justify-center rounded-xl bg-slate-900 text-gray-400">
-            Leveling Section Coming Soon
-          </div>
+          <LevelingSection
+            levelingData={levelingData ?? []}
+            isLoading={isLoadingLeveling}
+          />
         );
       default:
         return null;

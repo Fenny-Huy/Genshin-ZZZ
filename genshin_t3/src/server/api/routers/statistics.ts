@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { artifactItself } from "~/server/db/schema";
+import { artifactItself, artifactLeveling } from "~/server/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 
 export const statisticsRouter = createTRPCRouter({
@@ -115,6 +115,83 @@ export const statisticsRouter = createTRPCRouter({
           )`.mapWith(Number),
         })
         .from(artifactItself)
+        .where(and(...conditions))
+        .groupBy(artifactItself.type, artifactItself.mainStat);
+
+      return result;
+    }),
+
+  getLevelingStats: protectedProcedure
+    .input(
+      z.object({
+        set: z.string().nullable().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const conditions = [eq(artifactItself.userId, ctx.session.user.id)];
+      if (input.set) {
+        conditions.push(eq(artifactItself.set, input.set));
+      }
+
+      const result = await ctx.db
+        .select({
+          type: artifactItself.type,
+          mainStat: artifactItself.mainStat,
+          TypeCount: sql<number>`count(*)`.mapWith(Number),
+          
+          // Substat Presence (from artifactItself)
+          sub_ATK_per: sql<number>`sum(${artifactItself.percentATK})`.mapWith(Number),
+          sub_HP_per: sql<number>`sum(${artifactItself.percentHP})`.mapWith(Number),
+          sub_DEF_per: sql<number>`sum(${artifactItself.percentDEF})`.mapWith(Number),
+          sub_ATK: sql<number>`sum(${artifactItself.atk})`.mapWith(Number),
+          sub_HP: sql<number>`sum(${artifactItself.hp})`.mapWith(Number),
+          sub_DEF: sql<number>`sum(${artifactItself.def})`.mapWith(Number),
+          sub_ER: sql<number>`sum(${artifactItself.er})`.mapWith(Number),
+          sub_EM: sql<number>`sum(${artifactItself.em})`.mapWith(Number),
+          sub_Crit_Rate: sql<number>`sum(${artifactItself.critRate})`.mapWith(Number),
+          sub_Crit_DMG: sql<number>`sum(${artifactItself.critDMG})`.mapWith(Number),
+          
+          substatCount: sql<number>`sum(
+            ${artifactItself.percentATK} + ${artifactItself.percentHP} + ${artifactItself.percentDEF} + 
+            ${artifactItself.atk} + ${artifactItself.hp} + ${artifactItself.def} + 
+            ${artifactItself.er} + ${artifactItself.em} + 
+            ${artifactItself.critRate} + ${artifactItself.critDMG}
+          )`.mapWith(Number),
+
+          // Roll Counts (from artifactLeveling)
+          roll_HP: sql<number>`sum(${artifactLeveling.lHP})`.mapWith(Number),
+          roll_ATK: sql<number>`sum(${artifactLeveling.lATK})`.mapWith(Number),
+          roll_DEF: sql<number>`sum(${artifactLeveling.lDEF})`.mapWith(Number),
+          roll_HP_per: sql<number>`sum(${artifactLeveling.lPercentHP})`.mapWith(Number),
+          roll_ATK_per: sql<number>`sum(${artifactLeveling.lPercentATK})`.mapWith(Number),
+          roll_DEF_per: sql<number>`sum(${artifactLeveling.lPercentDEF})`.mapWith(Number),
+          roll_EM: sql<number>`sum(${artifactLeveling.lEM})`.mapWith(Number),
+          roll_ER: sql<number>`sum(${artifactLeveling.lER})`.mapWith(Number),
+          roll_Crit_Rate: sql<number>`sum(${artifactLeveling.lCritRate})`.mapWith(Number),
+          roll_Crit_DMG: sql<number>`sum(${artifactLeveling.lCritDMG})`.mapWith(Number),
+
+          TotalRoll: sql<number>`sum(
+            ${artifactLeveling.lHP} + ${artifactLeveling.lATK} + ${artifactLeveling.lDEF} + 
+            ${artifactLeveling.lPercentHP} + ${artifactLeveling.lPercentATK} + ${artifactLeveling.lPercentDEF} + 
+            ${artifactLeveling.lEM} + ${artifactLeveling.lER} + 
+            ${artifactLeveling.lCritRate} + ${artifactLeveling.lCritDMG}
+          )`.mapWith(Number),
+
+          // Added Substats
+          added_ATK: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'ATK' then 1 else 0 end)`.mapWith(Number),
+          added_DEF: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'DEF' then 1 else 0 end)`.mapWith(Number),
+          added_HP: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'HP' then 1 else 0 end)`.mapWith(Number),
+          added_ATK_per: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = '%ATK' then 1 else 0 end)`.mapWith(Number),
+          added_DEF_per: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = '%DEF' then 1 else 0 end)`.mapWith(Number),
+          added_HP_per: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = '%HP' then 1 else 0 end)`.mapWith(Number),
+          added_ER: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'ER' then 1 else 0 end)`.mapWith(Number),
+          added_EM: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'EM' then 1 else 0 end)`.mapWith(Number),
+          added_Crit_Rate: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'Crit Rate' then 1 else 0 end)`.mapWith(Number),
+          added_Crit_DMG: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'Crit DMG' then 1 else 0 end)`.mapWith(Number),
+          added_None: sql<number>`sum(case when ${artifactLeveling.addedSubstat} = 'None' then 1 else 0 end)`.mapWith(Number),
+        })
+        .from(artifactLeveling)
+        .innerJoin(artifactItself, eq(artifactLeveling.id, artifactItself.id))
         .where(and(...conditions))
         .groupBy(artifactItself.type, artifactItself.mainStat);
 

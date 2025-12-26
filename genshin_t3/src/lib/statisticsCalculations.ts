@@ -1,4 +1,276 @@
-import { artifactConfig } from "~/lib/constants";
+
+export const keysConfig = [
+  ["sub_ATK_per", "roll_ATK_per", "added_ATK_per", '%ATK'],
+  ["sub_HP_per", "roll_HP_per", "added_HP_per", '%HP'],
+  ["sub_DEF_per", "roll_DEF_per", "added_DEF_per", '%DEF'],
+  ["sub_ATK", "roll_ATK", "added_ATK", 'ATK'],
+  ["sub_HP", "roll_HP", "added_HP", 'HP'],
+  ["sub_DEF", "roll_DEF", "added_DEF", 'DEF'],
+  ["sub_ER", "roll_ER", "added_ER", 'ER'],
+  ["sub_EM", "roll_EM", "added_EM", 'EM'],
+  ["sub_Crit_Rate", "roll_Crit_Rate", "added_Crit_Rate", 'Crit Rate'],
+  ["sub_Crit_DMG", "roll_Crit_DMG", "added_Crit_DMG", 'Crit DMG'],
+  [null, null, "added_None", "None"]
+] as const;
+
+/**
+ * Creates mapping objects from keysConfig for different data transformations
+ */
+export const createMappings = () => {
+  const substatKeyToMainStat: Record<string, string> = {};
+  const levelingSubstatKeyToMainStat: Record<string, string> = {};
+  const substatToLevelingKeys: Record<string, string> = {};
+  const addedToMainStatKey: Record<string, string> = {};
+
+  keysConfig.forEach(mapping => {
+    const [subKey, rollKey, addedKey, value] = mapping;
+    if (subKey) substatKeyToMainStat[subKey] = value;
+    if (rollKey) levelingSubstatKeyToMainStat[rollKey] = value;
+    if (subKey && rollKey) substatToLevelingKeys[subKey] = rollKey;
+    if (addedKey) addedToMainStatKey[addedKey] = value;
+  });
+
+  return {
+    substatKeyToMainStat,
+    levelingSubstatKeyToMainStat,
+    substatToLevelingKeys,
+    addedToMainStatKey,
+  };
+};
+
+// Define the type for the leveling data item based on the backend response
+export interface LevelingDataItem {
+  type: string | null;
+  mainStat: string | null;
+  TypeCount: number;
+  substatCount: number;
+  TotalRoll: number;
+  [key: string]: any; // Allow dynamic access for sub_*, roll_*, added_* keys
+}
+
+/**
+ * Calculates overall leveling statistics
+ */
+export const calculateLevelingOverall = (levelingData: LevelingDataItem[]) => {
+  const mappings = createMappings();
+  const {
+    substatKeyToMainStat,
+    levelingSubstatKeyToMainStat,
+    substatToLevelingKeys,
+    addedToMainStatKey,
+  } = mappings;
+
+  // Calculate substat totals
+  const substatTotals = levelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('sub_') && item.mainStat !== substatKeyToMainStat[key]) {
+        acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate total substat counts
+  // This is the DIVISOR logic the user emphasized:
+  // Sum of substatCount for all items EXCEPT where main_stat matches the substat being calculated
+  const totalSubstatCounts = Object.keys(substatKeyToMainStat).reduce((acc, key) => {
+    acc[key] = levelingData.reduce((sum, item) => {
+      if (item.mainStat !== substatKeyToMainStat[key]) {
+        return sum + item.substatCount;
+      }
+      return sum;
+    }, 0);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate leveling counts (Rolls)
+  const levelingCount = levelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('roll_') && item.mainStat !== levelingSubstatKeyToMainStat[key]) {
+        acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate total leveling counts (Total Rolls)
+  const totalLevelingCount = Object.keys(levelingSubstatKeyToMainStat).reduce((acc, key) => {
+    acc[key] = levelingData.reduce((sum, item) => {
+      if (item.mainStat !== levelingSubstatKeyToMainStat[key]) {
+        return sum + item.TotalRoll;
+      }
+      return sum;
+    }, 0);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Create substat distribution
+  const substatDistribution = Object.keys(substatTotals).map(key => {
+    const rollKey = substatToLevelingKeys[key];
+    const substatLabel = substatKeyToMainStat[key];
+    
+    const appearancePercentage = totalSubstatCounts[key] ? (substatTotals[key]! / totalSubstatCounts[key]!) * 100 : 0;
+    const rollPercentage = (rollKey && totalLevelingCount[rollKey]) ? (levelingCount[rollKey]! / totalLevelingCount[rollKey]!) * 100 : 0;
+
+    return {
+      substat: substatLabel,
+      appearancePercentage,
+      rollPercentage,
+      substatcount: substatTotals[key] ?? 0,
+      rollcount: rollKey ? (levelingCount[rollKey] ?? 0) : 0,
+    };
+  });
+
+  // Calculate added substat distribution
+  const addedSubstatDistribution = levelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('added_')) {
+        acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  const totalAdded = levelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('added_') && item.mainStat !== addedToMainStatKey[key]) {
+         acc += (item[key] as number);
+      }
+    });
+    return acc;
+  }, 0);
+
+  const addedSubstatData = Object.keys(addedSubstatDistribution).map(key => ({
+    substat: addedToMainStatKey[key],
+    percentage: totalAdded ? (addedSubstatDistribution[key]! / totalAdded) * 100 : 0,
+    count: addedSubstatDistribution[key] ?? 0,
+  }));
+
+  return {
+    substatDistribution,
+    addedSubstatData,
+  };
+};
+
+/**
+ * Calculates specific leveling statistics for filtered data
+ */
+export const calculateLevelingSpecific = (levelingData: LevelingDataItem[], selectedType: string, selectedMainStat: string) => {
+  const mappings = createMappings();
+  const {
+    substatKeyToMainStat,
+    levelingSubstatKeyToMainStat,
+    substatToLevelingKeys,
+    addedToMainStatKey,
+  } = mappings;
+
+  const filteredLevelingData = levelingData.filter(
+    item => item.type === selectedType && item.mainStat === selectedMainStat
+  );
+
+  // Calculate substat totals for filtered data
+  const substatTotals = filteredLevelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('sub_')) {
+         acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate total substat counts for filtered data
+  const totalSubstatCounts = Object.keys(substatKeyToMainStat).reduce((acc, key) => {
+    acc[key] = filteredLevelingData.reduce((sum, item) => {
+      return sum + item.substatCount;
+    }, 0);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate leveling counts for filtered data
+  const levelingCount = filteredLevelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('roll_')) {
+        acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate total leveling counts for filtered data
+  const totalLevelingCount = Object.keys(levelingSubstatKeyToMainStat).reduce((acc, key) => {
+    acc[key] = filteredLevelingData.reduce((sum, item) => {
+      return sum + item.TotalRoll;
+    }, 0);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Create substat distribution for filtered data
+  const substatDistribution = Object.keys(substatTotals).map(key => {
+    const rollKey = substatToLevelingKeys[key];
+    const substatLabel = substatKeyToMainStat[key];
+    
+    return {
+      substat: substatLabel,
+      appearancePercentage: totalSubstatCounts[key] ? (substatTotals[key]! / totalSubstatCounts[key]!) * 100 : 0,
+      rollPercentage: (rollKey && totalLevelingCount[rollKey]) ? (levelingCount[rollKey]! / totalLevelingCount[rollKey]!) * 100 : 0,
+      substatcount: substatTotals[key] ?? 0,
+      rollcount: rollKey ? (levelingCount[rollKey] ?? 0) : 0,
+    };
+  });
+
+  // Calculate added substat distribution for filtered data
+  const addedSubstatDistribution = filteredLevelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('added_')) {
+        acc[key] = (acc[key] || 0) + (item[key] as number);
+      }
+    });
+    return acc;
+  }, {} as Record<string, number>);
+
+  const totalAdded = filteredLevelingData.reduce((acc, item) => {
+    Object.keys(item).forEach(key => {
+      if (key.startsWith('added_') && item.mainStat !== addedToMainStatKey[key]) {
+         acc += (item[key] as number);
+      }
+    });
+    return acc;
+  }, 0);
+
+  const addedSubstatData = Object.keys(addedSubstatDistribution).map(key => ({
+    substat: addedToMainStatKey[key],
+    percentage: totalAdded ? (addedSubstatDistribution[key]! / totalAdded) * 100 : 0,
+    count: addedSubstatDistribution[key] ?? 0,
+  }));
+
+  return {
+    substatDistribution,
+    addedSubstatData,
+  };
+};
+
+/**
+ * Gets unique types from leveling data
+ */
+export const getUniqueTypes = (levelingData: LevelingDataItem[]) => {
+  return levelingData
+    .map(item => item.type)
+    .filter((value, index, self) => value && self.indexOf(value) === index) as string[];
+};
+
+/**
+ * Gets unique main stats for a specific type from leveling data
+ */
+export const getUniqueMainStats = (levelingData: LevelingDataItem[], selectedType: string) => {
+  return levelingData
+    .filter(item => item.type === selectedType)
+    .map(item => item.mainStat)
+    .filter((value, index, self) => value && self.indexOf(value) === index) as string[];
+};
+
+// Re-export existing functions if needed, or just rely on these new ones.
+// The existing functions were for Substats section. I should probably keep them or adapt them.
+// For now, I'll add the Substat functions back in to avoid breaking the Substat section.
 
 // Mapping from database column keys to display labels
 const SUBSTAT_KEY_TO_LABEL: Record<string, string> = {
