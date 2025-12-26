@@ -149,7 +149,7 @@ export default function LevelingSearchPage() {
                         <td className="p-3">
                           <button
                             onClick={() => setSelectedArtifact({ ...artifact, leveling })}
-                            className="text-yellow-500 hover:text-yellow-400 font-medium"
+                            className="cursor-pointer rounded bg-yellow-600/20 px-3 py-1 text-xs font-medium text-yellow-500 hover:bg-yellow-600/30 transition-colors border border-yellow-600/30"
                           >
                             Edit
                           </button>
