@@ -119,7 +119,7 @@ export const calculateLevelingOverall = (levelingData: LevelingDataItem[]) => {
       substatcount: substatTotals[key] ?? 0,
       rollcount: rollKey ? (levelingCount[rollKey] ?? 0) : 0,
     };
-  });
+  }).sort((a, b) => b.appearancePercentage - a.appearancePercentage);
 
   // Calculate added substat distribution
   const addedSubstatDistribution = levelingData.reduce((acc, item) => {
@@ -144,7 +144,7 @@ export const calculateLevelingOverall = (levelingData: LevelingDataItem[]) => {
     substat: addedToMainStatKey[key],
     percentage: totalAdded ? (addedSubstatDistribution[key]! / totalAdded) * 100 : 0,
     count: addedSubstatDistribution[key] ?? 0,
-  }));
+  })).sort((a, b) => b.count - a.count);
 
   return {
     substatDistribution,
@@ -216,7 +216,7 @@ export const calculateLevelingSpecific = (levelingData: LevelingDataItem[], sele
       substatcount: substatTotals[key] ?? 0,
       rollcount: rollKey ? (levelingCount[rollKey] ?? 0) : 0,
     };
-  });
+  }).sort((a, b) => b.appearancePercentage - a.appearancePercentage);
 
   // Calculate added substat distribution for filtered data
   const addedSubstatDistribution = filteredLevelingData.reduce((acc, item) => {
@@ -241,7 +241,7 @@ export const calculateLevelingSpecific = (levelingData: LevelingDataItem[], sele
     substat: addedToMainStatKey[key],
     percentage: totalAdded ? (addedSubstatDistribution[key]! / totalAdded) * 100 : 0,
     count: addedSubstatDistribution[key] ?? 0,
-  }));
+  })).sort((a, b) => b.count - a.count);
 
   return {
     substatDistribution,
