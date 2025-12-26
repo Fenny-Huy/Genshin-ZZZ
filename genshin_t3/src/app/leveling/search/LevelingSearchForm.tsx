@@ -329,7 +329,18 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
             const isSelected = selectedSubstats.includes(substat);
             
             return (
-              <div key={substat} className="flex flex-col gap-2 rounded-lg bg-slate-800/50 p-3 border border-slate-700/50">
+              <div key={substat} className="relative flex flex-col gap-2 rounded-lg bg-slate-800/50 p-3 border border-slate-700/50">
+                {isSelected && (formData as any)[key] !== "" && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, [key]: "" }))}
+                    className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-900/30 text-xs text-red-400 hover:bg-red-900/50"
+                    title="Clear value"
+                  >
+                    ×
+                  </button>
+                )}
+
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -347,16 +358,51 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
                 </div>
                 
                 {isSelected && (
-                  <input
-                    type="number"
-                    name={key}
-                    value={(formData as any)[key]}
-                    onChange={handleInputChange}
-                    min="0"
-                    max="5"
-                    placeholder="Rolls"
-                    className="w-full rounded border border-slate-600 bg-slate-700 p-1.5 text-center text-sm text-white focus:border-yellow-500 focus:ring-yellow-500"
-                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = (formData as any)[key];
+                        if (current === "") {
+                          setFormData((prev) => ({ ...prev, [key]: "0" }));
+                        } else {
+                          const num = parseInt(current);
+                          if (num > 0) {
+                            setFormData((prev) => ({ ...prev, [key]: (num - 1).toString() }));
+                          }
+                        }
+                      }}
+                      className="flex h-7 w-7 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600"
+                    >
+                      −
+                    </button>
+                    
+                    <div className="flex-1 text-center text-sm font-medium text-white">
+                      {(formData as any)[key] === "" ? (
+                        <span className="text-gray-500">Any</span>
+                      ) : (
+                        (formData as any)[key]
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = (formData as any)[key];
+                        if (current === "") {
+                          setFormData((prev) => ({ ...prev, [key]: "0" }));
+                        } else {
+                          const num = parseInt(current);
+                          if (num < 5) {
+                            setFormData((prev) => ({ ...prev, [key]: (num + 1).toString() }));
+                          }
+                        }
+                      }}
+                      className="flex h-7 w-7 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600"
+                    >
+                      +
+                    </button>
+                  </div>
                 )}
               </div>
             );
