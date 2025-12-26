@@ -72,6 +72,55 @@ export const statisticsRouter = createTRPCRouter({
       };
     }),
 
+  getSubstats: protectedProcedure
+    .input(
+      z.object({
+        set: z.string().nullable().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const conditions = [eq(artifactItself.userId, ctx.session.user.id)];
+      if (input.set) {
+        conditions.push(eq(artifactItself.set, input.set));
+      }
+
+      // We need to aggregate substat counts grouped by Type and MainStat
+      // The original SQL query summed up the boolean flags (0 or 1) for each substat
+      // In our schema, we have integer columns for substats (0 or 1)
+      
+      const result = await ctx.db
+        .select({
+          type: artifactItself.type,
+          mainStat: artifactItself.mainStat,
+          artifactCount: sql<number>`count(*)`.mapWith(Number),
+          
+          // Summing up the presence of each substat
+          sub_ATK_per: sql<number>`sum(${artifactItself.percentATK})`.mapWith(Number),
+          sub_HP_per: sql<number>`sum(${artifactItself.percentHP})`.mapWith(Number),
+          sub_DEF_per: sql<number>`sum(${artifactItself.percentDEF})`.mapWith(Number),
+          sub_ATK: sql<number>`sum(${artifactItself.atk})`.mapWith(Number),
+          sub_HP: sql<number>`sum(${artifactItself.hp})`.mapWith(Number),
+          sub_DEF: sql<number>`sum(${artifactItself.def})`.mapWith(Number),
+          sub_ER: sql<number>`sum(${artifactItself.er})`.mapWith(Number),
+          sub_EM: sql<number>`sum(${artifactItself.em})`.mapWith(Number),
+          sub_Crit_Rate: sql<number>`sum(${artifactItself.critRate})`.mapWith(Number),
+          sub_Crit_DMG: sql<number>`sum(${artifactItself.critDMG})`.mapWith(Number),
+          
+          // Total count of all substats combined
+          substatCount: sql<number>`sum(
+            ${artifactItself.percentATK} + ${artifactItself.percentHP} + ${artifactItself.percentDEF} + 
+            ${artifactItself.atk} + ${artifactItself.hp} + ${artifactItself.def} + 
+            ${artifactItself.er} + ${artifactItself.em} + 
+            ${artifactItself.critRate} + ${artifactItself.critDMG}
+          )`.mapWith(Number),
+        })
+        .from(artifactItself)
+        .where(and(...conditions))
+        .groupBy(artifactItself.type, artifactItself.mainStat);
+
+      return result;
+    }),
+
   getAvailableSets: protectedProcedure.query(async ({ ctx }) => {
     const sets = await ctx.db
       .selectDistinct({ set: artifactItself.set })

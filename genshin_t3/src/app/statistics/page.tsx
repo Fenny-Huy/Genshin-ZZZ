@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { api } from "~/trpc/react";
 import { MainStatSection } from './_components/MainStatSection';
+import { SubstatSection } from './_components/SubstatSection';
 
 const customStyles = {
   control: (provided: any) => ({
@@ -44,12 +45,27 @@ export default function StatisticsPage() {
   // Main Stat State
   const [selectedMainStatChart, setSelectedMainStatChart] = useState('Types');
 
+  // Substat State
+  const [selectedSubstatChart, setSelectedSubstatChart] = useState('Overall');
+
   // Data Fetching
   const { data: availableSets } = api.statistics.getAvailableSets.useQuery();
   
   const { data: mainStatData, isLoading: isLoadingMainStats } = api.statistics.getMainStats.useQuery(
     { set: selectedSet },
     { enabled: selectedCategory === 'Main Stat' }
+  );
+
+  const { data: substatData, isLoading: isLoadingSubstats } = api.statistics.getSubstats.useQuery(
+    { set: selectedSet },
+    { enabled: selectedCategory === 'Substats' }
+  );
+
+  // We also need mainStatData for the "Specific" tab in Substats section to populate dropdowns
+  // So we should fetch it if we are in Substats section too
+  const { data: mainStatDataForSubstats } = api.statistics.getMainStats.useQuery(
+    { set: selectedSet },
+    { enabled: selectedCategory === 'Substats' }
   );
 
   const renderContent = () => {
@@ -66,9 +82,14 @@ export default function StatisticsPage() {
         );
       case 'Substats':
         return (
-          <div className="flex h-64 items-center justify-center rounded-xl bg-slate-900 text-gray-400">
-            Substats Section Coming Soon
-          </div>
+          <SubstatSection
+            selectedSubstatChart={selectedSubstatChart}
+            setSelectedSubstatChart={setSelectedSubstatChart}
+            substatData={substatData ?? []}
+            typeData={mainStatDataForSubstats?.typePercentages ?? []}
+            mainStatData={mainStatDataForSubstats?.mainStatPercentages ?? []}
+            isLoading={isLoadingSubstats}
+          />
         );
       case 'Leveling':
         return (
