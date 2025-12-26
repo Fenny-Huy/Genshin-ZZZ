@@ -32,6 +32,12 @@ export async function NavBar() {
                 Add Artifact
               </Link>
               <Link
+                href="/leveling/search"
+                className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
+              >
+                Search Leveling
+              </Link>
+              <Link
                 href="/api/auth/signout"
                 className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition-all hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
               >
