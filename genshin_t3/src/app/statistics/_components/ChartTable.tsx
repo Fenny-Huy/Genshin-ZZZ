@@ -197,11 +197,11 @@ export const ChartTable: React.FC<ChartTableProps> = ({
                         <td className="p-4 font-medium text-white">
                           {row.substat}
                         </td>
-                        <td className="p-4 text-right text-gray-300">
+                        <td className="p-4 text-right text-gray-300 tabular-nums">
                           {row.count.toLocaleString()}
                         </td>
-                        <td className="p-4 text-right font-medium text-yellow-500">
-                          {row.percentage.toFixed(1)}%
+                        <td className="p-4 text-right font-medium text-yellow-500 tabular-nums">
+                          {row.percentage.toFixed(2)}%
                         </td>
                       </tr>
                     ))
