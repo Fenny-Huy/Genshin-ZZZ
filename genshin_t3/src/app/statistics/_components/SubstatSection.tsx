@@ -85,7 +85,7 @@ export const SubstatSection: React.FC<SubstatSectionProps> = ({
               <button
                 key={stat}
                 onClick={() => setSelectedMainStat(stat)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   selectedMainStat === stat
                     ? 'bg-slate-700 text-white shadow-md'
                     : 'text-gray-400 hover:bg-slate-800 hover:text-gray-200'
