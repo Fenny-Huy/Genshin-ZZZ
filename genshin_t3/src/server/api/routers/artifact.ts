@@ -189,4 +189,59 @@ export const artifactRouter = createTRPCRouter({
 
       return newArtifact;
     }),
+
+  search: protectedProcedure
+    .input(
+      z.object({
+        set: z.string().nullable().optional(),
+        type: z.string().nullable().optional(),
+        mainStat: z.string().nullable().optional(),
+        numberOfSubstats: z.number().nullable().optional(),
+        substats: z.array(z.string()).optional(),
+        score: z.string().nullable().optional(),
+        source: z.string().nullable().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const filters = [eq(artifactItself.userId, ctx.session.user.id)];
+
+      if (input.set) filters.push(eq(artifactItself.set, input.set));
+      if (input.type) filters.push(eq(artifactItself.type, input.type));
+      if (input.mainStat) filters.push(eq(artifactItself.mainStat, input.mainStat));
+      if (input.numberOfSubstats)
+        filters.push(eq(artifactItself.numberOfSubstat, input.numberOfSubstats));
+      if (input.score) filters.push(eq(artifactItself.score, input.score));
+      if (input.source) filters.push(eq(artifactItself.whereGotIt, input.source));
+
+      if (input.substats && input.substats.length > 0) {
+        if (input.substats.includes("%ATK"))
+          filters.push(eq(artifactItself.percentATK, 1));
+        if (input.substats.includes("%HP"))
+          filters.push(eq(artifactItself.percentHP, 1));
+        if (input.substats.includes("%DEF"))
+          filters.push(eq(artifactItself.percentDEF, 1));
+        if (input.substats.includes("ATK"))
+          filters.push(eq(artifactItself.atk, 1));
+        if (input.substats.includes("HP"))
+          filters.push(eq(artifactItself.hp, 1));
+        if (input.substats.includes("DEF"))
+          filters.push(eq(artifactItself.def, 1));
+        if (input.substats.includes("ER"))
+          filters.push(eq(artifactItself.er, 1));
+        if (input.substats.includes("EM"))
+          filters.push(eq(artifactItself.em, 1));
+        if (input.substats.includes("Crit Rate"))
+          filters.push(eq(artifactItself.critRate, 1));
+        if (input.substats.includes("Crit DMG"))
+          filters.push(eq(artifactItself.critDMG, 1));
+      }
+
+      return ctx.db.query.artifactItself.findMany({
+        where: and(...filters),
+        orderBy: [desc(artifactItself.createDate)],
+        with: {
+          leveling: true,
+        },
+      });
+    }),
 });
