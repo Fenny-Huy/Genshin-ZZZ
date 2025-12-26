@@ -56,7 +56,10 @@ export const prepareChartData = (data: any[], labelKey: string, valueKey: string
  */
 export const prepareLevelingChartData = (data: any[], labelKey: string, valueKeys: string[]) => {
   // Sort data in descending order based on the first value key
-  const sortedData = [...data].sort((a, b) => b[valueKeys[0]] - a[valueKeys[0]]);
+  const sortKey = valueKeys[0];
+  const sortedData = sortKey 
+    ? [...data].sort((a, b) => b[sortKey] - a[sortKey])
+    : [...data];
 
   return {
     labels: sortedData.map(item => item[labelKey]),
