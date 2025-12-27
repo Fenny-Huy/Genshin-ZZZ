@@ -43,7 +43,7 @@ const ChartTable: React.FC<ChartTableProps> = ({
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'bottom' as const,
+        position: (chartType === 'pie' ? 'right' : 'bottom') as const,
         labels: {
           padding: 20,
           color: '#9ca3af', // text-gray-400
@@ -95,9 +95,9 @@ const ChartTable: React.FC<ChartTableProps> = ({
         <div className="mb-6 text-center">
           <h2 className="text-xl font-bold text-white">{chartTitle}</h2>
         </div>
-        <div className="flex-1 relative min-h-0 flex justify-center">
+        <div className="relative min-h-0 h-96 w-full">
           {chartType === 'pie' ? (
-            <div className="w-3/4 h-full">
+            <div className="w-full h-full mx-auto">
               <Pie data={chartData} options={chartOptions} />
             </div>
           ) : (
