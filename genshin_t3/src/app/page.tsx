@@ -78,6 +78,15 @@ export default async function Home() {
                     View comprehensive statistics and charts about your artifact collection.
                   </div>
                 </Link>
+                <Link
+                  href="/substatistics"
+                  className="flex max-w-xs flex-col gap-4 rounded-xl bg-slate-800 p-6 border border-slate-700 transition-all hover:bg-slate-700 hover:border-slate-600 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <h3 className="text-2xl font-bold text-cyan-400">Analytics →</h3>
+                  <div className="text-lg text-gray-300">
+                    Detailed breakdown of artifact sets, sources, scores, and leveling investment.
+                  </div>
+                </Link>
               </div>
             )}
           </div>
