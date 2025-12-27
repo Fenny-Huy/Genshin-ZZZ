@@ -1,0 +1,45 @@
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { artifactItself } from "~/server/db/schema";
+import { sql, desc, eq } from "drizzle-orm";
+
+export const substatisticsRouter = createTRPCRouter({
+  getSetData: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        set: artifactItself.set,
+        count: sql<number>`count(*)`.mapWith(Number),
+      })
+      .from(artifactItself)
+      .where(eq(artifactItself.userId, ctx.session.user.id))
+      .groupBy(artifactItself.set)
+      .orderBy(desc(sql`count(*)`));
+    return result;
+  }),
+
+  getSourceData: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        where: artifactItself.whereGotIt,
+        count: sql<number>`count(*)`.mapWith(Number),
+      })
+      .from(artifactItself)
+      .where(eq(artifactItself.userId, ctx.session.user.id))
+      .groupBy(artifactItself.whereGotIt)
+      .orderBy(desc(sql`count(*)`));
+    return result;
+  }),
+
+  getSetSourceComboData: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        set: artifactItself.set,
+        where: artifactItself.whereGotIt,
+        count: sql<number>`count(*)`.mapWith(Number),
+      })
+      .from(artifactItself)
+      .where(eq(artifactItself.userId, ctx.session.user.id))
+      .groupBy(artifactItself.set, artifactItself.whereGotIt)
+      .orderBy(desc(sql`count(*)`));
+    return result;
+  }),
+});
