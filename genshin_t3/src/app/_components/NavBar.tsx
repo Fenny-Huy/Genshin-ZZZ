@@ -6,7 +6,7 @@ export async function NavBar() {
 
   return (
     <nav className="bg-slate-900 p-4 text-white shadow-md">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="w-full px-8 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-yellow-500">
           Genshin Artifacts
         </Link>
@@ -36,6 +36,12 @@ export async function NavBar() {
                 className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
               >
                 Search Leveling
+              </Link>
+              <Link
+                href="/statistics"
+                className="rounded-lg bg-yellow-600 px-4 py-2 font-semibold text-white shadow-md transition-all hover:bg-yellow-500 hover:shadow-yellow-500/20 active:scale-95"
+              >
+                Statistics
               </Link>
               <Link
                 href="/api/auth/signout"

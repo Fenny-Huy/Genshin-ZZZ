@@ -69,6 +69,15 @@ export default async function Home() {
                     Find artifacts based on specific substat roll distributions and leveling history.
                   </div>
                 </Link>
+                <Link
+                  href="/statistics"
+                  className="flex max-w-xs flex-col gap-4 rounded-xl bg-slate-800 p-6 border border-slate-700 transition-all hover:bg-slate-700 hover:border-slate-600 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <h3 className="text-2xl font-bold text-pink-400">Statistics →</h3>
+                  <div className="text-lg text-gray-300">
+                    View comprehensive statistics and charts about your artifact collection.
+                  </div>
+                </Link>
               </div>
             )}
           </div>
