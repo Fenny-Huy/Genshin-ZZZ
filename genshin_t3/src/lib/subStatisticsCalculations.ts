@@ -106,7 +106,7 @@ export const calculateSetSourceData = (combineCap = 3.5) => {
     });
 
     if (other.count > 0) {
-      filteredData.push(other);
+      filteredData.push(other as { label: string; substat: string; percentage: number; count: number });
     }
 
     return filteredData;
