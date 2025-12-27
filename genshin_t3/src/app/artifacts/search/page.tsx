@@ -1,25 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { api } from "~/trpc/react";
+import { api, type RouterInputs } from "~/trpc/react";
 import { SearchForm } from "./SearchForm";
 import { ArtifactRow } from "../recent_list/ArtifactRow";
 
+type SearchFilters = Omit<RouterInputs["artifact"]["search"], "page" | "limit">;
+
 export default function SearchPage() {
-  const [searchFilters, setSearchFilters] = useState<any>(null);
+  const [searchFilters, setSearchFilters] = useState<SearchFilters | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const { data, isLoading, refetch } = api.artifact.search.useQuery(
-    { ...searchFilters, page, limit },
+    { ...(searchFilters ?? {}), page, limit },
     {
       enabled: !!searchFilters, // Only run query when filters are set
       staleTime: 0,
     },
   );
 
-  const handleSearch = (filters: any) => {
+  const handleSearch = (filters: SearchFilters | null) => {
     if (filters === null) {
       setSearchFilters(null);
       setHasSearched(false);
