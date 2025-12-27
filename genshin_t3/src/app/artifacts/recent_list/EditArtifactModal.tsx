@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import Select from "react-select";
+import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { api } from "~/trpc/react";
 import { artifactConfig } from "~/lib/constants";
 import { type RouterOutputs } from "~/trpc/react";
@@ -15,28 +15,33 @@ interface EditArtifactModalProps {
   onUpdateSuccess: () => void;
 }
 
-const customStyles = {
-  control: (provided: any) => ({
+interface Option {
+  value: string | null;
+  label: string | null;
+}
+
+const customStyles: StylesConfig<Option, false> = {
+  control: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937", // bg-gray-800
     borderColor: "#374151", // border-gray-700
     color: "white",
   }),
-  menu: (provided: any) => ({
+  menu: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937",
     zIndex: 9999,
   }),
-  option: (provided: any, state: { isFocused: boolean }) => ({
+  option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isFocused ? "#374151" : "#1f2937",
     color: "white",
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided) => ({
     ...provided,
     color: "white",
   }),
-  input: (provided: any) => ({
+  input: (provided) => ({
     ...provided,
     color: "white",
   }),
@@ -90,7 +95,7 @@ export function EditArtifactModal({
     source: artifact.whereGotIt ?? "",
   });
 
-  const handleSelectChange = (selectedOption: any, field: string) => {
+  const handleSelectChange = (selectedOption: SingleValue<Option>, field: string) => {
     setFormData((prev) => {
       const updatedFormData = {
         ...prev,
@@ -206,10 +211,8 @@ export function EditArtifactModal({
             </label>
             <Select
               options={
-                formData.type
-                  ? artifactConfig.mainStatsOptions[
-                      formData.type.value as keyof typeof artifactConfig.mainStatsOptions
-                    ]
+                formData.type?.value
+                  ? artifactConfig.mainStatsOptions[formData.type.value] ?? []
                   : []
               }
               value={formData.mainStat}
