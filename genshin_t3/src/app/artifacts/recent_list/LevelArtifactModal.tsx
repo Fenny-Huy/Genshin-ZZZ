@@ -195,7 +195,7 @@ export function LevelArtifactModal({
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => handleDecrement(key)}
-                      disabled={(formData[key] as number) <= 0}
+                      disabled={formData[key] <= 0}
                       className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                     >
                       −
@@ -203,7 +203,7 @@ export function LevelArtifactModal({
                     <span className="w-8 text-center text-lg font-bold text-white">{formData[key]}</span>
                     <button
                       onClick={() => handleIncrement(key)}
-                      disabled={(formData[key] as number) >= 5}
+                      disabled={formData[key] >= 5}
                       className="flex h-8 w-8 items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50"
                     >
                       +
