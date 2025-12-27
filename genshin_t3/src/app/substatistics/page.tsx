@@ -12,6 +12,8 @@ export default async function SubStatisticsPage() {
   const scoreSourceData = await api.substatistics.getScoreSourceData();
   const scoreSetSourceData = await api.substatistics.getScoreSetSourceData();
 
+  const levelingInvestmentData = await api.substatistics.getLevelingInvestmentData();
+
   return (
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center bg-slate-950 text-white">
@@ -33,6 +35,7 @@ export default async function SubStatisticsPage() {
             scoreSetData={scoreSetData}
             scoreSourceData={scoreSourceData}
             scoreSetSourceData={scoreSetSourceData}
+            levelingInvestmentData={levelingInvestmentData}
           />
         </div>
       </main>

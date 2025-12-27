@@ -13,6 +13,7 @@ interface SubStatisticsContentProps {
   scoreSetData: any[];
   scoreSourceData: any[];
   scoreSetSourceData: any[];
+  levelingInvestmentData: any[];
 }
 
 type Tab = 'Set/Source' | 'Score' | 'Leveling Invest';
@@ -25,6 +26,7 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
   scoreSetData,
   scoreSourceData,
   scoreSetSourceData,
+  levelingInvestmentData,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('Set/Source');
 
@@ -49,7 +51,9 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
         );
       case 'Leveling Invest':
         return (
-          <LevelingInvestmentSection />
+          <LevelingInvestmentSection 
+            levelingInvestmentData={levelingInvestmentData}
+          />
         );
       default:
         return null;

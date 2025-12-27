@@ -28,8 +28,6 @@ export const prepareSubChartData = (data: any[], labelKey: string, valueKey: str
       {
         data: sortedData.map(item => item[valueKey]),
         backgroundColor: colors.slice(0, sortedData.length),
-        borderColor: 'transparent',
-        borderWidth: 0,
       },
     ],
   };

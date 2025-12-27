@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { artifactItself } from "~/server/db/schema";
+import { artifactItself, artifactLeveling } from "~/server/db/schema";
 import { sql, desc, eq } from "drizzle-orm";
 
 export const substatisticsRouter = createTRPCRouter({
@@ -96,6 +96,44 @@ export const substatisticsRouter = createTRPCRouter({
       .where(eq(artifactItself.userId, ctx.session.user.id))
       .groupBy(artifactItself.score, artifactItself.set, artifactItself.whereGotIt)
       .orderBy(desc(sql`count(*)`));
+    return result;
+  }),
+
+  getLevelingInvestmentData: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        type: artifactItself.type,
+        set: artifactItself.set,
+        artifactCount: sql<number>`count(*)`.mapWith(Number),
+        totalRolls: sql<number>`sum(
+          ${artifactLeveling.lHP} + 
+          ${artifactLeveling.lATK} + 
+          ${artifactLeveling.lDEF} + 
+          ${artifactLeveling.lPercentHP} + 
+          ${artifactLeveling.lPercentATK} + 
+          ${artifactLeveling.lPercentDEF} + 
+          ${artifactLeveling.lEM} + 
+          ${artifactLeveling.lER} + 
+          ${artifactLeveling.lCritRate} + 
+          ${artifactLeveling.lCritDMG}
+        )`.mapWith(Number),
+      })
+      .from(artifactLeveling)
+      .innerJoin(artifactItself, eq(artifactLeveling.id, artifactItself.id))
+      .where(eq(artifactItself.userId, ctx.session.user.id))
+      .groupBy(artifactItself.type, artifactItself.set)
+      .orderBy(desc(sql`sum(
+          ${artifactLeveling.lHP} + 
+          ${artifactLeveling.lATK} + 
+          ${artifactLeveling.lDEF} + 
+          ${artifactLeveling.lPercentHP} + 
+          ${artifactLeveling.lPercentATK} + 
+          ${artifactLeveling.lPercentDEF} + 
+          ${artifactLeveling.lEM} + 
+          ${artifactLeveling.lER} + 
+          ${artifactLeveling.lCritRate} + 
+          ${artifactLeveling.lCritDMG}
+        )`));
     return result;
   }),
 });

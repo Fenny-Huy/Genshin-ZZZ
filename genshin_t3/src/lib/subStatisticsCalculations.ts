@@ -347,3 +347,71 @@ export const calculateScoreData = (combineCap = 4) => {
     separateDataOfScoreSource,
   };
 };
+
+// Leveling Investment calculations
+export const calculateLevelingInvestmentData = (levelingInvestmentData: { type: string | null; set: string | null; artifactCount: number; totalRolls: number }[]) => {
+  const getUniqueTypes = () => {
+    const types = [...new Set(levelingInvestmentData.map(item => item.type))].filter(Boolean) as string[];
+    return types;
+  };
+
+  const getUniqueSets = () => {
+    const sets = [...new Set(levelingInvestmentData.map(item => item.set))].filter(Boolean) as string[];
+    return sets.sort();
+  };
+
+  const getTypeData = (type: string) => {
+    const filteredData = levelingInvestmentData.filter(item => item.type === type);
+    const total = filteredData.reduce((sum, item) => sum + item.totalRolls, 0);
+    return filteredData.map(item => ({
+      substat: item.set,
+      label: item.set,
+      percentage: (item.totalRolls / total) * 100,
+      count: item.totalRolls,
+      artifactCount: item.artifactCount
+    }));
+  };
+
+  const getAllTypeData = () => {
+    // Group all data by set, summing up total rolls across all types
+    const groupedData = levelingInvestmentData.reduce((acc, item) => {
+      const existing = acc.find(i => i.set === item.set);
+      if (existing) {
+        existing.totalRolls += item.totalRolls;
+        existing.artifactCount += item.artifactCount;
+      } else {
+        acc.push({ ...item });
+      }
+      return acc;
+    }, [] as typeof levelingInvestmentData);
+
+    const total = groupedData.reduce((sum, item) => sum + item.totalRolls, 0);
+    return groupedData.map(item => ({
+      substat: item.set,
+      label: item.set,
+      percentage: (item.totalRolls / total) * 100,
+      count: item.totalRolls,
+      artifactCount: item.artifactCount
+    }));
+  };
+
+  const getSetData = (set: string) => {
+    const filteredData = levelingInvestmentData.filter(item => item.set === set);
+    const total = filteredData.reduce((sum, item) => sum + item.totalRolls, 0);
+    return filteredData.map(item => ({
+      substat: item.type,
+      label: item.type,
+      percentage: (item.totalRolls / total) * 100,
+      count: item.totalRolls,
+      artifactCount: item.artifactCount
+    }));
+  };
+
+  return {
+    getUniqueTypes,
+    getUniqueSets,
+    getTypeData,
+    getAllTypeData,
+    getSetData,
+  };
+};
