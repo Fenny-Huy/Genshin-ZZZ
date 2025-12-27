@@ -369,7 +369,7 @@ export const calculateLevelingInvestmentData = (levelingInvestmentData: { type: 
       percentage: (item.totalRolls / total) * 100,
       count: item.totalRolls,
       artifactCount: item.artifactCount
-    }));
+    })).sort((a, b) => b.count - a.count);
   };
 
   const getAllTypeData = () => {
@@ -392,7 +392,7 @@ export const calculateLevelingInvestmentData = (levelingInvestmentData: { type: 
       percentage: (item.totalRolls / total) * 100,
       count: item.totalRolls,
       artifactCount: item.artifactCount
-    }));
+    })).sort((a, b) => b.count - a.count);
   };
 
   const getSetData = (set: string) => {
@@ -404,7 +404,7 @@ export const calculateLevelingInvestmentData = (levelingInvestmentData: { type: 
       percentage: (item.totalRolls / total) * 100,
       count: item.totalRolls,
       artifactCount: item.artifactCount
-    }));
+    })).sort((a, b) => b.count - a.count);
   };
 
   return {

@@ -2,13 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Select from "react-select";
+import Select, { type StylesConfig } from "react-select";
 import { api } from "~/trpc/react";
 import { artifactConfig } from "~/lib/constants";
 
+interface Option {
+  value: string;
+  label: string;
+}
+
 // Custom styles for React Select to match dark theme
-const customStyles = {
-  control: (provided: any, state: any) => ({
+const customStyles: StylesConfig<Option, false> = {
+  control: (provided, state) => ({
     ...provided,
     backgroundColor: "#1e293b", // slate-800
     borderColor: state.isFocused ? "#a855f7" : "#4b5563", // purple-500 : gray-600
@@ -18,12 +23,12 @@ const customStyles = {
       borderColor: "#a855f7",
     },
   }),
-  menu: (provided: any) => ({
+  menu: (provided) => ({
     ...provided,
     backgroundColor: "#334155", // slate-700
     zIndex: 50,
   }),
-  option: (provided: any, state: any) => ({
+  option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isSelected
       ? "#a855f7" // purple-500
@@ -36,15 +41,15 @@ const customStyles = {
       backgroundColor: "#a855f7",
     },
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided) => ({
     ...provided,
     color: "white",
   }),
-  input: (provided: any) => ({
+  input: (provided) => ({
     ...provided,
     color: "white",
   }),
-  placeholder: (provided: any) => ({
+  placeholder: (provided) => ({
     ...provided,
     color: "#9ca3af", // gray-400
   }),
@@ -254,7 +259,7 @@ export default function ArtifactCreateForm() {
             instanceId="main-stat-select"
             options={
               formData.type
-                ? artifactConfig.mainStatsOptions[formData.type] || []
+                ? artifactConfig.mainStatsOptions[formData.type] ?? []
                 : []
             }
             value={toOption(formData.mainStat)}
