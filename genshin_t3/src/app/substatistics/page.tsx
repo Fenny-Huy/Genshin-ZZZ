@@ -1,11 +1,16 @@
 import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
-import SetSourceSection from "./_components/SetSourceSection";
+import SubStatisticsContent from "./_components/SubStatisticsContent";
 
 export default async function SubStatisticsPage() {
   const setData = await api.substatistics.getSetData();
   const sourceData = await api.substatistics.getSourceData();
   const setSourceComboData = await api.substatistics.getSetSourceComboData();
+  
+  const scoreData = await api.substatistics.getScoreData();
+  const scoreSetData = await api.substatistics.getScoreSetData();
+  const scoreSourceData = await api.substatistics.getScoreSourceData();
+  const scoreSetSourceData = await api.substatistics.getScoreSetSourceData();
 
   return (
     <HydrateClient>
@@ -20,18 +25,15 @@ export default async function SubStatisticsPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-8">
-            <section className="flex flex-col gap-4 rounded-xl bg-slate-900/50 p-6 border border-slate-800">
-              <h2 className="text-2xl font-semibold text-white border-b border-slate-700 pb-4">
-                Set & Source Distribution
-              </h2>
-              <SetSourceSection 
-                setData={setData}
-                sourceData={sourceData}
-                setSourceComboData={setSourceComboData}
-              />
-            </section>
-          </div>
+          <SubStatisticsContent
+            setData={setData}
+            sourceData={sourceData}
+            setSourceComboData={setSourceComboData}
+            scoreData={scoreData}
+            scoreSetData={scoreSetData}
+            scoreSourceData={scoreSourceData}
+            scoreSetSourceData={scoreSetSourceData}
+          />
         </div>
       </main>
     </HydrateClient>

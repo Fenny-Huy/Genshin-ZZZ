@@ -182,3 +182,168 @@ export const calculateSetSourceData = (combineCap = 3.5) => {
     prepareChartSetSourceComboData,
   };
 };
+
+export const calculateScoreData = (combineCap = 4) => {
+  const prepareTableScoreData = (data: { score: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      substat: item.score,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const prepareChartScoreData = (data: { score: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      label: item.score,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const prepareTableScoreSetData = (data: { score: string; set: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      substat: `${item.set} - ${item.score}`,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const prepareChartScoreSetData = (data: { score: string; set: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    const processedData = data.map(item => ({
+      label: `${item.set} - ${item.score}`,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+
+    const other = {
+      label: 'Other',
+      percentage: 0,
+      count: 0,
+    };
+
+    const filteredData = processedData.filter(item => {
+      if (item.percentage < combineCap) {
+        other.percentage += item.percentage;
+        other.count += item.count;
+        return false;
+      }
+      return true;
+    });
+
+    if (other.count > 0) {
+      filteredData.push(other);
+    }
+
+    return filteredData;
+  };
+
+  const prepareTableScoreSourceData = (data: { score: string; where: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      substat: `${item.where} - ${item.score}`,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const prepareChartScoreSourceData = (data: { score: string; where: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    const processedData = data.map(item => ({
+      label: `${item.where} - ${item.score}`,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+
+    const other = {
+      label: 'Other',
+      percentage: 0,
+      count: 0,
+    };
+
+    const filteredData = processedData.filter(item => {
+      if (item.percentage < combineCap) {
+        other.percentage += item.percentage;
+        other.count += item.count;
+        return false;
+      }
+      return true;
+    });
+
+    if (other.count > 0) {
+      filteredData.push(other);
+    }
+
+    return filteredData;
+  };
+
+  const prepareScoreSetSpecificData = (data: { score: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      label: item.score,
+      substat: item.score,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const prepareScoreSourceSpecificData = (data: { score: string; count: number }[]) => {
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    return data.map(item => ({
+      label: item.score,
+      substat: item.score,
+      percentage: (item.count / total) * 100,
+      count: item.count,
+    }));
+  };
+
+  const separateDataOfScoreSet = (data: { score: string; set: string; where: string; count: number }[], source: string) => {
+    if (source) {
+      const filteredData = data.filter(item => item.where === source);
+      const aggregatedData = filteredData.reduce((acc, item) => {
+        const existing = acc.find(i => i.score === item.score);
+        if (existing) {
+          existing.count += item.count;
+        } else {
+          acc.push({ score: item.score, count: item.count });
+        }
+        return acc;
+      }, [] as { score: string; count: number }[]);
+      return aggregatedData;
+    }
+    return [];
+  };
+
+  const separateDataOfScoreSource = (data: { score: string; set: string; where: string; count: number }[], set: string) => {
+    if (set) {
+      const filteredData = data.filter(item => item.set === set);
+      const aggregatedData = filteredData.reduce((acc, item) => {
+        const existing = acc.find(i => i.score === item.score);
+        if (existing) {
+          existing.count += item.count;
+        } else {
+          acc.push({ score: item.score, count: item.count });
+        }
+        return acc;
+      }, [] as { score: string; count: number }[]);
+      return aggregatedData;
+    }
+    return [];
+  };
+
+  return {
+    prepareTableScoreData,
+    prepareChartScoreData,
+    prepareTableScoreSetData,
+    prepareChartScoreSetData,
+    prepareTableScoreSourceData,
+    prepareChartScoreSourceData,
+    prepareScoreSetSpecificData,
+    prepareScoreSourceSpecificData,
+    separateDataOfScoreSet,
+    separateDataOfScoreSource,
+  };
+};
