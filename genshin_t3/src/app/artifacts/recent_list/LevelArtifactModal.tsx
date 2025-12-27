@@ -14,6 +14,20 @@ interface LevelArtifactModalProps {
   onUpdateSuccess: () => void;
 }
 
+interface LevelingFormData {
+  lHP: number;
+  lATK: number;
+  lDEF: number;
+  lPercentHP: number;
+  lPercentATK: number;
+  lPercentDEF: number;
+  lEM: number;
+  lER: number;
+  lCritRate: number;
+  lCritDMG: number;
+  addedSubstat: string;
+}
+
 export function LevelArtifactModal({
   artifact,
   onClose,
@@ -28,7 +42,7 @@ export function LevelArtifactModal({
     },
   });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LevelingFormData>({
     lHP: artifact.leveling?.lHP ?? 0,
     lATK: artifact.leveling?.lATK ?? 0,
     lDEF: artifact.leveling?.lDEF ?? 0,
@@ -65,23 +79,23 @@ export function LevelArtifactModal({
     setAvailableSubstats(available);
   }, [artifact]);
 
-  const handleIncrement = (field: keyof typeof formData) => {
+  const handleIncrement = (field: keyof LevelingFormData) => {
     if (field === "addedSubstat") return;
-    const current = formData[field] as number;
+    const current = formData[field];
     if (current < 5) {
       setFormData((prev) => ({ ...prev, [field]: current + 1 }));
     }
   };
 
-  const handleDecrement = (field: keyof typeof formData) => {
+  const handleDecrement = (field: keyof LevelingFormData) => {
     if (field === "addedSubstat") return;
-    const current = formData[field] as number;
+    const current = formData[field];
     if (current > 0) {
       setFormData((prev) => ({ ...prev, [field]: current - 1 }));
     }
   };
 
-  const getFormDataKey = (substat: string): keyof typeof formData => {
+  const getFormDataKey = (substat: string): Exclude<keyof LevelingFormData, "addedSubstat"> => {
     switch (substat) {
       case "%HP": return "lPercentHP";
       case "%ATK": return "lPercentATK";
@@ -155,7 +169,7 @@ export function LevelArtifactModal({
                     const newState = { ...prev, addedSubstat: newSubstat };
                     if (prev.addedSubstat !== "None") {
                       const oldKey = getFormDataKey(prev.addedSubstat);
-                      (newState as any)[oldKey] = 0;
+                      newState[oldKey] = 0;
                     }
                     return newState;
                   });
