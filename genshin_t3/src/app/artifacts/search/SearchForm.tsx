@@ -126,13 +126,13 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
   };
 
   const isSearchDisabled = !(
-    formData.artifactSet ||
-    formData.type ||
-    formData.mainStat ||
-    formData.numberOfSubstats ||
+    formData.artifactSet !== null ||
+    formData.type !== null ||
+    formData.mainStat !== null ||
+    formData.numberOfSubstats !== "" ||
     formData.substats.length > 0 ||
-    formData.score ||
-    formData.source
+    formData.score !== "" ||
+    formData.source !== ""
   );
 
   // Flatten main stats options for search (allow any main stat)

@@ -1,40 +1,50 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
+import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { artifactConfig } from "~/lib/constants";
+import { type RouterInputs } from "~/trpc/react";
+
+type LevelingSearchFilters = Omit<RouterInputs["leveling"]["search"], "page" | "limit">;
 
 interface LevelingSearchFormProps {
-  onSearch: (filters: any) => void;
+  onSearch: (filters: LevelingSearchFilters | null) => void;
   isLoading: boolean;
 }
 
-const customStyles = {
-  control: (provided: any) => ({
+interface Option {
+  value: string;
+  label: string;
+}
+
+const customStyles: StylesConfig<Option, false> = {
+  control: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937", // bg-gray-800
     borderColor: "#374151", // border-gray-700
     color: "white",
   }),
-  menu: (provided: any) => ({
+  menu: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937",
     zIndex: 9999,
   }),
-  option: (provided: any, state: { isFocused: boolean }) => ({
+  option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isFocused ? "#374151" : "#1f2937",
     color: "white",
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided) => ({
     ...provided,
     color: "white",
   }),
-  input: (provided: any) => ({
+  input: (provided) => ({
     ...provided,
     color: "white",
   }),
 };
+
+type LevelingKey = "lHP" | "lATK" | "lDEF" | "lPercentHP" | "lPercentATK" | "lPercentDEF" | "lEM" | "lER" | "lCritRate" | "lCritDMG";
 
 export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormProps) {
   const [mounted, setMounted] = useState(false);
@@ -82,7 +92,7 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
 
   if (!mounted) return null;
 
-  const handleSelectChange = (selectedOption: any, field: string) => {
+  const handleSelectChange = (selectedOption: SingleValue<Option>, field: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: selectedOption,
@@ -99,7 +109,7 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
     }));
   };
 
-  const getLevelingKey = (substat: string): keyof typeof formData => {
+  const getLevelingKey = (substat: string): LevelingKey => {
     switch (substat) {
       case "HP": return "lHP";
       case "ATK": return "lATK";
@@ -155,14 +165,14 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filters = {
-      set: formData.artifactSet?.value || null,
-      type: formData.type?.value || null,
-      mainStat: formData.mainStat?.value || null,
+      set: formData.artifactSet?.value ?? null,
+      type: formData.type?.value ?? null,
+      mainStat: formData.mainStat?.value ?? null,
       numberOfSubstats: formData.numberOfSubstats
         ? parseInt(formData.numberOfSubstats)
         : null,
-      score: formData.score?.value || null,
-      source: formData.source?.value || null,
+      score: formData.score?.value ?? null,
+      source: formData.source?.value ?? null,
       substats: selectedSubstats.length > 0 ? selectedSubstats : undefined,
       
       lHP: formData.lHP ? parseInt(formData.lHP) : null,
@@ -336,7 +346,7 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
                 }`}
                 onClick={() => handleSubstatToggle(substat)}
               >
-                {isSelected && (formData as any)[key] !== "" && (
+                {isSelected && formData[key] !== "" && (
                   <button
                     type="button"
                     onClick={(e) => {
@@ -376,7 +386,7 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
                     <button
                       type="button"
                       onClick={() => {
-                        const current = (formData as any)[key];
+                        const current = formData[key];
                         if (current === "") {
                           setFormData((prev) => ({ ...prev, [key]: "0" }));
                         } else {
@@ -392,17 +402,17 @@ export function LevelingSearchForm({ onSearch, isLoading }: LevelingSearchFormPr
                     </button>
                     
                     <div className="flex-1 text-center text-sm font-medium text-white">
-                      {(formData as any)[key] === "" ? (
+                      {formData[key] === "" ? (
                         <span className="text-gray-500">Any</span>
                       ) : (
-                        (formData as any)[key]
+                        formData[key]
                       )}
                     </div>
 
                     <button
                       type="button"
                       onClick={() => {
-                        const current = (formData as any)[key];
+                        const current = formData[key];
                         if (current === "") {
                           setFormData((prev) => ({ ...prev, [key]: "0" }));
                         } else {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { artifactItself, artifactLeveling } from "~/server/db/schema";
+import { artifactItself } from "~/server/db/schema";
 import { eq, desc, count, and } from "drizzle-orm";
 
 export const artifactRouter = createTRPCRouter({
