@@ -10,7 +10,8 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
-  Title
+  Title,
+  type ChartData
 } from 'chart.js';
 
 ChartJS.register(
@@ -23,10 +24,16 @@ ChartJS.register(
   Title
 );
 
+interface TableRow {
+  substat: string;
+  count: number;
+  percentage: number;
+}
+
 interface ChartTableProps {
   chartType: 'pie' | 'bar';
-  chartData: any;
-  tableData: any[];
+  chartData: ChartData<'pie' | 'bar', number[], string> | null | undefined;
+  tableData: TableRow[] | null | undefined;
   chartTitle: string;
   tableTitle: string;
   tableFirstField: string;
@@ -52,10 +59,9 @@ export const ChartTable: React.FC<ChartTableProps> = ({
       );
     }
 
-    if (!chartData || !chartData.labels || chartData.labels.length === 0) {
+    if (!chartData?.labels?.length) {
       return (
         <div className="flex h-[400px] flex-col items-center justify-center rounded-xl bg-slate-800/50 text-gray-400">
-          <div className="mb-4 text-4xl">📊</div>
           <h3 className="text-lg font-medium text-white">No Data Available</h3>
           <p>No chart data to display</p>
         </div>
@@ -66,7 +72,7 @@ export const ChartTable: React.FC<ChartTableProps> = ({
       return (
         <div className="relative h-[400px] w-full rounded-xl bg-slate-800/50 p-6">
           <Pie 
-            data={chartData} 
+            data={chartData as ChartData<'pie', number[], string>} 
             options={{
               responsive: true,
               maintainAspectRatio: false,
@@ -102,7 +108,7 @@ export const ChartTable: React.FC<ChartTableProps> = ({
       return (
         <div className="relative h-[400px] w-full rounded-xl bg-slate-800/50 p-6">
           <Bar 
-            data={chartData}
+            data={chartData as ChartData<'bar', number[], string>}
             options={{
               responsive: true,
               maintainAspectRatio: false,

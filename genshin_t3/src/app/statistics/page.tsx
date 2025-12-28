@@ -1,39 +1,39 @@
 "use client";
 
 import React, { useState } from 'react';
-import Select from 'react-select';
+import Select, { type CSSObjectWithLabel } from 'react-select';
 import { api } from "~/trpc/react";
 import { MainStatSection } from './_components/MainStatSection';
 import { SubstatSection } from './_components/SubstatSection';
 import { LevelingSection } from './_components/LevelingSection';
 
 const customStyles = {
-  control: (provided: any) => ({
+  control: (provided: CSSObjectWithLabel) => ({
     ...provided,
     backgroundColor: "#1f2937", // bg-gray-800
     borderColor: "#374151", // border-gray-700
     color: "white",
     minHeight: "42px",
   }),
-  menu: (provided: any) => ({
+  menu: (provided: CSSObjectWithLabel) => ({
     ...provided,
     backgroundColor: "#1f2937",
     zIndex: 9999,
   }),
-  option: (provided: any, state: { isFocused: boolean }) => ({
+  option: (provided: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
     ...provided,
     backgroundColor: state.isFocused ? "#374151" : "#1f2937",
     color: "white",
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided: CSSObjectWithLabel) => ({
     ...provided,
     color: "white",
   }),
-  input: (provided: any) => ({
+  input: (provided: CSSObjectWithLabel) => ({
     ...provided,
     color: "white",
   }),
-  placeholder: (provided: any) => ({
+  placeholder: (provided: CSSObjectWithLabel) => ({
     ...provided,
     color: "#9ca3af",
   }),

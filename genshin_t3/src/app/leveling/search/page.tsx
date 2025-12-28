@@ -1,26 +1,31 @@
 "use client";
 
 import React, { useState } from "react";
-import { api } from "~/trpc/react";
+import { api, type RouterInputs, type RouterOutputs } from "~/trpc/react";
 import { LevelingSearchForm } from "./LevelingSearchForm";
 import { LevelArtifactModal } from "~/app/artifacts/recent_list/LevelArtifactModal";
 
+type LevelingSearchFilters = Omit<RouterInputs["leveling"]["search"], "page" | "limit">;
+type SearchResult = RouterOutputs["leveling"]["search"]["results"][number];
+// Flatten the type to match what the UI expects (merging artifact and leveling properties)
+type Artifact = SearchResult["artifact"] & { leveling: SearchResult["leveling"] };
+
 export default function LevelingSearchPage() {
-  const [searchFilters, setSearchFilters] = useState<any>(null);
+  const [searchFilters, setSearchFilters] = useState<LevelingSearchFilters | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedArtifact, setSelectedArtifact] = useState<any>(null);
+  const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
   const limit = 10;
 
   const { data, isLoading, refetch } = api.leveling.search.useQuery(
-    { ...searchFilters, page, limit },
+    { ...(searchFilters ?? {}), page, limit },
     {
       enabled: !!searchFilters,
       staleTime: 0,
     },
   );
 
-  const handleSearch = (filters: any) => {
+  const handleSearch = (filters: LevelingSearchFilters | null) => {
     if (filters === null) {
       setSearchFilters(null);
       setHasSearched(false);
@@ -44,7 +49,7 @@ export default function LevelingSearchPage() {
   };
 
   // Helper to check if a substat is present on the artifact
-  const isSubstatPresent = (artifact: any, substat: string) => {
+  const isSubstatPresent = (artifact: SearchResult["artifact"], substat: string) => {
     switch (substat) {
       case "%ATK": return artifact.percentATK === 1;
       case "%HP": return artifact.percentHP === 1;
@@ -201,7 +206,7 @@ export default function LevelingSearchPage() {
           artifact={selectedArtifact}
           onClose={() => setSelectedArtifact(null)}
           onUpdateSuccess={() => {
-            refetch();
+            void refetch();
           }}
         />
       )}
