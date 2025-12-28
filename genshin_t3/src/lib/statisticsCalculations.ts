@@ -344,16 +344,16 @@ export const calculateSubstatSpecific = (
   }
 
   return Object.keys(SUBSTAT_KEY_TO_LABEL).map(key => {
-    const label = SUBSTAT_KEY_TO_LABEL[key];
+    const label = SUBSTAT_KEY_TO_LABEL[key]!;
     // If the substat is the same as the main stat, it can't exist as a substat
     if (label === selectedMainStat) return null;
 
     return {
       substat: label,
       percentage: data.substatCount > 0 
-        ? (data[key] / data.substatCount) * 100 
+        ? ((data[key] as number) / data.substatCount) * 100 
         : 0,
-      count: data[key],
+      count: data[key] as number,
     };
-  }).filter((item): item is NonNullable<typeof item> => item !== null);
+  }).filter((item): item is { substat: string; percentage: number; count: number } => item !== null);
 };
