@@ -1,36 +1,44 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
+import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { artifactConfig } from "~/lib/constants";
+import { type RouterInputs } from "~/trpc/react";
+
+type SearchFilters = Omit<RouterInputs["artifact"]["search"], "page" | "limit">;
 
 interface SearchFormProps {
-  onSearch: (filters: any) => void;
+  onSearch: (filters: SearchFilters | null) => void;
   isLoading: boolean;
 }
 
-const customStyles = {
-  control: (provided: any) => ({
+interface Option {
+  value: string;
+  label: string;
+}
+
+const customStyles: StylesConfig<Option, false> = {
+  control: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937", // bg-gray-800
     borderColor: "#374151", // border-gray-700
     color: "white",
   }),
-  menu: (provided: any) => ({
+  menu: (provided) => ({
     ...provided,
     backgroundColor: "#1f2937",
     zIndex: 9999,
   }),
-  option: (provided: any, state: { isFocused: boolean }) => ({
+  option: (provided, state) => ({
     ...provided,
     backgroundColor: state.isFocused ? "#374151" : "#1f2937",
     color: "white",
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided) => ({
     ...provided,
     color: "white",
   }),
-  input: (provided: any) => ({
+  input: (provided) => ({
     ...provided,
     color: "white",
   }),
@@ -62,7 +70,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
 
   if (!mounted) return null;
 
-  const handleSelectChange = (selectedOption: any, field: string) => {
+  const handleSelectChange = (selectedOption: SingleValue<Option>, field: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: selectedOption,
@@ -105,15 +113,15 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch({
-      set: formData.artifactSet?.value || null,
-      type: formData.type?.value || null,
-      mainStat: formData.mainStat?.value || null,
+      set: formData.artifactSet?.value ?? null,
+      type: formData.type?.value ?? null,
+      mainStat: formData.mainStat?.value ?? null,
       numberOfSubstats: formData.numberOfSubstats
         ? parseInt(formData.numberOfSubstats)
         : null,
       substats: formData.substats,
-      score: formData.score || null,
-      source: formData.source || null,
+      score: formData.score !== "" ? formData.score : null,
+      source: formData.source !== "" ? formData.source : null,
     });
   };
 
