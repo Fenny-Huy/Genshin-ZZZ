@@ -16,7 +16,7 @@ export const artifactRouter = createTRPCRouter({
 
       const artifacts = await ctx.db.query.artifactItself.findMany({
         where: eq(artifactItself.userId, ctx.session.user.id),
-        orderBy: [desc(artifactItself.createDate)],
+        orderBy: [desc(artifactItself.createDate), desc(artifactItself.id)],
         limit: input.limit,
         offset: offset,
         with: {
