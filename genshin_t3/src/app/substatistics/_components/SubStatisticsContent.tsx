@@ -83,19 +83,19 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700">
               <h4 className="mb-2 font-semibold text-yellow-400">Set/Source</h4>
               <p className="text-sm text-gray-300">
-                Analyze artifact set and source distributions. Click <strong>Set</strong>, <strong>Source</strong>, or both to view data. Use <strong>Specific</strong> for filtered views.
+                Analyze artifact set and source counts and distributions. Click <strong>Set</strong>, <strong>Source</strong>, or both to view data. Use <strong>Specific</strong> for filtered views for a specific set.
               </p>
             </div>
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700">
               <h4 className="mb-2 font-semibold text-yellow-400">Score</h4>
               <p className="text-sm text-gray-300">
-                View artifact score distributions. Toggle <strong>Set</strong> or <strong>Source</strong> to analyze scores. Use <strong>Specific</strong> to drill down by set and/or source.
+                View artifact score distributions. Toggle <strong>Set</strong> or <strong>Source</strong> to analyze scores. Select both to view the overall score distribution. Use <strong>Specific</strong> to drill down by set and/or source.
               </p>
             </div>
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700">
               <h4 className="mb-2 font-semibold text-yellow-400">Leveling Invest</h4>
               <p className="text-sm text-gray-300">
-                Track total rolls invested in leveling. Select <strong>Type</strong> to view by artifact type, or <strong>Set</strong> to analyze by artifact set.
+                Track which artifact sets you invested in leveling the most. Select <strong>Type</strong> to view by artifact type, or <strong>Set</strong> to analyze by artifact set.
               </p>
             </div>
           </div>
