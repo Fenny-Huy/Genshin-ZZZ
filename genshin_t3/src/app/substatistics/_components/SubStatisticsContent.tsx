@@ -14,6 +14,14 @@ interface SubStatisticsContentProps {
   scoreSourceData: any[];
   scoreSetSourceData: any[];
   levelingInvestmentData: any[];
+  isLoadingSet: boolean;
+  isLoadingSource: boolean;
+  isLoadingSetSourceCombo: boolean;
+  isLoadingScore: boolean;
+  isLoadingScoreSet: boolean;
+  isLoadingScoreSource: boolean;
+  isLoadingScoreSetSource: boolean;
+  isLoadingLevelingInvestment: boolean;
 }
 
 type Tab = 'Set/Source' | 'Score' | 'Leveling Invest';
@@ -27,6 +35,14 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
   scoreSourceData,
   scoreSetSourceData,
   levelingInvestmentData,
+  isLoadingSet,
+  isLoadingSource,
+  isLoadingSetSourceCombo,
+  isLoadingScore,
+  isLoadingScoreSet,
+  isLoadingScoreSource,
+  isLoadingScoreSetSource,
+  isLoadingLevelingInvestment,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('Set/Source');
   const [showGuide, setShowGuide] = useState(false);
@@ -39,6 +55,7 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
             setData={setData}
             sourceData={sourceData}
             setSourceComboData={setSourceComboData}
+            isLoading={isLoadingSet || isLoadingSource || isLoadingSetSourceCombo}
           />
         );
       case 'Score':
@@ -48,12 +65,14 @@ const SubStatisticsContent: React.FC<SubStatisticsContentProps> = ({
             scoreSetData={scoreSetData}
             scoreSourceData={scoreSourceData}
             scoreSetSourceData={scoreSetSourceData}
+            isLoading={isLoadingScore || isLoadingScoreSet || isLoadingScoreSource || isLoadingScoreSetSource}
           />
         );
       case 'Leveling Invest':
         return (
           <LevelingInvestmentSection 
             levelingInvestmentData={levelingInvestmentData}
+            isLoading={isLoadingLevelingInvestment}
           />
         );
       default:
