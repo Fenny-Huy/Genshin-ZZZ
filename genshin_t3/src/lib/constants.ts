@@ -110,5 +110,7 @@ export const artifactConfig = {
     "Finale of the Deep Galleries",
     "Silken Moon's Serenade",
     "Night of the Sky's Unveiling",
+    "A Day Carved From Rising Winds",
+    "Aubade of Morningstar and Moon",
   ],
 };
