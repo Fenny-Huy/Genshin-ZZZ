@@ -18,13 +18,24 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
 
   const hasLevelingData = artifact.leveling;
 
-  const renderCheckbox = (value: number | null) => (
-    <div className="flex justify-center">
-      <span className={`text-lg font-bold ${value === 1 ? "text-green-500" : "text-transparent"}`}>
-        {value === 1 ? "✓" : "·"}
-      </span>
-    </div>
-  );
+  const renderCheckbox = (value: number | null, substatName: string) => {
+    // Check if this is the unactivated substat
+    const isUnactivated = artifact.unactivatedSubstat === substatName;
+    
+    return (
+      <div className="flex justify-center">
+        {isUnactivated ? (
+          <span className="text-lg font-bold text-blue-400" title="Unactivated substat">
+            ○
+          </span>
+        ) : (
+          <span className={`text-lg font-bold ${value === 1 ? "text-green-500" : "text-transparent"}`}>
+            {value === 1 ? "✓" : "·"}
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -33,16 +44,16 @@ export function ArtifactRow({ artifact, onRefresh }: ArtifactRowProps) {
         <td className="p-3 text-gray-300">{artifact.type}</td>
         <td className="p-3 text-yellow-500 font-medium">{artifact.mainStat}</td>
         <td className="p-3 text-center text-gray-300">{artifact.numberOfSubstat}</td>
-        <td className="p-3">{renderCheckbox(artifact.percentATK)}</td>
-        <td className="p-3">{renderCheckbox(artifact.percentHP)}</td>
-        <td className="p-3">{renderCheckbox(artifact.percentDEF)}</td>
-        <td className="p-3">{renderCheckbox(artifact.atk)}</td>
-        <td className="p-3">{renderCheckbox(artifact.hp)}</td>
-        <td className="p-3">{renderCheckbox(artifact.def)}</td>
-        <td className="p-3">{renderCheckbox(artifact.er)}</td>
-        <td className="p-3">{renderCheckbox(artifact.em)}</td>
-        <td className="p-3">{renderCheckbox(artifact.critRate)}</td>
-        <td className="p-3">{renderCheckbox(artifact.critDMG)}</td>
+        <td className="p-3">{renderCheckbox(artifact.percentATK, "%ATK")}</td>
+        <td className="p-3">{renderCheckbox(artifact.percentHP, "%HP")}</td>
+        <td className="p-3">{renderCheckbox(artifact.percentDEF, "%DEF")}</td>
+        <td className="p-3">{renderCheckbox(artifact.atk, "ATK")}</td>
+        <td className="p-3">{renderCheckbox(artifact.hp, "HP")}</td>
+        <td className="p-3">{renderCheckbox(artifact.def, "DEF")}</td>
+        <td className="p-3">{renderCheckbox(artifact.er, "ER")}</td>
+        <td className="p-3">{renderCheckbox(artifact.em, "EM")}</td>
+        <td className="p-3">{renderCheckbox(artifact.critRate, "Crit Rate")}</td>
+        <td className="p-3">{renderCheckbox(artifact.critDMG, "Crit DMG")}</td>
         <td className="p-3 text-gray-400">{artifact.whereGotIt}</td>
         <td className="p-3">
           <span className={`rounded px-2 py-1 text-xs font-bold ${
