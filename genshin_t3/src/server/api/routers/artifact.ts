@@ -47,6 +47,7 @@ export const artifactRouter = createTRPCRouter({
         substats: z.array(z.string()),
         score: z.string(),
         source: z.string(),
+        unactivatedSubstat: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -69,6 +70,7 @@ export const artifactRouter = createTRPCRouter({
           em: input.substats.includes("EM") ? 1 : 0,
           critRate: input.substats.includes("Crit Rate") ? 1 : 0,
           critDMG: input.substats.includes("Crit DMG") ? 1 : 0,
+          unactivatedSubstat: input.unactivatedSubstat ?? null,
         })
         .where(
           and(
@@ -89,6 +91,7 @@ export const artifactRouter = createTRPCRouter({
         substats: z.array(z.string()),
         score: z.string(),
         source: z.string(),
+        unactivatedSubstat: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -114,6 +117,7 @@ export const artifactRouter = createTRPCRouter({
           em: input.substats.includes("EM") ? 1 : 0,
           critRate: input.substats.includes("Crit Rate") ? 1 : 0,
           critDMG: input.substats.includes("Crit DMG") ? 1 : 0,
+          unactivatedSubstat: input.unactivatedSubstat ?? null,
         })
         .returning({ id: artifactItself.id });
 
