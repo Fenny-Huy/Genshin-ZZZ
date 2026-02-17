@@ -145,7 +145,8 @@ export default function ArtifactCreateForm() {
     !formData.numberOfSubstats ||
     !formData.score ||
     !formData.source ||
-    formData.substats.length !== parseInt(formData.numberOfSubstats);
+    formData.substats.length !== parseInt(formData.numberOfSubstats) ||
+    (formData.numberOfSubstats === "3" && !formData.unactivatedSubstat);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,7 +176,7 @@ export default function ArtifactCreateForm() {
     },
     {
       name: "Unactivated",
-      completed: formData.numberOfSubstats !== "3" || !!formData.unactivatedSubstat,
+      completed: formData.numberOfSubstats === "4" || (formData.numberOfSubstats === "3" && !!formData.unactivatedSubstat),
     },
     { name: "Score", completed: !!formData.score },
     { name: "Source", completed: !!formData.source },
@@ -357,7 +358,6 @@ export default function ArtifactCreateForm() {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-200">
               Unactivated Substat (shown at +0)
-              <span className="ml-2 text-xs text-gray-400">(Optional)</span>
             </label>
             <Select
               instanceId="unactivated-substat-select"
