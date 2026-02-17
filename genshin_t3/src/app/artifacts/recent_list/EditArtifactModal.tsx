@@ -171,7 +171,8 @@ export function EditArtifactModal({
     formData.numberOfSubstats &&
     formData.substats.length === parseInt(formData.numberOfSubstats, 10) &&
     formData.score &&
-    formData.source
+    formData.source &&
+    (formData.numberOfSubstats !== "3" || formData.unactivatedSubstat)
   );
 
   const filteredSubstats = artifactConfig.allSubstats.filter(
@@ -290,7 +291,6 @@ export function EditArtifactModal({
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-300">
                 Unactivated Substat (shown at +0)
-                <span className="ml-2 text-xs text-gray-400">(Optional)</span>
               </label>
               <select
                 name="unactivatedSubstat"
@@ -298,7 +298,7 @@ export function EditArtifactModal({
                 onChange={handleInputChange}
                 className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
               >
-                <option value="">None</option>
+                <option value="">Select Substat</option>
                 {availableUnactivatedSubstats.map((substat) => (
                   <option key={substat} value={substat}>
                     {substat}
