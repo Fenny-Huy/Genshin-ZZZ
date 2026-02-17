@@ -52,6 +52,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     mainStat: { value: string; label: string } | null;
     numberOfSubstats: string;
     substats: string[];
+    unactivatedSubstat: string;
     score: string;
     source: string;
   }>({
@@ -60,6 +61,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     mainStat: null,
     numberOfSubstats: "",
     substats: [],
+    unactivatedSubstat: "",
     score: "",
     source: "",
   });
@@ -104,6 +106,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
       mainStat: null,
       numberOfSubstats: "",
       substats: [],
+      unactivatedSubstat: "",
       score: "",
       source: "",
     });
@@ -120,6 +123,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
         ? parseInt(formData.numberOfSubstats)
         : null,
       substats: formData.substats,
+      unactivatedSubstat: formData.unactivatedSubstat !== "" ? formData.unactivatedSubstat : null,
       score: formData.score !== "" ? formData.score : null,
       source: formData.source !== "" ? formData.source : null,
     });
@@ -131,6 +135,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     formData.mainStat !== null ||
     formData.numberOfSubstats !== "" ||
     formData.substats.length > 0 ||
+    formData.unactivatedSubstat !== "" ||
     formData.score !== "" ||
     formData.source !== ""
   );
@@ -250,6 +255,26 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
             {artifactConfig.sources.map((source) => (
               <option key={source} value={source}>
                 {source}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Unactivated Substat */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-gray-300">
+            Unactivated Substat
+          </label>
+          <select
+            name="unactivatedSubstat"
+            value={formData.unactivatedSubstat}
+            onChange={handleInputChange}
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
+          >
+            <option value="">Any</option>
+            {artifactConfig.allSubstats.map((substat) => (
+              <option key={substat} value={substat}>
+                {substat}
               </option>
             ))}
           </select>
