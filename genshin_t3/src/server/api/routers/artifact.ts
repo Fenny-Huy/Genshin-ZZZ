@@ -47,6 +47,7 @@ export const artifactRouter = createTRPCRouter({
         substats: z.array(z.string()),
         score: z.string(),
         source: z.string(),
+        unactivatedSubstat: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -69,6 +70,7 @@ export const artifactRouter = createTRPCRouter({
           em: input.substats.includes("EM") ? 1 : 0,
           critRate: input.substats.includes("Crit Rate") ? 1 : 0,
           critDMG: input.substats.includes("Crit DMG") ? 1 : 0,
+          unactivatedSubstat: input.unactivatedSubstat ?? null,
         })
         .where(
           and(
@@ -89,6 +91,7 @@ export const artifactRouter = createTRPCRouter({
         substats: z.array(z.string()),
         score: z.string(),
         source: z.string(),
+        unactivatedSubstat: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -114,6 +117,7 @@ export const artifactRouter = createTRPCRouter({
           em: input.substats.includes("EM") ? 1 : 0,
           critRate: input.substats.includes("Crit Rate") ? 1 : 0,
           critDMG: input.substats.includes("Crit DMG") ? 1 : 0,
+          unactivatedSubstat: input.unactivatedSubstat ?? null,
         })
         .returning({ id: artifactItself.id });
 
@@ -132,6 +136,7 @@ export const artifactRouter = createTRPCRouter({
         mainStat: z.string().nullable().optional(),
         numberOfSubstats: z.number().nullable().optional(),
         substats: z.array(z.string()).optional(),
+        unactivatedSubstat: z.string().nullable().optional(),
         score: z.string().nullable().optional(),
         source: z.string().nullable().optional(),
         limit: z.number().min(1).max(100).default(10),
@@ -147,6 +152,8 @@ export const artifactRouter = createTRPCRouter({
       if (input.mainStat) filters.push(eq(artifactItself.mainStat, input.mainStat));
       if (input.numberOfSubstats)
         filters.push(eq(artifactItself.numberOfSubstat, input.numberOfSubstats));
+      if (input.unactivatedSubstat)
+        filters.push(eq(artifactItself.unactivatedSubstat, input.unactivatedSubstat));
       if (input.score) filters.push(eq(artifactItself.score, input.score));
       if (input.source) filters.push(eq(artifactItself.whereGotIt, input.source));
 

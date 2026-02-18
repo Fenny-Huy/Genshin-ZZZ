@@ -68,6 +68,7 @@ export default function ArtifactCreateForm() {
     mainStat: "",
     numberOfSubstats: "",
     substats: [] as string[],
+    unactivatedSubstat: "",
     score: "",
     source: "",
   };
@@ -108,8 +109,10 @@ export default function ArtifactCreateForm() {
         mainStat: "",
         substats: [],
         numberOfSubstats: "",
+        unactivatedSubstat: "",
       }),
-      ...(field === "mainStat" && { substats: [] }),
+      ...(field === "mainStat" && { substats: [], unactivatedSubstat: "" }),
+      ...(field === "numberOfSubstats" && { unactivatedSubstat: "" }),
     }));
   };
 
@@ -119,12 +122,19 @@ export default function ArtifactCreateForm() {
       substats: checked
         ? [...prev.substats, substat]
         : prev.substats.filter((s) => s !== substat),
+      // Reset unactivated substat if it conflicts with selected substats
+      unactivatedSubstat: checked && prev.unactivatedSubstat === substat ? "" : prev.unactivatedSubstat,
     }));
   };
 
   // Filter available substats (exclude main stat)
   const availableSubstats = artifactConfig.allSubstats.filter(
     (s) => s !== formData.mainStat
+  );
+
+  // Filter available unactivated substats (exclude main stat and selected substats)
+  const availableUnactivatedSubstats = artifactConfig.allSubstats.filter(
+    (s) => s !== formData.mainStat && !formData.substats.includes(s)
   );
 
   // Validation
@@ -135,7 +145,8 @@ export default function ArtifactCreateForm() {
     !formData.numberOfSubstats ||
     !formData.score ||
     !formData.source ||
-    formData.substats.length !== parseInt(formData.numberOfSubstats);
+    formData.substats.length !== parseInt(formData.numberOfSubstats) ||
+    (formData.numberOfSubstats === "3" && !formData.unactivatedSubstat);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,6 +158,7 @@ export default function ArtifactCreateForm() {
       substats: formData.substats,
       score: formData.score,
       source: formData.source,
+      unactivatedSubstat: formData.unactivatedSubstat || undefined,
     });
   };
 
@@ -161,6 +173,10 @@ export default function ArtifactCreateForm() {
       completed:
         !!formData.numberOfSubstats &&
         formData.substats.length === parseInt(formData.numberOfSubstats),
+    },
+    {
+      name: "Unactivated",
+      completed: formData.numberOfSubstats === "4" || (formData.numberOfSubstats === "3" && !!formData.unactivatedSubstat),
     },
     { name: "Score", completed: !!formData.score },
     { name: "Source", completed: !!formData.source },
@@ -336,6 +352,27 @@ export default function ArtifactCreateForm() {
             </p>
           )}
         </div>
+
+        {/* Unactivated Substat (only for 3-substat artifacts) */}
+        {formData.numberOfSubstats === "3" && (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-200">
+              Unactivated Substat (shown at +0)
+            </label>
+            <Select
+              instanceId="unactivated-substat-select"
+              options={toOptions(availableUnactivatedSubstats)}
+              value={toOption(formData.unactivatedSubstat)}
+              onChange={(val) => handleSelectChange("unactivatedSubstat", val)}
+              placeholder="Select Unactivated Substat..."
+              styles={customStyles}
+              isClearable
+            />
+            <p className="text-xs text-gray-400">
+              This is the 4th substat shown before leveling to +4
+            </p>
+          </div>
+        )}
 
         {/* Score */}
         <div className="space-y-2">

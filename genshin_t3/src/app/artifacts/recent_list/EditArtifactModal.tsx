@@ -83,6 +83,7 @@ export function EditArtifactModal({
     mainStat: { value: string | null; label: string | null } | null;
     numberOfSubstats: string;
     substats: string[];
+    unactivatedSubstat: string;
     score: string;
     source: string;
   }>({
@@ -91,6 +92,7 @@ export function EditArtifactModal({
     mainStat: { value: artifact.mainStat, label: artifact.mainStat },
     numberOfSubstats: artifact.numberOfSubstat?.toString() ?? "3",
     substats: getInitialSubstats(),
+    unactivatedSubstat: artifact.unactivatedSubstat ?? "",
     score: artifact.score ?? "",
     source: artifact.whereGotIt ?? "",
   });
@@ -106,12 +108,16 @@ export function EditArtifactModal({
         updatedFormData.mainStat = null;
         updatedFormData.substats = [];
         updatedFormData.numberOfSubstats = "";
+        updatedFormData.unactivatedSubstat = "";
       }
 
       if (field === "mainStat") {
         updatedFormData.substats = prev.substats.filter(
           (substat) => substat !== selectedOption?.value,
         );
+        if (prev.unactivatedSubstat === selectedOption?.value) {
+          updatedFormData.unactivatedSubstat = "";
+        }
       }
 
       return updatedFormData;
@@ -129,11 +135,15 @@ export function EditArtifactModal({
         substats: checked
           ? [...prev.substats, value]
           : prev.substats.filter((substat) => substat !== value),
+        // Reset unactivated substat if it conflicts
+        unactivatedSubstat: checked && prev.unactivatedSubstat === value ? "" : prev.unactivatedSubstat,
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
+        // Reset unactivated substat when changing number of substats
+        ...(name === "numberOfSubstats" && { unactivatedSubstat: "" }),
       }));
     }
   };
@@ -150,6 +160,7 @@ export function EditArtifactModal({
       substats: formData.substats,
       score: formData.score,
       source: formData.source,
+      unactivatedSubstat: formData.unactivatedSubstat || undefined,
     });
   };
 
@@ -160,11 +171,17 @@ export function EditArtifactModal({
     formData.numberOfSubstats &&
     formData.substats.length === parseInt(formData.numberOfSubstats, 10) &&
     formData.score &&
-    formData.source
+    formData.source &&
+    (formData.numberOfSubstats !== "3" || formData.unactivatedSubstat)
   );
 
   const filteredSubstats = artifactConfig.allSubstats.filter(
     (substat) => substat !== formData.mainStat?.value,
+  );
+
+  // Filter available unactivated substats (exclude main stat and selected substats)
+  const availableUnactivatedSubstats = artifactConfig.allSubstats.filter(
+    (s) => s !== formData.mainStat?.value && !formData.substats.includes(s)
   );
 
   return createPortal(
@@ -268,6 +285,31 @@ export function EditArtifactModal({
               ))}
             </div>
           </div>
+
+          {/* Unactivated Substat (only for 3-substat artifacts) */}
+          {formData.numberOfSubstats === "3" && (
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-300">
+                Unactivated Substat (shown at +0)
+              </label>
+              <select
+                name="unactivatedSubstat"
+                value={formData.unactivatedSubstat}
+                onChange={handleInputChange}
+                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
+              >
+                <option value="">Select Substat</option>
+                {availableUnactivatedSubstats.map((substat) => (
+                  <option key={substat} value={substat}>
+                    {substat}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-400">
+                This is the 4th substat shown before leveling to +4
+              </p>
+            </div>
+          )}
 
           {/* Score & Source */}
           <div className="grid grid-cols-2 gap-4">

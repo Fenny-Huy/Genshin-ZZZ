@@ -197,6 +197,12 @@ export const levelingRouter = createTRPCRouter({
         throw new Error("Artifact not found or unauthorized");
       }
 
+      // If artifact has 3 substats and an unactivatedSubstat defined, use it automatically
+      let finalAddedSubstat = input.addedSubstat;
+      if (artifact.numberOfSubstat === 3 && artifact.unactivatedSubstat) {
+        finalAddedSubstat = artifact.unactivatedSubstat;
+      }
+
       await ctx.db
         .insert(artifactLeveling)
         .values({
@@ -211,7 +217,7 @@ export const levelingRouter = createTRPCRouter({
           lER: input.lER,
           lCritRate: input.lCritRate,
           lCritDMG: input.lCritDMG,
-          addedSubstat: input.addedSubstat,
+          addedSubstat: finalAddedSubstat,
           lastAdded: new Date(),
         })
         .onConflictDoUpdate({
@@ -227,7 +233,7 @@ export const levelingRouter = createTRPCRouter({
             lER: input.lER,
             lCritRate: input.lCritRate,
             lCritDMG: input.lCritDMG,
-            addedSubstat: input.addedSubstat,
+            addedSubstat: finalAddedSubstat,
             lastAdded: new Date(),
           },
         });

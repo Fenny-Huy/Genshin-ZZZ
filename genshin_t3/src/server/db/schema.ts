@@ -35,6 +35,7 @@ export const artifactItself = createTable(
     critDMG: d.integer().default(0),
     whereGotIt: d.varchar({ length: 50 }),
     score: d.varchar({ length: 50 }),
+    unactivatedSubstat: d.varchar({ length: 50 }),
     createDate: d
       .timestamp({ mode: "date" })
       .$defaultFn(() => new Date())

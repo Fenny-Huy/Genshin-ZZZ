@@ -158,36 +158,55 @@ export function LevelArtifactModal({
         <div className="space-y-6">
           {artifact.numberOfSubstat === 3 && (
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-300">
-                Added Substat (at +4)
-              </label>
-              <select
-                value={formData.addedSubstat}
-                onChange={(e) => {
-                  const newSubstat = e.target.value;
-                  setFormData((prev) => {
-                    const newState = { ...prev, addedSubstat: newSubstat };
-                    if (prev.addedSubstat !== "None") {
-                      const oldKey = getFormDataKey(prev.addedSubstat);
-                      newState[oldKey] = 0;
-                    }
-                    return newState;
-                  });
-                }}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
-              >
-                <option value="None">Select Substat</option>
-                {availableSubstats.map((substat) => (
-                  <option key={substat} value={substat}>
-                    {substat}
-                  </option>
-                ))}
-              </select>
+              {artifact.unactivatedSubstat ? (
+                // If unactivated substat is defined, show it (non-editable)
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Added Substat (at +4)
+                  </label>
+                  <div className="w-full rounded-lg border border-slate-700 bg-slate-800/50 p-2.5 text-gray-400">
+                    {artifact.unactivatedSubstat}
+                    <span className="ml-2 text-xs text-gray-500">(auto)</span>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    This substat will be automatically added when you level to +4
+                  </p>
+                </div>
+              ) : (
+                // Old artifacts without unactivated substat - show manual selector
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Added Substat (at +4)
+                  </label>
+                  <select
+                    value={formData.addedSubstat}
+                    onChange={(e) => {
+                      const newSubstat = e.target.value;
+                      setFormData((prev) => {
+                        const newState = { ...prev, addedSubstat: newSubstat };
+                        if (prev.addedSubstat !== "None") {
+                          const oldKey = getFormDataKey(prev.addedSubstat);
+                          newState[oldKey] = 0;
+                        }
+                        return newState;
+                      });
+                    }}
+                    className="w-full rounded-lg border border-slate-700 bg-slate-800 p-2.5 text-white focus:border-yellow-500 focus:ring-yellow-500"
+                  >
+                    <option value="None">Select Substat</option>
+                    {availableSubstats.map((substat) => (
+                      <option key={substat} value={substat}>
+                        {substat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           )}
 
           <div className="space-y-4">
-            {[...initialSubstats, ...(formData.addedSubstat !== "None" ? [formData.addedSubstat] : [])].map((substat) => {
+            {[...initialSubstats, ...(artifact.unactivatedSubstat ? [artifact.unactivatedSubstat] : formData.addedSubstat !== "None" ? [formData.addedSubstat] : [])].map((substat) => {
               const key = getFormDataKey(substat);
               return (
                 <div key={substat} className="flex items-center justify-between rounded-lg bg-slate-800/50 p-3 border border-slate-700/50">
